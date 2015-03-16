@@ -5,9 +5,13 @@ import com.snail.education.protocol.result.SECartResult;
 import com.snail.education.protocol.result.SECourseCateResult;
 import com.snail.education.protocol.result.SECourseDetailResult;
 import com.snail.education.protocol.result.SECourseResult;
+import com.snail.education.protocol.result.SEOrderResult;
 
 import retrofit.Callback;
 import retrofit.http.GET;
+import retrofit.http.Multipart;
+import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Query;
 
 /**
@@ -51,9 +55,9 @@ public interface SECourseService {
      *
      * @param cb
      */
-    @GET("/api/classBuy")
-    public void addToCart(@Query("id") int id,
-                          @Query("uid") int uid,
+    @GET("/api/classToCart")
+    public void addToCart(@Query("id") String id,
+                          @Query("uid") String uid,
                           Callback<SEAddCartResult> cb);
 
     /**
@@ -64,4 +68,24 @@ public interface SECourseService {
     @GET("/api/cartList")
     public void fetchCartList(@Query("uid") int uid,
                               Callback<SECartResult> cb);
+
+    /**
+     * 购买课程
+     *
+     * @param cb
+     */
+    @GET("/api/classBuy")
+    public void buyCourse(@Query("id") String id,
+                          @Query("uid") String uid,
+                          Callback<SEAddCartResult> cb);
+
+    /**
+     * 创建订单
+     *
+     * @param cb
+     */
+    @Multipart
+    @POST("/api/orderCreate")
+    public void createOrder(@Part("uid") int uid,
+                            Callback<SEOrderResult> cb);
 }

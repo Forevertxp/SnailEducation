@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
@@ -23,12 +24,18 @@ import com.snail.education.app.SEConfig;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
+import com.snail.education.protocol.manager.SERestManager;
 import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SECart;
 import com.snail.education.protocol.model.SECourse;
 import com.snail.education.protocol.model.SECourseDetail;
+import com.snail.education.protocol.model.SEOrder;
 import com.snail.education.protocol.model.SEUser;
+import com.snail.education.protocol.result.SEAddCartResult;
+import com.snail.education.protocol.result.SEOrderResult;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.protocol.service.SECourseService;
+import com.snail.education.protocol.service.SEInformationService;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.course.RelativeCourseAdapter;
 import com.snail.svprogresshud.SVProgressHUD;
@@ -40,6 +47,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class CoursePayActivity extends SEBaseActivity {
 
@@ -56,7 +67,11 @@ public class CoursePayActivity extends SEBaseActivity {
     private static final int SDK_PAY_FLAG = 1;
     private static final int SDK_CHECK_FLAG = 2;
 
+    private SEUser currentuser;
     private ListView cartLV;
+    private TextView totalPrice;
+
+    private SECourseService courseService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +79,28 @@ public class CoursePayActivity extends SEBaseActivity {
         setContentView(R.layout.activity_course_pay);
         setTitleText("购物车");
         cartLV = (ListView) findViewById(R.id.cartLV);
+        totalPrice = (TextView) findViewById(R.id.totalPrice);
 
-        ExternalFragment fragment = new ExternalFragment();
-        getFragmentManager().beginTransaction().replace(R.id.payLL, fragment).commit();
+        courseService = SERestManager.getInstance().create(SECourseService.class);
+        currentuser = SEAuthManager.getInstance().getAccessUser();
 
-        initCartList();
+        String id = getIntent().getStringExtra("id");
+        buyCourse(id, currentuser.getId());
+    }
+
+    private void buyCourse(String id, String uid) {
+        courseService.buyCourse(id, uid, new Callback<SEAddCartResult>() {
+            @Override
+            public void success(SEAddCartResult result, Response response) {
+                initCartList();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                initCartList();
+            }
+        });
+
     }
 
     /**
@@ -77,30 +109,19 @@ public class CoursePayActivity extends SEBaseActivity {
     private void initCartList() {
 
         final SECourseManager courseManager = SECourseManager.getInstance();
-        SEUser currentuser = SEAuthManager.getInstance().getAccessUser();
-        if (currentuser == null || currentuser.getId().equals("")) {
-            new AlertDialog.Builder(this)
-                    .setTitle("您尚未登录")
-                    .setMessage("登录后才能购买，是否去登录？")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                        }
-                    })
-                    .show();
-            return;
-        }
         courseManager.fetchCartList(Integer.parseInt(currentuser.getId()), new SECallBack() {
             @Override
             public void success() {
                 ArrayList<SECart> cartArrayList = courseManager.getCartList();
+                float total = 0;
+                for (SECart cart : cartArrayList) {
+                    total += Float.parseFloat(cart.getData().getPrice());
+                }
+                totalPrice.setText("¥" + total);
                 CartCourseAdapter adapter = new CartCourseAdapter(CoursePayActivity.this, cartArrayList);
                 cartLV.setAdapter(adapter);
                 setListViewHeightBasedOnChildren(cartLV);
+
             }
 
             @Override
@@ -140,6 +161,28 @@ public class CoursePayActivity extends SEBaseActivity {
         params.height = (totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1)));
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    /*
+    创建订单并跳转到支付页面
+     */
+    public void createOrder(View v) {
+        if (currentuser == null) {
+            return;
+        }
+        courseService.createOrder(Integer.parseInt(currentuser.getId()), new Callback<SEOrderResult>() {
+            @Override
+            public void success(SEOrderResult result, Response response) {
+                SEOrder order = result.data;
+                pay(order);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+
     }
 
 
@@ -191,9 +234,9 @@ public class CoursePayActivity extends SEBaseActivity {
     /**
      * call alipay sdk pay. 调用SDK支付
      */
-    public void pay(View v) {
+    public void pay(SEOrder order) {
         // 订单
-        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
+        String orderInfo = getOrderInfo(order.getBody(), "该测试商品的详细描述", order.getMoney());
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);

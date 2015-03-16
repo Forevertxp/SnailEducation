@@ -1,8 +1,10 @@
 package com.snail.education.ui.course;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -41,9 +43,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
 import com.snail.education.app.SEConfig;
 import com.snail.education.protocol.SECallBack;
+import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
 import com.snail.education.protocol.model.SECourse;
 import com.snail.education.protocol.model.SECourseDetail;
+import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.course.pay.CoursePayActivity;
@@ -182,11 +186,13 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
 
         final SECourseManager courseManager = SECourseManager.getInstance();
         SVProgressHUD.showInView(this, "正在加载，请稍后...", true);
-        courseManager.getCourseDetail(courseID, 39, new SECallBack() {
+        SEUser currentuser = SEAuthManager.getInstance().getAccessUser();
+        int uid = (currentuser != null) ? Integer.parseInt(currentuser.getId()) : -1;
+        courseManager.getCourseDetail(courseID, uid, new SECallBack() {
             @Override
             public void success() {
                 SVProgressHUD.dismiss(CourseDetailActivity.this);
-                SECourseDetail courseDetail = courseManager.getCourseDetail();
+                final SECourseDetail courseDetail = courseManager.getCourseDetail();
                 DisplayImageOptions options = new DisplayImageOptions.Builder()//
                         .cacheInMemory(true)//
                         .cacheOnDisk(true)//
@@ -197,14 +203,35 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
                 if (courseDetail.getFree().equals("Y")) {
                     freeText.setText("免费");
                 } else {
-                    freeText.setText("马上购买");
-                    freeText.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(CourseDetailActivity.this, CoursePayActivity.class);
-                            startActivity(intent);
-                        }
-                    });
+                    if (courseDetail.get_buy().equals("Y")) {
+                        freeText.setText("已购买");
+                    } else {
+                        freeText.setText("马上购买");
+                        freeText.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!SEAuthManager.getInstance().isAuthenticated()) {
+                                    new AlertDialog.Builder(CourseDetailActivity.this)
+                                            .setTitle("您尚未登录")
+                                            .setMessage("登录后才能购买，是否去登录？")
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            })
+                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    // do nothing
+                                                }
+                                            })
+                                            .show();
+                                    return;
+                                }
+                                Intent intent = new Intent(CourseDetailActivity.this, CoursePayActivity.class);
+                                intent.putExtra("id", courseDetail.getId());
+                                startActivity(intent);
+                            }
+                        });
+                    }
                 }
                 infoText.setText(courseDetail.getInfo());
                 ArrayList<SECourse> courseArrayList = courseManager.getCourseList();
@@ -218,6 +245,10 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
                 Toast.makeText(CourseDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void addToCart() {
+
     }
 
     private final class surfaceSeekBar implements OnSeekBarChangeListener {
