@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CircularImageView/CircularImageView.iml" filepath="$PROJECT_DIR$/CircularImageView/CircularImageView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Education.iml" filepath="$PROJECT_DIR$/Education.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IconicDroid/IconicDroid.iml" filepath="$PROJECT_DIR$/IconicDroid/IconicDroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ImageChooser/ImageChooser.iml" filepath="$PROJECT_DIR$/ImageChooser/ImageChooser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ImageChooser/ImageChooser.iml" filepath="$PROJECT_DIR$/ImageChooser/ImageChooser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ImageViewer/ImageViewer.iml" filepath="$PROJECT_DIR$/ImageViewer/ImageViewer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PullToRefresh/PullToRefresh.iml" filepath="$PROJECT_DIR$/PullToRefresh/PullToRefresh.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SVProgressHUD/SVProgressHUD.iml" filepath="$PROJECT_DIR$/SVProgressHUD/SVProgressHUD.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SortListView/SortListView.iml" filepath="$PROJECT_DIR$/SortListView/SortListView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StaggeredGridVIew/StaggeredGridVIew.iml" filepath="$PROJECT_DIR$/StaggeredGridVIew/StaggeredGridVIew.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>
+

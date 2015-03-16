@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/baseFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.snail.education.ui.me.NoScrollViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.snail.education.ui.me.NoScrollViewPager>
+
+</FrameLayout>

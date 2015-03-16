@@ -1,0 +1,148 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/regLL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.snail.education.ui.me.activity.UserUpdateActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/ic_search_bg">
+
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:text="手 机 号："
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="@color/gainsboro" />
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:inputType="phone"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/tv_phone"
+            android:background="@null" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/ic_search_bg"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_pass"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:text="密 码:"
+                android:background="@color/gainsboro" />
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:inputType="textPassword"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/tv_pass"
+                android:background="@null" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_pass_again"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:text="确认秘密："
+                android:gravity="center"
+                android:textSize="14sp"
+                android:background="@color/gainsboro" />
+
+            <EditText
+                android:id="@+id/et_password_again"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:inputType="textPassword"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/tv_pass_again"
+                android:background="@null" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="已阅读并同意" />
+
+        <TextView
+            android:id="@+id/tv_protocol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/text"
+            android:layout_centerVertical="true"
+            android:textColor="@color/green"
+            android:text="《蜗牛用户协议及隐私政策》" />
+
+
+        <ImageView
+            android:id="@+id/iv_switch_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/open_icon"
+            android:layout_alignParentRight="true"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_switch_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/close_icon"
+            android:layout_alignParentRight="true"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_normal"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:text="注  册" />
+
+
+</LinearLayout>
