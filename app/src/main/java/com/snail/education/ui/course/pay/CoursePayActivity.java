@@ -1,5 +1,7 @@
 package com.snail.education.ui.course.pay;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -7,6 +9,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
@@ -15,10 +21,13 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
 import com.snail.education.app.SEConfig;
 import com.snail.education.protocol.SECallBack;
+import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
+import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SECart;
 import com.snail.education.protocol.model.SECourse;
 import com.snail.education.protocol.model.SECourseDetail;
+import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.course.RelativeCourseAdapter;
@@ -45,14 +54,17 @@ public class CoursePayActivity extends SEBaseActivity {
 
 
     private static final int SDK_PAY_FLAG = 1;
-
     private static final int SDK_CHECK_FLAG = 2;
+
+    private ListView cartLV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_pay);
         setTitleText("购物车");
+        cartLV = (ListView) findViewById(R.id.cartLV);
+
         ExternalFragment fragment = new ExternalFragment();
         getFragmentManager().beginTransaction().replace(R.id.payLL, fragment).commit();
 
@@ -65,11 +77,30 @@ public class CoursePayActivity extends SEBaseActivity {
     private void initCartList() {
 
         final SECourseManager courseManager = SECourseManager.getInstance();
-        courseManager.fetchCartList(39, new SECallBack() {
+        SEUser currentuser = SEAuthManager.getInstance().getAccessUser();
+        if (currentuser == null || currentuser.getId().equals("")) {
+            new AlertDialog.Builder(this)
+                    .setTitle("您尚未登录")
+                    .setMessage("登录后才能购买，是否去登录？")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .show();
+            return;
+        }
+        courseManager.fetchCartList(Integer.parseInt(currentuser.getId()), new SECallBack() {
             @Override
             public void success() {
                 ArrayList<SECart> cartArrayList = courseManager.getCartList();
-
+                CartCourseAdapter adapter = new CartCourseAdapter(CoursePayActivity.this, cartArrayList);
+                cartLV.setAdapter(adapter);
+                setListViewHeightBasedOnChildren(cartLV);
             }
 
             @Override
@@ -77,6 +108,38 @@ public class CoursePayActivity extends SEBaseActivity {
 
             }
         });
+    }
+
+    /**
+     * 根据listview内容设置其高度
+     *
+     * @param listView
+     */
+    public void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = listView.getPaddingTop() + listView.getPaddingBottom();
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+
+            if (listItem != null) {
+                // This next line is needed before you call measure or else you won't get measured height at all. The listitem needs to be drawn first to know the height.
+                listItem.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                totalHeight += listItem.getMeasuredHeight();
+
+            }
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = (totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1)));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
 
