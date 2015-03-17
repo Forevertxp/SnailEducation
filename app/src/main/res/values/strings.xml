@@ -29,5 +29,6 @@
     <string name="logining">使用%s帐号登录中…</string>
     <string name="title_activity_user_reg">UserRegActivity</string>
     <string name="title_activity_user_update">UserUpdateActivity</string>
+    <string name="title_activity_download">DownloadActivity</string>
 
 </resources>
