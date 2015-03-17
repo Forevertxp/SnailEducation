@@ -23,6 +23,7 @@ import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.model.SEUserInfo;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.ui.me.activity.DownloadActivity;
 import com.snail.education.ui.me.activity.UserUpdateActivity;
 
 
@@ -72,7 +73,8 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.profileRL:
-                onEditUserInfo();
+                //onEditUserInfo();
+                onUserDownload();
                 break;
             case R.id.logoutBtn:
                 logout();
@@ -147,6 +149,14 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
         if (user != null) {
             Intent intent = new Intent(getActivity(), UserUpdateActivity.class);
             startActivityForResult(intent, EDIT_USER_INFO);
+        }
+    }
+
+    private void onUserDownload() {
+        SEUser user = SEAuthManager.getInstance().getAccessUser();
+        if (user != null) {
+            Intent intent = new Intent(getActivity(), DownloadActivity.class);
+            startActivity(intent);
         }
     }
 
