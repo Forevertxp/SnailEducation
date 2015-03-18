@@ -14,13 +14,13 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import com.snail.education.R;
-import com.snail.education.ui.me.UserLoginFragment;
+import com.snail.education.ui.activity.SEBaseActivity;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DownloadActivity extends FragmentActivity implements ViewPager.OnPageChangeListener {
+public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPageChangeListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -59,6 +59,7 @@ public class DownloadActivity extends FragmentActivity implements ViewPager.OnPa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
+        setTitleText("我的缓存");
 
         initViews();
 
@@ -216,9 +217,9 @@ public class DownloadActivity extends FragmentActivity implements ViewPager.OnPa
      */
     private int supplyTabs(List<TabInfo> tabs) {
         tabs.add(new TabInfo(0, "已缓存",
-                UserLoginFragment.class));
+                DownloadingFragment.class));
         tabs.add(new TabInfo(1, "正在缓存",
-                UserLoginFragment.class));
+                DownloadingFragment.class));
         return 1;
     }
 

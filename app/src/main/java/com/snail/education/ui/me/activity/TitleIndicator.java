@@ -144,59 +144,24 @@ public class TitleIndicator extends LinearLayout implements View.OnClickListener
      * 大意是这样的：当页面滚动的时候，会有一个滚动距离，然后onDraw被触发后，
      * 就会在新位置重新画上滚动条（其实就是画线）
      */
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//        //下面是计算本次滑动的距离
-//        float scroll_x = 0;
-//        if (mTotal != 0) {
-//            mPerItemWidth = getWidth() / mTotal;
-//            int tabID = mSelectedTab;
-//            scroll_x = (mCurrentScroll - ((tabID) * (getWidth() + mViewPager.getPageMargin()))) / mTotal;
-//        } else {
-//            mPerItemWidth = getWidth();
-//            scroll_x = mCurrentScroll;
-//        }
-//        //下面就是如何画线了
-//        Path path = mPath;
-//        path.rewind();
-//        float offset = 0;
-//        float left_x = mSelectedTab * mPerItemWidth + offset + scroll_x;
-//        float right_x = (mSelectedTab + 1) * mPerItemWidth - offset + scroll_x;
-//        float top_y = getHeight() - mFooterLineHeight - mFooterTriangleHeight;
-//        float bottom_y = getHeight() - mFooterLineHeight;
-//
-//        path.moveTo(left_x, top_y + 1f);
-//        path.lineTo(right_x, top_y + 1f);
-//        path.lineTo(right_x, bottom_y + 1f);
-//        path.lineTo(left_x, bottom_y + 1f);
-//        path.close();
-//        canvas.drawPath(path, mPaintFooterTriangle);
-//    }
-
-    /**
-     * 原onDraw方法，线条是顶到两端，修改距两端有一定距离 by txp
-     *
-     * @param canvas
-     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //下面是计算本次滑动的距离
         float scroll_x = 0;
         if (mTotal != 0) {
-            mPerItemWidth = (getWidth() - 60) / mTotal;
+            mPerItemWidth = getWidth() / mTotal;
             int tabID = mSelectedTab;
             scroll_x = (mCurrentScroll - ((tabID) * (getWidth() + mViewPager.getPageMargin()))) / mTotal;
         } else {
-            mPerItemWidth = (getWidth() - 60);
+            mPerItemWidth = getWidth();
             scroll_x = mCurrentScroll;
         }
         //下面就是如何画线了
         Path path = mPath;
         path.rewind();
         float offset = 0;
-        float left_x = mSelectedTab * mPerItemWidth + offset + scroll_x + 30;
+        float left_x = mSelectedTab * mPerItemWidth + offset + scroll_x;
         float right_x = (mSelectedTab + 1) * mPerItemWidth - offset + scroll_x;
         float top_y = getHeight() - mFooterLineHeight - mFooterTriangleHeight;
         float bottom_y = getHeight() - mFooterLineHeight;

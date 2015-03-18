@@ -1,9 +1,5 @@
 package com.snail.education.ui.course.pay;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,28 +13,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
-import com.snail.education.app.SEConfig;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
 import com.snail.education.protocol.manager.SERestManager;
-import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SECart;
-import com.snail.education.protocol.model.SECourse;
-import com.snail.education.protocol.model.SECourseDetail;
 import com.snail.education.protocol.model.SEOrder;
 import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.result.SEAddCartResult;
 import com.snail.education.protocol.result.SEOrderResult;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.protocol.service.SECourseService;
-import com.snail.education.protocol.service.SEInformationService;
 import com.snail.education.ui.activity.SEBaseActivity;
-import com.snail.education.ui.course.RelativeCourseAdapter;
-import com.snail.svprogresshud.SVProgressHUD;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

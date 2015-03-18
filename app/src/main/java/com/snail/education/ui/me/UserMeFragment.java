@@ -33,7 +33,7 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
     private UserHeaderView headerView;
     private TextView orderText, saleText, processText, collectText;
     private Button logoutBtn;
-    private RelativeLayout profileRL;
+    private RelativeLayout downloadRL, profileRL;
 
     public UserMeFragment() {
         // Required empty public constructor
@@ -61,9 +61,11 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
         saleText = (TextView) view.findViewById(R.id.saleText);
         processText = (TextView) view.findViewById(R.id.processText);
         collectText = (TextView) view.findViewById(R.id.collectText);
+        downloadRL = (RelativeLayout) view.findViewById(R.id.downloadRL);
         profileRL = (RelativeLayout) view.findViewById(R.id.profileRL);
         userFrame.addView(headerView);
         logoutBtn = (Button) view.findViewById(R.id.logoutBtn);
+        downloadRL.setOnClickListener(this);
         profileRL.setOnClickListener(this);
         logoutBtn.setOnClickListener(this);
         return view;
@@ -72,15 +74,16 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.profileRL:
-                //onEditUserInfo();
+            case R.id.downloadRL:
                 onUserDownload();
+                break;
+            case R.id.profileRL:
+                onEditUserInfo();
                 break;
             case R.id.logoutBtn:
                 logout();
                 break;
         }
-
     }
 
     private void logout() {

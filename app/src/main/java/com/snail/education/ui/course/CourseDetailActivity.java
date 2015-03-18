@@ -38,10 +38,19 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lidroid.xutils.DbUtils;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.DbException;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.HttpHandler;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
+import com.snail.education.app.SEAPP;
 import com.snail.education.app.SEConfig;
+import com.snail.education.database.CourseDB;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
@@ -95,6 +104,7 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
     private ImageView coverImage;
     private ProgressBar waitingBar;
     private TextView totalTime;
+    private Button downloadButton;
 
     private String localUrl;
 
@@ -174,6 +184,7 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
         freeText = (TextView) findViewById(R.id.courseFree);
         infoText = (TextView) findViewById(R.id.courseInfo);
         relativeListView = (ListView) findViewById(R.id.relativeCourse);
+        downloadButton = (Button) findViewById(R.id.btn_download);
 
         // 注册网络监听
         registerNetBroad();
@@ -237,6 +248,16 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
                 ArrayList<SECourse> courseArrayList = courseManager.getCourseList();
                 RelativeCourseAdapter adapter = new RelativeCourseAdapter(CourseDetailActivity.this, courseArrayList);
                 relativeListView.setAdapter(adapter);
+
+                downloadButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (courseDetail.getFree().equals("Y") || courseDetail.get_buy().equals("Y"))
+                            downloadCourse(courseDetail);
+                        else
+                            SVProgressHUD.showInViewWithoutIndicator(CourseDetailActivity.this, "抱歉，您无下载权限！", 2.f);
+                    }
+                });
             }
 
             @Override
@@ -249,6 +270,47 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
 
     private void addToCart() {
 
+    }
+
+    private void downloadCourse(SECourseDetail courseDetail) {
+        DbUtils db = DbUtils.create(CourseDetailActivity.this);
+        CourseDB course = new CourseDB();
+        course.setId(Integer.parseInt(courseDetail.getId()));
+        course.setName(courseDetail.getName());
+        course.setThumb(SEConfig.getInstance().getAPIBaseURL()+courseDetail.getThumb());
+        try {
+            db.save(course);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+//        HttpUtils http = new HttpUtils();
+//        HttpHandler handler = http.download(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getVideo(),
+//                "/sdcard/snailvideo" + courseDetail.getId() + ".mp4",
+//                true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
+//                true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
+//                new RequestCallBack<File>() {
+//
+//                    @Override
+//                    public void onStart() {
+//                        Toast.makeText(CourseDetailActivity.this, "添加至缓存列表", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onLoading(long total, long current, boolean isUploading) {
+//                        //testTextView.setText(current + "/" + total);
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(ResponseInfo<File> responseInfo) {
+//                        Toast.makeText(CourseDetailActivity.this, "downloaded:" + responseInfo.result.getPath(), Toast.LENGTH_SHORT).show();
+//                    }
+//
+//
+//                    @Override
+//                    public void onFailure(HttpException error, String msg) {
+//                        Toast.makeText(CourseDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
     private final class surfaceSeekBar implements OnSeekBarChangeListener {

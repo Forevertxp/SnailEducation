@@ -1,7 +1,7 @@
 package com.snail.education.ui.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.snail.education.R;
 import com.umeng.analytics.MobclickAgent;
 
-public class SEBaseActivity extends Activity {
+public class SEBaseActivity extends FragmentActivity {
 
 
     private ImageView leftImage;
