@@ -102,6 +102,10 @@
             android:name=".ui.me.activity.UserUpdateActivity"
             android:label="@string/title_activity_user_update" >
         </activity>
+        <activity
+            android:name=".ui.me.activity.DownloadActivity"
+            android:label="@string/title_activity_download" >
+        </activity>
     </application>
 
 </manifest>
