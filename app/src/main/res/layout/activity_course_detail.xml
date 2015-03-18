@@ -147,6 +147,7 @@
                 android:textColor="@color/green" />
 
             <Button
+                android:id="@+id/btn_download"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:text="离线缓存"

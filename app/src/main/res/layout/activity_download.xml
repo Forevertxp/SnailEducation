@@ -10,12 +10,18 @@
         android:id="@+id/pagerindicator"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        app:footerColor="@color/tab_indicator_text_selected"
+        android:background="@color/white"
+        app:footerColor="@color/white"
         app:footerLineHeight="2dp"
         app:footerTriangleHeight="3.0dp"
         app:textColor="@color/tab_indicator_text"
         app:textSizeNormal="16sp"
         app:textSizeSelected="16sp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightgrey" />
 
 
     <!-- Don't set background for ViewPager. It doesn't work because of page margin -->

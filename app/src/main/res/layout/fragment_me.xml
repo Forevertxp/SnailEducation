@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
@@ -75,6 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
@@ -109,6 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
@@ -120,6 +123,7 @@
             android:layout_marginRight="10dp" />
 
         <RelativeLayout
+            android:id="@+id/downloadRL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp">
@@ -128,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:text="我的收藏" />
+                android:text="我的缓存" />
 
             <TextView
                 android:id="@+id/collectText"
@@ -136,12 +140,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/seagreen"
                 android:layout_marginRight="8dp"
-                android:layout_toLeftOf="@+id/collectImage" />
+                android:layout_toLeftOf="@+id/collectImage"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/collectImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:src="@drawable/ic_next"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
@@ -173,6 +179,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
@@ -205,6 +212,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
@@ -237,6 +245,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 

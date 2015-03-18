@@ -47,16 +47,16 @@
         <item name="android:textColor">@color/TabBarForegroundColor</item>
     </style>
 
+    <style name="TabBarTitleTextAppearanceSelected" parent="TabBarTitleTextAppearance">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
     <style name="TabBarIconTextAppearance">
         <item name="android:textSize">32sp</item>
         <item name="android:textColor">@color/TabBarForegroundColor</item>
     </style>
 
     <style name="TabBarIconTextAppearanceSelected" parent="TabBarIconTextAppearance">
-        <item name="android:textColor">@color/blue</item>
-    </style>
-
-    <style name="TabBarTitleTextAppearanceSelected" parent="TabBarTitleTextAppearance">
         <item name="android:textColor">@color/blue</item>
     </style>
 
