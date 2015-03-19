@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.snail.education.database.CourseDB;
 import com.snail.education.ui.activity.ImagePagerActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,12 +28,15 @@ public class DownloadAdapter extends BaseAdapter {
 
     private Context context;
     private List<CourseDB> courseList;
+    public static boolean CHECKBOS_VISIBLE = false;//用来记录是否显示checkBox
 
+    private List<Boolean> boolList; // 用来记录checkbox的选中状态
 
-    public DownloadAdapter(Context context, List<CourseDB> courseList) {
+    public DownloadAdapter(Context context, List<CourseDB> courseList, List<Boolean> boolList) {
         super();
         this.context = context;
         this.courseList = courseList;
+        this.boolList = boolList;
     }
 
     @Override
@@ -58,6 +63,7 @@ public class DownloadAdapter extends BaseAdapter {
             holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
             holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
             holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
+            holder.cb = (CheckBox) convertView.findViewById(R.id.item_cb);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -72,6 +78,12 @@ public class DownloadAdapter extends BaseAdapter {
                 .bitmapConfig(Bitmap.Config.RGB_565)//
                 .build();
         ImageLoader.getInstance().displayImage(imageUrl, holder.iv_avatar, options);
+        if (CHECKBOS_VISIBLE) {
+            holder.cb.setVisibility(View.VISIBLE);
+        } else {
+            holder.cb.setVisibility(View.INVISIBLE);
+        }
+        holder.cb.setChecked(boolList.get(position));
         return convertView;
     }
 
@@ -106,10 +118,11 @@ public class DownloadAdapter extends BaseAdapter {
         }
     }
 
-    class ViewHolder {
+    public class ViewHolder {
         private ImageView iv_avatar;
         private TextView tv_title;
         private TextView tv_content;
+        public CheckBox cb;
     }
 
 }

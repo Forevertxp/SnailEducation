@@ -48,4 +48,14 @@
         android:textColor="#b3b3b3"
         android:textSize="14sp" />
 
+    <CheckBox
+        android:id="@+id/item_cb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+
 </RelativeLayout>

@@ -11,16 +11,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.snail.education.R;
 import com.snail.education.ui.activity.SEBaseActivity;
+import com.snail.education.ui.me.adapter.DownloadAdapter;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPageChangeListener {
+public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPageChangeListener,DownloadingFragment.DownloadingListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -51,6 +55,8 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
     //选项卡控件
     protected TitleIndicator mIndicator;
 
+    private TextView chooseTV, deleteTV;
+
     public TitleIndicator getIndicator() {
         return mIndicator;
     }
@@ -60,6 +66,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
         setTitleText("我的缓存");
+        setRightImage(R.drawable.ic_edit_delete);
 
         initViews();
 
@@ -67,6 +74,19 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         mPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.page_margin_width));
         //设置viewpager内部页面间距的drawable
         //mPager.setPageMarginDrawable(R.color.page_viewer_margin_color);
+
+        setRightImageListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DownloadAdapter.CHECKBOS_VISIBLE = true;
+                myAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void showMessage(int index) {
+
     }
 
     public class MyAdapter extends FragmentPagerAdapter {
@@ -147,6 +167,38 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
 
         mPager.setCurrentItem(mCurrentTab);
         mLastTab = mCurrentTab;
+
+        chooseTV = (TextView) findViewById(R.id.tv_choose);
+        deleteTV = (TextView) findViewById(R.id.tv_delete);
+
+        chooseTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 分别调用Fragment中方法
+                switch (mCurrentTab) {
+                    case 0:
+                        Toast.makeText(DownloadActivity.this, mCurrentTab + "", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        Toast.makeText(DownloadActivity.this, mCurrentTab + "", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
+            }
+        });
+
+        deleteTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (mCurrentTab) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                }
+            }
+        });
+
     }
 
     /**
