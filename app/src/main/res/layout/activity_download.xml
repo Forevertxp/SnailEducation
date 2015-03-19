@@ -32,6 +32,7 @@
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/line"
         android:duplicateParentState="true" />
 
     <LinearLayout
@@ -40,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/lightgrey"
+        android:visibility="invisible"
         android:orientation="horizontal">
 
         <TextView
