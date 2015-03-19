@@ -277,7 +277,8 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
         CourseDB course = new CourseDB();
         course.setId(Integer.parseInt(courseDetail.getId()));
         course.setName(courseDetail.getName());
-        course.setThumb(SEConfig.getInstance().getAPIBaseURL()+courseDetail.getThumb());
+        course.setThumb(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getThumb());
+        course.setVideo(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getVideo());
         try {
             db.save(course);
         } catch (DbException e) {

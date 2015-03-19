@@ -15,7 +15,7 @@ public class SEBaseActivity extends FragmentActivity {
 
     private ImageView leftImage;
     private ImageView rightImage;
-    private TextView titleText;
+    private TextView titleText, rightText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class SEBaseActivity extends FragmentActivity {
         initLeft();
         rightImage = (ImageView) actionbarLayout.findViewById(R.id.right_imbt);
         titleText = (TextView) actionbarLayout.findViewById(R.id.tv_title);
+        rightText = (TextView) actionbarLayout.findViewById(R.id.right_text);
         getActionBar().setCustomView(actionbarLayout);
 
     }
@@ -72,6 +73,14 @@ public class SEBaseActivity extends FragmentActivity {
 
     public void setRightImageListener(View.OnClickListener l) {
         rightImage.setOnClickListener(l);
+    }
+
+    public void setRightText(String text) {
+        rightText.setText(text);
+    }
+
+    public void setRightTextListener(View.OnClickListener l) {
+        rightText.setOnClickListener(l);
     }
 
     @Override

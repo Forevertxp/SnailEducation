@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +25,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPageChangeListener,DownloadingFragment.DownloadingListener {
+public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPageChangeListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -55,7 +56,9 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
     //选项卡控件
     protected TitleIndicator mIndicator;
 
+    private LinearLayout editLL;
     private TextView chooseTV, deleteTV;
+    private boolean isEditing = false;
 
     public TitleIndicator getIndicator() {
         return mIndicator;
@@ -66,7 +69,6 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
         setTitleText("我的缓存");
-        setRightImage(R.drawable.ic_edit_delete);
 
         initViews();
 
@@ -74,18 +76,6 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         mPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.page_margin_width));
         //设置viewpager内部页面间距的drawable
         //mPager.setPageMarginDrawable(R.color.page_viewer_margin_color);
-
-        setRightImageListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DownloadAdapter.CHECKBOS_VISIBLE = true;
-                myAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-    @Override
-    public void showMessage(int index) {
 
     }
 
@@ -170,6 +160,39 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
 
         chooseTV = (TextView) findViewById(R.id.tv_choose);
         deleteTV = (TextView) findViewById(R.id.tv_delete);
+        editLL = (LinearLayout) findViewById(R.id.editLL);
+
+        setRightText("编辑");
+        setRightTextListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEditing) {
+                    DownloadAdapter.CHECKBOS_VISIBLE = false;
+                    switch (mCurrentTab) {
+                        case 0:
+                            break;
+                        case 1:
+                            ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+                            break;
+                    }
+                    editLL.setVisibility(View.INVISIBLE);
+                    setRightText("编辑");
+                    isEditing = false;
+                } else {
+                    DownloadAdapter.CHECKBOS_VISIBLE = true;
+                    switch (mCurrentTab) {
+                        case 0:
+                            break;
+                        case 1:
+                            ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+                            break;
+                    }
+                    setRightText("取消");
+                    editLL.setVisibility(View.VISIBLE);
+                    isEditing = true;
+                }
+            }
+        });
 
         chooseTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,7 +203,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
                         Toast.makeText(DownloadActivity.this, mCurrentTab + "", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        Toast.makeText(DownloadActivity.this, mCurrentTab + "", Toast.LENGTH_SHORT).show();
+                        ((DownloadingFragment) myAdapter.getItem(1)).chooseOrDeChoose();
                         break;
                 }
 
@@ -269,7 +292,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
      */
     private int supplyTabs(List<TabInfo> tabs) {
         tabs.add(new TabInfo(0, "已缓存",
-                DownloadingFragment.class));
+                DownloadedFragment.class));
         tabs.add(new TabInfo(1, "正在缓存",
                 DownloadingFragment.class));
         return 1;

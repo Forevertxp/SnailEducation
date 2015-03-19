@@ -19,6 +19,9 @@ public class CourseDB {
     @Column(column = "thumb")
     private String thumb;  //课程图片地址
 
+    @Column(column = "video")
+    private String video;  //课程视频地址
+
     @Column(column = "size")
     private long size;  //已经下载的课程大小
 
@@ -44,6 +47,14 @@ public class CourseDB {
 
     public void setThumb(String thumb) {
         this.thumb = thumb;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
     }
 
     public long getSize() {

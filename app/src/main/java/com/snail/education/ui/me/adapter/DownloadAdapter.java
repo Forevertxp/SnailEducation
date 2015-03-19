@@ -62,7 +62,7 @@ public class DownloadAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
             holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
-            holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
+            holder.tv_progress = (TextView) convertView.findViewById(R.id.tv_content);
             holder.cb = (CheckBox) convertView.findViewById(R.id.item_cb);
             convertView.setTag(holder);
         } else {
@@ -70,7 +70,7 @@ public class DownloadAdapter extends BaseAdapter {
         }
         CourseDB course = courseList.get(position);
         holder.tv_title.setText(course.getName());
-        holder.tv_content.setText(course.getSize() + "");
+        //holder.tv_progress.setText("0");
         String imageUrl = course.getThumb();
         DisplayImageOptions options = new DisplayImageOptions.Builder()//
                 .cacheInMemory(true)//
@@ -121,7 +121,7 @@ public class DownloadAdapter extends BaseAdapter {
     public class ViewHolder {
         private ImageView iv_avatar;
         private TextView tv_title;
-        private TextView tv_content;
+        public TextView tv_progress;
         public CheckBox cb;
     }
 
