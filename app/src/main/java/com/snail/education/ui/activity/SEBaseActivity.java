@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,10 @@ public class SEBaseActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // manifest中配置主题为Translucent，因此需要在这儿通过代码设置
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        setTheme(R.style.AppTheme);
 
         // 返回箭头（默认不显示）
         getActionBar().setDisplayHomeAsUpEnabled(false);

@@ -1,7 +1,6 @@
 package com.snail.education.ui.me.activity;
 
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import com.lidroid.xutils.http.HttpHandler;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.snail.education.R;
-import com.snail.education.app.SEConfig;
 import com.snail.education.database.CourseDB;
 import com.snail.education.ui.me.adapter.DownloadAdapter;
 
@@ -40,6 +38,9 @@ public class DownloadingFragment extends BaseFragment {
     private boolean isDownloading = false;
 
     public DownloadAdapter adapter;
+    private DownloadAdapter.ViewHolder viewHolder;
+
+    private HttpHandler handler;
 
     public DownloadingFragment() {
         // Required empty public constructor
@@ -57,7 +58,7 @@ public class DownloadingFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent,
                                     View view, int position, long id) {
-                final DownloadAdapter.ViewHolder viewHolder = (DownloadAdapter.ViewHolder) view.getTag();
+                viewHolder = (DownloadAdapter.ViewHolder) view.getTag();
                 if (DownloadAdapter.CHECKBOS_VISIBLE) {
                     viewHolder.cb.toggle();
                     if (viewHolder.cb.isChecked()) {
@@ -66,43 +67,11 @@ public class DownloadingFragment extends BaseFragment {
                         boolList.set(position, false);
                     }
                 } else {
-                    HttpUtils http = new HttpUtils();
-                    HttpHandler handler = null;
                     if (!isDownloading) {
-                        handler = http.download(courseList.get(position).getVideo(),
-                                "/sdcard/snailvideo" + courseList.get(position).getId() + ".mp4",
-                                true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
-                                true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
-                                new RequestCallBack<File>() {
-
-                                    @Override
-                                    public void onStart() {
-                                        Toast.makeText(getActivity(), "开始下载", Toast.LENGTH_SHORT).show();
-                                        isDownloading = true;
-                                    }
-
-                                    @Override
-                                    public void onLoading(long total, long current, boolean isUploading) {
-                                        viewHolder.tv_progress.setText(current + "/" + total);
-                                    }
-
-                                    @Override
-                                    public void onSuccess(ResponseInfo<File> responseInfo) {
-                                        viewHolder.tv_progress.setText("已完成");
-                                    }
-
-
-                                    @Override
-                                    public void onFailure(HttpException error, String msg) {
-                                        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-                                        isDownloading = false;
-                                    }
-                                });
+                        doDownload(courseList.get(position).getVideo(), "/sdcard/snailvideo" + courseList.get(position).getId() + ".mp4");
                     } else {
-                        if (handler != null) {
-                            handler.pause();
-                            isDownloading = false;
-                        }
+                        doStopDownload();
+                        isDownloading = false;
                     }
                 }
             }
@@ -127,6 +96,48 @@ public class DownloadingFragment extends BaseFragment {
             e.printStackTrace();
         }
 
+    }
+
+    public void doDownload(String sourceUrl, String targetUrl) {
+
+        // 1.创建下载器
+        HttpUtils http = new HttpUtils();
+        // 2.最大开启线程数量
+        http.configRequestThreadPoolSize(4);
+        handler = http.download(sourceUrl, targetUrl,
+                true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
+                true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
+                new RequestCallBack<File>() {
+
+                    @Override
+                    public void onStart() {
+                        Toast.makeText(getActivity(), "开始下载", Toast.LENGTH_SHORT).show();
+                        isDownloading = true;
+                    }
+
+                    @Override
+                    public void onLoading(long total, long current, boolean isUploading) {
+                        viewHolder.tv_progress.setText(current + "/" + total);
+                    }
+
+                    @Override
+                    public void onSuccess(ResponseInfo<File> responseInfo) {
+                        viewHolder.tv_progress.setText("已完成");
+                    }
+
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                        isDownloading = false;
+                    }
+                });
+    }
+
+    public void doStopDownload() {
+        //调用cancel()方法停止下载
+        handler.cancel();
+        //viewHolder.tv_progress.setText("停止下载");
     }
 
     public void chooseOrDeChoose() {

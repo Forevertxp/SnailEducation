@@ -6,6 +6,7 @@ import com.snail.education.protocol.result.SECourseCateResult;
 import com.snail.education.protocol.result.SECourseDetailResult;
 import com.snail.education.protocol.result.SECourseResult;
 import com.snail.education.protocol.result.SEOrderResult;
+import com.snail.education.protocol.result.SEWXPayInfoResult;
 
 import retrofit.Callback;
 import retrofit.http.GET;
@@ -88,4 +89,14 @@ public interface SECourseService {
     @POST("/api/orderCreate")
     public void createOrder(@Part("uid") int uid,
                             Callback<SEOrderResult> cb);
+
+
+    /**
+     * 获取微信支付的相关信息
+     *
+     * @param cb
+     */
+    @GET("/api/apppay")
+    public void fetchWXPayInfo(@Query("id") String id,
+                               Callback<SEWXPayInfoResult> cb);
 }
