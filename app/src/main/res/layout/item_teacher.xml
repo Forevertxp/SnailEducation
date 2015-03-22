@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/catalog"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#E0E0E0"
+        android:textColor="#454545"
+        android:layout_weight="1.0"
+        android:paddingLeft="5dip"
+        android:paddingTop="5dip"
+        android:paddingBottom="5dip"
+        android:text="A" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/teacherAvatar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dip"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/oname"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:textColor="@color/gray"
+            android:layout_marginLeft="5dip"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_below="@+id/title"
+            android:text=""
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/job"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:textColor="@color/gray"
+            android:layout_marginLeft="5dip"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_below="@+id/oname"
+            android:text=""
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/relative_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:layout_marginLeft="5dip"
+            android:paddingTop="5dip"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_below="@+id/job"
+            android:text="相关课程"
+            android:textColor="@color/green"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/course_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:layout_marginLeft="5dip"
+            android:paddingTop="5dip"
+            android:layout_below="@+id/job"
+            android:layout_toRightOf="@+id/relative_course"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="@color/green" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/teacherAvatar"
+            android:background="@color/lightgrey"
+            android:layout_marginTop="10dp" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

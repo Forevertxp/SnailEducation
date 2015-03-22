@@ -4,8 +4,8 @@
     <color name="TabBarForegroundColor">#AAAAAA</color>
     <color name="SearchViewPlateBackgroundColor">#88FFFFFF</color>
     <color name="LightDividerLineColor">#AAAAAA</color>
-    <color name="ActionBarBackgroundColor">#0090ff</color>
-    <color name="ActionBarForegroundColor">#ffffff</color>
+    <color name="ActionBarBackgroundColor">#111111</color>
+    <color name="ActionBarForegroundColor">#008000</color>
     <color name="DarkTextColor">#444444</color>
     <color name="LightTextColor">#999999</color>
 
