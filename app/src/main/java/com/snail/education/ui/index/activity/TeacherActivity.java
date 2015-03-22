@@ -1,6 +1,5 @@
 package com.snail.education.ui.index.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -13,6 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.snail.education.R;
+import com.snail.education.protocol.manager.SERestManager;
+import com.snail.education.protocol.model.SETeacher;
+import com.snail.education.protocol.model.SETeacherCate;
+import com.snail.education.protocol.result.SETeacherResult;
+import com.snail.education.protocol.service.SETeacherService;
+import com.snail.education.ui.activity.SEBaseActivity;
+import com.snail.education.ui.index.adapter.TeacherAdapter;
 import com.snail.sortlistview.CharacterParser;
 import com.snail.sortlistview.ClearEditText;
 import com.snail.sortlistview.PinyinComparator;
@@ -24,11 +30,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TeacherActivity extends Activity {
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+public class TeacherActivity extends SEBaseActivity {
     private ListView sortListView;
     private SideBar sideBar;
     private TextView dialog;
-    private SortAdapter adapter;
+    private TeacherAdapter adapter;
     private ClearEditText mClearEditText;
     /**
      * 汉字转换成拼音的类
@@ -46,7 +56,9 @@ public class TeacherActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
+        setTitleText("名师推荐");
         initViews();
+        fetchTeacherList();
     }
 
     private void initViews() {
@@ -84,14 +96,6 @@ public class TeacherActivity extends Activity {
             }
         });
 
-        SourceDateList = filledData(getResources().getStringArray(R.array.date));
-
-        // 根据a-z进行排序源数据
-        Collections.sort(SourceDateList, pinyinComparator);
-        adapter = new SortAdapter(this, SourceDateList);
-        sortListView.setAdapter(adapter);
-
-
         mClearEditText = (ClearEditText) findViewById(R.id.filter_edit);
 
         //根据输入框输入值的改变来过滤搜索
@@ -115,21 +119,53 @@ public class TeacherActivity extends Activity {
         });
     }
 
+    private void fetchTeacherList() {
+        SETeacherService teacherService = SERestManager.getInstance().create(SETeacherService.class);
+        teacherService.fetchTeacher(new Callback<SETeacherResult>() {
+            @Override
+            public void success(SETeacherResult result, Response response) {
+                if (result.state) {
+                    ArrayList<SETeacherCate> cateList = result.data;
+                    ArrayList<SETeacher> teacherArrayList = new ArrayList<SETeacher>();
+                    for (SETeacherCate cate : cateList) {
+                        ArrayList<SETeacher> subList = cate.getData();
+                        teacherArrayList.addAll(subList);
+                    }
+                    SourceDateList = filledData(teacherArrayList);
+
+                    // 根据a-z进行排序源数据
+                    Collections.sort(SourceDateList, pinyinComparator);
+                    adapter = new TeacherAdapter(TeacherActivity.this, SourceDateList);
+                    sortListView.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(TeacherActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     /**
      * 为ListView填充数据
      *
-     * @param date
+     * @param teacherArrayList
      * @return
      */
-    private List<SortModel> filledData(String[] date) {
+    private List<SortModel> filledData(ArrayList<SETeacher> teacherArrayList) {
         List<SortModel> mSortList = new ArrayList<SortModel>();
 
-        for (int i = 0; i < date.length; i++) {
+        for (int i = 0; i < teacherArrayList.size(); i++) {
             SortModel sortModel = new SortModel();
-            sortModel.setName(date[i]);
+            sortModel.setName(teacherArrayList.get(i).getName());
+            sortModel.setOname(teacherArrayList.get(i).getOname());
+            sortModel.setJob(teacherArrayList.get(i).getJob());
+            sortModel.setIcon(teacherArrayList.get(i).getIcon());
+            sortModel.setCount(teacherArrayList.get(i).getClasscount());
             //汉字转换成拼音
-            String pinyin = characterParser.getSelling(date[i]);
+            String pinyin = characterParser.getSelling(teacherArrayList.get(i).getName());
             String sortString = pinyin.substring(0, 1).toUpperCase();
 
             // 正则表达式，判断首字母是否是英文字母

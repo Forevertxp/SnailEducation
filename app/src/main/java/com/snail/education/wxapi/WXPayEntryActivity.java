@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.snail.education.R;
+import com.snail.education.ui.course.pay.CoursePayActivity;
 import com.snail.education.ui.course.pay.weixin.Constants;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;

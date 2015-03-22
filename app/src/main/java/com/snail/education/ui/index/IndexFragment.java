@@ -29,6 +29,7 @@ import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.index.activity.AuditionActivity;
 import com.snail.education.ui.index.activity.SignInActivity;
 import com.snail.education.ui.index.activity.StudentActivity;
+import com.snail.education.ui.index.activity.SubjectActivity;
 import com.snail.education.ui.index.activity.TeacherActivity;
 import com.snail.education.ui.course.RelativeCourseAdapter;
 
@@ -217,6 +218,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
             case R.id.course:
                 break;
             case R.id.subject:
+                Intent subjectIntent = new Intent(getActivity(), SubjectActivity.class);
+                startActivity(subjectIntent);
                 break;
             case R.id.exam:
                 break;

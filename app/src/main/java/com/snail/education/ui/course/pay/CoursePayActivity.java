@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -36,6 +37,7 @@ import com.snail.education.ui.course.pay.weixin.Util;
 import com.snail.education.ui.course.pay.zhifubao.CartCourseAdapter;
 import com.snail.education.ui.course.pay.zhifubao.PayResult;
 import com.snail.education.ui.course.pay.zhifubao.SignUtils;
+import com.snail.svprogresshud.SVProgressHUD;
 import com.tencent.mm.sdk.constants.Build;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -83,6 +85,9 @@ public class CoursePayActivity extends SEBaseActivity {
     private SEUser currentuser;
     private ListView cartLV;
     private TextView totalPrice;
+    private Button zfbPay, wxPay;
+
+    private int pay_type = 0; //0支付宝 1微信
 
     private SECourseService courseService;
 
@@ -99,7 +104,28 @@ public class CoursePayActivity extends SEBaseActivity {
 
         String id = getIntent().getStringExtra("id");
         buyCourse(id, currentuser.getId());
-        initWXPayInfo();
+
+        zfbPay = (Button) findViewById(R.id.zfbPay);
+        zfbPay.setSelected(true);
+        wxPay = (Button) findViewById(R.id.wxPay);
+
+        zfbPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zfbPay.setSelected(true);
+                wxPay.setSelected(false);
+                pay_type = 0;
+            }
+        });
+
+        wxPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zfbPay.setSelected(false);
+                wxPay.setSelected(true);
+                pay_type = 1;
+            }
+        });
     }
 
     private void buyCourse(String id, String uid) {
@@ -188,13 +214,21 @@ public class CoursePayActivity extends SEBaseActivity {
             @Override
             public void success(SEOrderResult result, Response response) {
                 SEOrder order = result.data;
+                if (order == null) {
+                    SVProgressHUD.showInViewWithoutIndicator(CoursePayActivity.this, "购物车已空", 2.f);
+                    return;
+                }
                 //支付宝支付
-                pay(order);
+                if (pay_type == 0)
+                    pay(order);
                 // 微信支付
-                api = WXAPIFactory.createWXAPI(CoursePayActivity.this, Constants.APP_ID);
-                boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;  //版本是否支持
-                if (isPaySupported)
-                    new GetAccessTokenTask().execute();
+                if (pay_type == 1) {
+                    api = WXAPIFactory.createWXAPI(CoursePayActivity.this, Constants.APP_ID);
+                    boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;  //版本是否支持
+                    if (isPaySupported)
+                        initWXPayInfo(order.getSn());
+                }
+
             }
 
             @Override
@@ -413,14 +447,16 @@ public class CoursePayActivity extends SEBaseActivity {
     }
 
 
-
-
     //-----------------------------------------------------------------------------微信支付--------------------------------------------------------------------------------------
-    private void initWXPayInfo(){
-        courseService.fetchWXPayInfo("F3151736936059D",new Callback<SEWXPayInfoResult>() {
+    private void initWXPayInfo(String sn) {
+        courseService.fetchWXPayInfo(sn, new Callback<SEWXPayInfoResult>() {
             @Override
             public void success(SEWXPayInfoResult result, Response response) {
-                String partnerid = result.partnerid;
+                if (result.retmsg.equals("ok")) {
+                    nonceStr = result.noncestr;
+                    timeStamp = result.timestamp;
+                    new GetAccessTokenTask().execute();
+                }
 
             }
 
@@ -430,7 +466,6 @@ public class CoursePayActivity extends SEBaseActivity {
             }
         });
     }
-
 
     private class GetAccessTokenTask extends AsyncTask<Void, Void, GetAccessTokenResult> {
 
@@ -537,10 +572,10 @@ public class CoursePayActivity extends SEBaseActivity {
 
     /**
      * 微信公众平台商户模块和商户约定的密钥
-     *
+     * <p/>
      * 注意：不能hardcode在客户端，建议genPackage这个过程由服务器端完成
      */
-    private static final String PARTNER_KEY = "8934e7d15453e97507ef794cf7b0519d";
+    private static final String PARTNER_KEY = "456587cce316b8c37271c641a650002a";
 
     private String genPackage(List<NameValuePair> params) {
         StringBuilder sb = new StringBuilder();
@@ -562,17 +597,17 @@ public class CoursePayActivity extends SEBaseActivity {
 
     /**
      * 微信开放平台和商户约定的密钥
-     *
+     * <p/>
      * 注意：不能hardcode在客户端，建议genSign这个过程由服务器端完成
      */
-    private static final String APP_SECRET = "7b557825fe2a1bedffdde3a34bc5c20e"; // wxd930ea5d5a258f4f 对应的密钥
+    private static final String APP_SECRET = "7b557825fe2a1bedffdde3a34bc5c20e";
 
     /**
      * 微信开放平台和商户约定的支付密钥
-     *
+     * <p/>
      * 注意：不能hardcode在客户端，建议genSign这个过程由服务器端完成
      */
-    private static final String APP_KEY = "L8LrMqqeGRxST5reouB0K66CaYAWpqhAVsq7ggKkxHCOastWksvuX1uvmvQclxaHoYd3ElNBrNO2DHnnzgfVG9Qs473M3DTOZug5er46FhuGofumV8H2FVR9qkjSlC5K"; // wxd930ea5d5a258f4f 对应的支付密钥
+    private static final String APP_KEY = "9yjurpcYhrBn7gZEpDxhcbbgCgDW7vfOfcf6TcMfe4MnBd2ED4sRo8JpluLNRcMrrwrkvNMj72R7cL8Aw1A43rySVRBtMGrZwOWhYZ9iiayjDjKG7TddseO2vAvUkx8z"; // wxd930ea5d5a258f4f 对应的支付密钥
 
 
     private static enum LocalRetCode {
@@ -651,12 +686,14 @@ public class CoursePayActivity extends SEBaseActivity {
     }
 
     private String genNonceStr() {
-        Random random = new Random();
-        return MD5.getMessageDigest(String.valueOf(random.nextInt(10000)).getBytes());
+//        Random random = new Random();
+//        return MD5.getMessageDigest(String.valueOf(random.nextInt(10000)).getBytes());
+        return nonceStr;
     }
 
     private long genTimeStamp() {
-        return System.currentTimeMillis() / 1000;
+//        return System.currentTimeMillis() / 1000;
+        return timeStamp;
     }
 
     /**
@@ -708,12 +745,12 @@ public class CoursePayActivity extends SEBaseActivity {
 
             List<NameValuePair> packageParams = new LinkedList<NameValuePair>();
             packageParams.add(new BasicNameValuePair("bank_type", "WX"));
-            packageParams.add(new BasicNameValuePair("body", "千足金箍棒"));
+            packageParams.add(new BasicNameValuePair("body", "蜗牛课程"));
             packageParams.add(new BasicNameValuePair("fee_type", "1"));
             packageParams.add(new BasicNameValuePair("input_charset", "UTF-8"));
             packageParams.add(new BasicNameValuePair("notify_url", "http://weixin.qq.com"));
             packageParams.add(new BasicNameValuePair("out_trade_no", genOutTradNo()));
-            packageParams.add(new BasicNameValuePair("partner", "1900000109"));
+            packageParams.add(new BasicNameValuePair("partner", Constants.PARTNER_ID));
             packageParams.add(new BasicNameValuePair("spbill_create_ip", "196.168.1.1"));
             packageParams.add(new BasicNameValuePair("total_fee", "1"));
             packageValue = genPackage(packageParams);

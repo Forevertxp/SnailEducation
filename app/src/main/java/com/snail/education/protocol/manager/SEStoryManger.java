@@ -3,6 +3,7 @@ package com.snail.education.protocol.manager;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.model.SEInformation;
 import com.snail.education.protocol.model.SEStory;
+import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.result.SEInformationResult;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.protocol.service.SEInformationService;
@@ -46,7 +47,11 @@ public class SEStoryManger {
 
 
     public void refreshStory(int page, int limit, final SECallBack callback) {
-        getStotyService().fetchStory(page, limit, 39, new Callback<ArrayList<SEStory>>() {
+        SEUser u = SEAuthManager.getInstance().getAccessUser();
+        if (u == null || u.getId().equals("")) {
+            return;
+        }
+        getStotyService().fetchStory(page, limit, Integer.parseInt(u.getId()), new Callback<ArrayList<SEStory>>() {
             @Override
             public void success(ArrayList<SEStory> data, Response response) {
                 storyList = data;
@@ -66,7 +71,11 @@ public class SEStoryManger {
     }
 
     public void loadMoreInformation(int page, int limit, final SECallBack callback) {
-        getStotyService().fetchStory(page, limit, 39, new Callback<ArrayList<SEStory>>() {
+        SEUser u = SEAuthManager.getInstance().getAccessUser();
+        if (u == null || u.getId().equals("")) {
+            return;
+        }
+        getStotyService().fetchStory(page, limit, Integer.parseInt(u.getId()), new Callback<ArrayList<SEStory>>() {
             @Override
             public void success(ArrayList<SEStory> data, Response response) {
                 storyList = data;
