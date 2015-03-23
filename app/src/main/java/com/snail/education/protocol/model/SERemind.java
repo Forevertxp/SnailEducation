@@ -6,10 +6,10 @@ package com.snail.education.protocol.model;
 public class SERemind {
     private String id;
     private String name;
-    private String tips;
+    private Object tips;
     private String date;
     private long time;
-    private int diff;
+    private String diff;
 
     public String getId() {
         return id;
@@ -19,8 +19,12 @@ public class SERemind {
         return name;
     }
 
-    public String getTips() {
+    public Object getTips() {
         return tips;
+    }
+
+    public String getDiff() {
+        return diff;
     }
 
     public String getDate() {
@@ -31,7 +35,4 @@ public class SERemind {
         return time;
     }
 
-    public int getDiff() {
-        return diff;
-    }
 }

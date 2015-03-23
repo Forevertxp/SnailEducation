@@ -27,6 +27,7 @@ import com.snail.education.protocol.manager.SEIndexManager;
 import com.snail.education.protocol.model.SEIndexCount;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.index.activity.AuditionActivity;
+import com.snail.education.ui.index.activity.ExamActivity;
 import com.snail.education.ui.index.activity.SignInActivity;
 import com.snail.education.ui.index.activity.StudentActivity;
 import com.snail.education.ui.index.activity.SubjectActivity;
@@ -222,6 +223,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
                 startActivity(subjectIntent);
                 break;
             case R.id.exam:
+                Intent examIntent = new Intent(getActivity(), ExamActivity.class);
+                startActivity(examIntent);
                 break;
             case R.id.teacherImage:
                 Intent teacherIntent = new Intent(getActivity(), TeacherActivity.class);

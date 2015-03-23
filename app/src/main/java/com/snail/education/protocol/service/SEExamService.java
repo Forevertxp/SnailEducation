@@ -5,9 +5,12 @@ import com.snail.education.protocol.result.SEExamResult;
 import com.snail.education.protocol.result.SERemindResult;
 
 import retrofit.Callback;
+import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Query;
 
 /**
@@ -20,9 +23,10 @@ public interface SEExamService {
      *
      * @param cb
      */
-    @FormUrlEncoded
+    @Multipart
     @POST("/api/remind")
-    public void examRemind(Callback<SERemindResult> cb);
+    public void examRemind(@Part("no") String no,
+                           Callback<SERemindResult> cb);
 
     /**
      * 备考攻略列表
@@ -41,7 +45,7 @@ public interface SEExamService {
      * @param cb
      */
     @GET("/api/newsHtml")
-    public void fetchExamDetail(@Query("id") String page,
+    public void fetchExamDetail(@Query("id") String id,
                                 Callback<SEExamDetailResult> cb);
 }
 
