@@ -53,5 +53,6 @@
     <string name="title_activity_subject">SubjectActivity</string>
     <string name="title_activity_exam">ExamActivity</string>
     <string name="title_activity_sub_item">SubItemActivity</string>
+    <string name="title_activity_exam_article">ExamArticleActivity</string>
 
 </resources>

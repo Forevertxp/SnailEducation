@@ -35,7 +35,17 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:layout_toRightOf="@id/iv_avatar"
+        android:layout_toLeftOf="@+id/next"
         android:textColor="#b3b3b3"
         android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_next"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp" />
 
 </RelativeLayout>
