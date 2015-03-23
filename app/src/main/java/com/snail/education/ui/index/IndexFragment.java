@@ -22,12 +22,14 @@ import android.widget.TextView;
 import com.snail.education.R;
 import com.snail.education.common.SEAutoSlidingPagerView;
 import com.snail.education.common.SESearchBox;
+import com.snail.education.common.SETabBar;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEIndexManager;
 import com.snail.education.protocol.model.SEIndexCount;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.index.activity.AuditionActivity;
 import com.snail.education.ui.index.activity.ExamActivity;
+import com.snail.education.ui.index.activity.MsgActivity;
 import com.snail.education.ui.index.activity.SignInActivity;
 import com.snail.education.ui.index.activity.StudentActivity;
 import com.snail.education.ui.index.activity.SubjectActivity;
@@ -37,6 +39,7 @@ import com.snail.education.ui.course.RelativeCourseAdapter;
 public class IndexFragment extends Fragment implements View.OnClickListener {
 
     private SEAutoSlidingPagerView autoSlidingPagerView;
+    private ImageView rightImage;
     private ImageView listeningImage, courseImage, subjectImage, examImage;
     private ImageView teacherImage, organizationImage, studentImage;
     private TextView signinText, teacherText, organizationText, studentText;
@@ -86,11 +89,13 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
         autoSlidingPagerView.setFocusableInTouchMode(true);
         initAdInfo();
 
+        rightImage = (ImageView) view.findViewById(R.id.right_index);
         listeningImage = (ImageView) view.findViewById(R.id.listening);
         courseImage = (ImageView) view.findViewById(R.id.course);
         subjectImage = (ImageView) view.findViewById(R.id.subject);
         examImage = (ImageView) view.findViewById(R.id.exam);
 
+        rightImage.setOnClickListener(this);
         listeningImage.setOnClickListener(this);
         courseImage.setOnClickListener(this);
         subjectImage.setOnClickListener(this);
@@ -212,6 +217,10 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.right_index:
+                Intent msgIntent = new Intent(getActivity(), MsgActivity.class);
+                startActivity(msgIntent);
+                break;
             case R.id.listening:
                 Intent listeningIntent = new Intent(getActivity(), AuditionActivity.class);
                 startActivity(listeningIntent);
