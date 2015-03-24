@@ -56,5 +56,6 @@
     <string name="title_activity_exam_article">ExamArticleActivity</string>
     <string name="title_activity_msg">MsgActivity</string>
     <string name="title_activity_index">IndexActivity</string>
+    <string name="title_activity_deply_story">DeplyStoryActivity</string>
 
 </resources>
