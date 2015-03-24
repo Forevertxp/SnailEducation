@@ -136,6 +136,10 @@
             android:name=".ui.index.activity.ExamArticleActivity"
             android:label="@string/title_activity_exam_article" >
         </activity>
+        <activity
+            android:name=".ui.index.activity.MsgActivity"
+            android:label="@string/title_activity_msg" >
+        </activity>
     </application>
 
 </manifest>
