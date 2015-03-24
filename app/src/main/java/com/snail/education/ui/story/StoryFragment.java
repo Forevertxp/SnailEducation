@@ -2,9 +2,11 @@ package com.snail.education.ui.story;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -15,6 +17,7 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.SEDataRetriever;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.BaseSearchActivity;
+import com.snail.education.ui.story.deploy.DeployStoryActivity;
 import com.snail.pulltorefresh.PullToRefreshBase;
 import com.snail.pulltorefresh.PullToRefreshListView;
 
@@ -84,6 +87,20 @@ public class StoryFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(BaseSearchActivity.MENU_SEARCH).setVisible(false);
+        MenuItem item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "发表");
+        item.setIcon(R.drawable.ic_like);
+        item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == Menu.NONE) {
+            Intent intent = new Intent(getActivity(), DeployStoryActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

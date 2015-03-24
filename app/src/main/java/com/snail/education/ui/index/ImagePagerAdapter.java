@@ -1,13 +1,17 @@
 package com.snail.education.ui.index;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.snail.education.R;
 import com.snail.education.app.SEConfig;
 import com.snail.education.common.RecyclingPagerAdapter;
 import com.snail.education.protocol.model.SEAdvertisement;
+import com.snail.education.ui.information.activity.InfoDetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -33,7 +37,7 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup container) {
+    public View getView(final int position, View view, ViewGroup container) {
         ViewHolder holder;
         if (view == null) {
             holder = new ViewHolder();
@@ -42,15 +46,23 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    int item = autoSlidingPagerView.getCurrentItem();
-//                    handlePagerItemClicked(item);
+                    SEAdvertisement ad = adImageList.get(position);
+                    Intent intent = new Intent(context, InfoDetailActivity.class);
+                    if (!ad.getEvent().getId().equals("")) {
+                        intent.putExtra("infoID", Integer.parseInt(ad.getEvent().getId()));
+                        context.startActivity(intent);
+                    }
                 }
             });
         } else {
             holder = (ViewHolder) view.getTag();
         }
+        int width = context.getResources().getDisplayMetrics().widthPixels;
         Picasso.with(context)
                 .load(SEConfig.getInstance().getAPIBaseURL() + adImageList.get(position).getImg())
+                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.ic_launcher)
+                .resize(width, 360)
                 .into(holder.imageView);
         return view;
     }

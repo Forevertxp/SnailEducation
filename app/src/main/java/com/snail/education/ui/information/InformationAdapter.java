@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.snail.education.R;
 import com.snail.education.app.SEConfig;
+import com.snail.education.common.AutoScrollViewPager;
 import com.snail.education.common.SEAutoSlidingPagerView;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEIndexManager;
@@ -20,6 +22,7 @@ import com.snail.education.protocol.manager.SEInformationManager;
 import com.snail.education.protocol.model.SEInformation;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.index.ImagePagerAdapter;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +93,7 @@ public class InformationAdapter extends BaseAdapter {
                 public void success() {
                     slidingPagerView.setAdapter(new ImagePagerAdapter(context, indexManager.getAdList()));
                     slidingPagerView.setOnPageChangeListener(new MyOnPageChangeListener());
-                    slidingPagerView.setInterval(4000);
+                    slidingPagerView.setInterval(3000);
                     slidingPagerView.setScrollDurationFactor(2.0);
                     slidingPagerView.startAutoScroll();
                 }
@@ -100,7 +103,6 @@ public class InformationAdapter extends BaseAdapter {
 
                 }
             });
-
         } else {
             if (convertView == null) {
                 convertView = View.inflate(context, R.layout.item_information, null);
@@ -116,12 +118,11 @@ public class InformationAdapter extends BaseAdapter {
             holder.tv_title.setText(information.getTitle());
             holder.tv_content.setText(information.getInfo());
             String imageUrl = SEConfig.getInstance().getAPIBaseURL() + information.getIcon();
-            DisplayImageOptions options = new DisplayImageOptions.Builder()//
-                    .cacheInMemory(true)//
-                    .cacheOnDisk(true)//
-                    .bitmapConfig(Bitmap.Config.RGB_565)//
-                    .build();
-            ImageLoader.getInstance().displayImage(imageUrl, holder.iv_avatar, options);
+            Picasso.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher)
+                    .error(R.drawable.ic_launcher)
+                    .into(holder.iv_avatar);
         }
         return convertView;
     }

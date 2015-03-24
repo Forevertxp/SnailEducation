@@ -17,6 +17,10 @@ public class SEAdvertisement implements Serializable {
         return event;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getImg() {
         return img;
     }

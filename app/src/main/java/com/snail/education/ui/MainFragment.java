@@ -185,7 +185,7 @@ public class MainFragment extends Fragment {
             case 3:
                 setActionBarVisible(true);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) getActivity()).setTitleText("蜗牛故事");
+                ((MainActivity) getActivity()).setTitleText("            蜗牛故事");
                 // getActivity().getActionBar().setTitle("蜗牛故事");
                 break;
             case 4:
