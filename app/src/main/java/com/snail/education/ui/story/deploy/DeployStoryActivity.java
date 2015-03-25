@@ -1,140 +1,310 @@
 package com.snail.education.ui.story.deploy;
 
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
-import com.snail.education.R;
 import com.snail.education.ui.activity.SEBaseActivity;
+import com.snail.photo.R;
+import com.snail.photo.activity.AlbumActivity;
+import com.snail.photo.activity.GalleryActivity;
+import com.snail.photo.util.Bimp;
+import com.snail.photo.util.FileUtils;
+import com.snail.photo.util.ImageItem;
+import com.snail.photo.util.PublicWay;
+import com.snail.photo.util.Res;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+/**
+ * @author tianxiaopeng
+ * @version 2015年3月25日  下午11:48:34
+ */
+public class DeployStoryActivity extends SEBaseActivity {
 
-public class DeployStoryActivity extends SEBaseActivity implements OnClickListener {
+    private GridView noScrollgridview;
+    private GridAdapter adapter;
+    private View parentView;
+    private PopupWindow pop = null;
+    private LinearLayout ll_popup;
+    public static Bitmap bimap;
 
-    private EditText addTwitter;
-    private ImageView addPhote, imageView;
-    private TextView sendTwitter;
-
-    /**
-     * 去上传文件
-     */
-    protected static final int TO_UPLOAD_FILE = 1;
-    /**
-     * 上传文件响应
-     */
-    protected static final int UPLOAD_FILE_DONE = 2; //
-    /**
-     * 选择文件
-     */
-    public static final int TO_SELECT_PHOTO = 3;
-    /**
-     * 上传初始化
-     */
-    private static final int UPLOAD_INIT_PROCESS = 4;
-    /**
-     * 上传中
-     */
-    private static final int UPLOAD_IN_PROCESS = 5;
-    /**
-     * 这里的这个URL是我服务器的javaEE环境URL
-     */
-    private static String requestURL = "http://v1.api.upyun.com/ge-img-test";
-
-    private String picPath = null;
-    private ProgressDialog progressDialog;
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_deploy_story);
-        setTitleText("发表故事");
-        init();
+        Res.init(this);
+        bimap = BitmapFactory.decodeResource(
+                getResources(),
+                R.drawable.icon_addpic_unfocused);
+        PublicWay.activityList.add(this);
+        parentView = getLayoutInflater().inflate(R.layout.activity_selectimg, null);
+        setContentView(parentView);
+        Init();
     }
 
-    public void init() {
-        addTwitter = (EditText) findViewById(R.id.twitter_add);
-        addPhote = (ImageView) findViewById(R.id.photo_add);
-        imageView = (ImageView) findViewById(R.id.photo);
-        sendTwitter = (TextView) findViewById(R.id.twitter_send);
-        progressDialog = new ProgressDialog(this);
-        addPhote.setOnClickListener(this);
-        sendTwitter.setOnClickListener(this);
-    }
+    public void Init() {
 
+        pop = new PopupWindow(DeployStoryActivity.this);
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.photo_add:
-                break;
-            case R.id.twitter_send:
-                if (picPath != null) {
-                } else {
-                    String content = addTwitter.getText().toString();
-                    addTwitter(content, "");
-                }
-                break;
-            default:
-                break;
-        }
-    }
+        View view = getLayoutInflater().inflate(R.layout.item_popupwindows, null);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == TO_SELECT_PHOTO) {
-        }
-    }
+        ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
 
+        pop.setWidth(LayoutParams.MATCH_PARENT);
+        pop.setHeight(LayoutParams.WRAP_CONTENT);
+        pop.setBackgroundDrawable(new BitmapDrawable());
+        pop.setFocusable(true);
+        pop.setOutsideTouchable(true);
+        pop.setContentView(view);
 
-    // 发布新market消息
-    private void addTwitter(final String content, final String image) {
-        Thread readThread = new Thread(new Runnable() {
+        RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent);
+        Button bt1 = (Button) view
+                .findViewById(R.id.item_popupwindows_camera);
+        Button bt2 = (Button) view
+                .findViewById(R.id.item_popupwindows_Photo);
+        Button bt3 = (Button) view
+                .findViewById(R.id.item_popupwindows_cancel);
+        parent.setOnClickListener(new OnClickListener() {
+
             @Override
-            public void run() {
-                String path = "http://182.92.183.189:8831/twitter/add";
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("content", content);
-                params.put("image", image);
-                Message message = Message.obtain();
-                try {
-                    JSONObject jsonObject = new JSONObject("");
-                    if (jsonObject.getInt("code") == 0) {
-                        message.arg1 = 1;
-                    } else {
-                        message.arg1 = -1;
-                    }
-                    mHandler.sendMessage(message);
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                pop.dismiss();
+                ll_popup.clearAnimation();
+            }
+        });
+        bt1.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                photo();
+                pop.dismiss();
+                ll_popup.clearAnimation();
+            }
+        });
+        bt2.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(DeployStoryActivity.this,
+                        AlbumActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
+                pop.dismiss();
+                ll_popup.clearAnimation();
+            }
+        });
+        bt3.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                pop.dismiss();
+                ll_popup.clearAnimation();
+            }
+        });
+
+        noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
+        noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        adapter = new GridAdapter(this);
+        adapter.update();
+        noScrollgridview.setAdapter(adapter);
+        noScrollgridview.setOnItemClickListener(new OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                if (arg2 == Bimp.tempSelectBitmap.size()) {
+                    Log.i("ddddddd", "----------");
+                    ll_popup.startAnimation(AnimationUtils.loadAnimation(DeployStoryActivity.this, R.anim.activity_translate_in));
+                    pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+                } else {
+                    Intent intent = new Intent(DeployStoryActivity.this,
+                            GalleryActivity.class);
+                    intent.putExtra("position", "1");
+                    intent.putExtra("ID", arg2);
+                    startActivity(intent);
                 }
             }
         });
-        readThread.start();
 
     }
 
-    ;
+    @SuppressLint("HandlerLeak")
+    public class GridAdapter extends BaseAdapter {
+        private LayoutInflater inflater;
+        private int selectedPosition = -1;
+        private boolean shape;
 
-    private Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            if (msg.arg1 == 1) {
+        public boolean isShape() {
+            return shape;
+        }
+
+        public void setShape(boolean shape) {
+            this.shape = shape;
+        }
+
+        public GridAdapter(Context context) {
+            inflater = LayoutInflater.from(context);
+        }
+
+        public void update() {
+            loading();
+        }
+
+        public int getCount() {
+            if (Bimp.tempSelectBitmap.size() == 9) {
+                return 9;
+            }
+            return (Bimp.tempSelectBitmap.size() + 1);
+        }
+
+        public Object getItem(int arg0) {
+            return null;
+        }
+
+        public long getItemId(int arg0) {
+            return 0;
+        }
+
+        public void setSelectedPosition(int position) {
+            selectedPosition = position;
+        }
+
+        public int getSelectedPosition() {
+            return selectedPosition;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.item_published_grida,
+                        parent, false);
+                holder = new ViewHolder();
+                holder.image = (ImageView) convertView
+                        .findViewById(R.id.item_grida_image);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            if (position == Bimp.tempSelectBitmap.size()) {
+                holder.image.setImageBitmap(BitmapFactory.decodeResource(
+                        getResources(), R.drawable.icon_addpic_unfocused));
+                if (position == 9) {
+                    holder.image.setVisibility(View.GONE);
+                }
+            } else {
+                holder.image.setImageBitmap(Bimp.tempSelectBitmap.get(position).getBitmap());
+            }
+
+            return convertView;
+        }
+
+        public class ViewHolder {
+            public ImageView image;
+        }
+
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 1:
+                        adapter.notifyDataSetChanged();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        public void loading() {
+            new Thread(new Runnable() {
+                public void run() {
+                    while (true) {
+                        if (Bimp.max == Bimp.tempSelectBitmap.size()) {
+                            Message message = new Message();
+                            message.what = 1;
+                            handler.sendMessage(message);
+                            break;
+                        } else {
+                            Bimp.max += 1;
+                            Message message = new Message();
+                            message.what = 1;
+                            handler.sendMessage(message);
+                        }
+                    }
+                }
+            }).start();
+        }
+    }
+
+    public String getString(String s) {
+        String path = null;
+        if (s == null)
+            return "";
+        for (int i = s.length() - 1; i > 0; i++) {
+            s.charAt(i);
+        }
+        return path;
+    }
+
+    protected void onRestart() {
+        adapter.update();
+        super.onRestart();
+    }
+
+    private static final int TAKE_PICTURE = 0x000001;
+
+    public void photo() {
+        Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(openCameraIntent, TAKE_PICTURE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case TAKE_PICTURE:
+                if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
+
+                    String fileName = String.valueOf(System.currentTimeMillis());
+                    Bitmap bm = (Bitmap) data.getExtras().get("data");
+                    FileUtils.saveBitmap(bm, fileName);
+
+                    ImageItem takePhoto = new ImageItem();
+                    takePhoto.setBitmap(bm);
+                    Bimp.tempSelectBitmap.add(takePhoto);
+                }
+                break;
+        }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            for (int i = 0; i < PublicWay.activityList.size(); i++) {
+                if (null != PublicWay.activityList.get(i)) {
+                    PublicWay.activityList.get(i).finish();
+                }
             }
         }
-    };
+        return true;
+    }
+
 }
 
