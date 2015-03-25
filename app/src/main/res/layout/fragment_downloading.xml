@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.snail.education.ui.me.activity.DownloadingFragment">
+    tools:context="com.snail.education.ui.me.com.snailedu.photo.com.snailedu.photo.activity.DownloadingFragment">
 
     <ListView
         android:id="@+id/downloadingLV"

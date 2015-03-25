@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.snail.education.ui.me.activity.DownloadedFragment">
+    tools:context="com.snail.education.ui.me.com.snailedu.photo.com.snailedu.photo.activity.DownloadedFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"

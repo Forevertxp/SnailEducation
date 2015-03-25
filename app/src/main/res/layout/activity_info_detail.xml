@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context="com.snail.education.ui.information.activity.InfoDetailActivity">
+    tools:context="com.snail.education.ui.information.com.snailedu.photo.com.snailedu.photo.activity.InfoDetailActivity">
 
     <LinearLayout
         android:layout_width="fill_parent"

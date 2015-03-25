@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.snail.education.ui.index.activity.AuditionActivity">
+    tools:context="com.snail.education.ui.index.com.snailedu.photo.com.snailedu.photo.activity.AuditionActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
