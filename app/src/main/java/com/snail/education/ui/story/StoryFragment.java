@@ -17,7 +17,7 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.SEDataRetriever;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.BaseSearchActivity;
-import com.snail.education.ui.story.deploy.DeployStoryActivity;
+import com.snail.photo.activity.UploadPicActivity;
 import com.snail.pulltorefresh.PullToRefreshBase;
 import com.snail.pulltorefresh.PullToRefreshListView;
 
@@ -88,14 +88,14 @@ public class StoryFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(BaseSearchActivity.MENU_SEARCH).setVisible(false);
         MenuItem item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "发表");
-        item.setIcon(R.drawable.ic_like);
+        item.setIcon(R.drawable.ic_add_photo);
         item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == Menu.NONE) {
-            Intent intent = new Intent(getActivity(), DeployStoryActivity.class);
+            Intent intent = new Intent(getActivity(), UploadPicActivity.class);
             startActivity(intent);
             return true;
         }

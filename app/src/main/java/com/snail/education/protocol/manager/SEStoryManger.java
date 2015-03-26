@@ -73,10 +73,11 @@ public class SEStoryManger {
 
     public void loadMoreInformation(int page, int limit, final SECallBack callback) {
         SEUser u = SEAuthManager.getInstance().getAccessUser();
-        if (u == null || u.getId().equals("")) {
-            return;
+        int uid = 0;
+        if (u != null && !u.getId().equals("")) {
+            uid = Integer.parseInt(u.getId());
         }
-        getStotyService().fetchStory(page, limit, Integer.parseInt(u.getId()), new Callback<ArrayList<SEStory>>() {
+        getStotyService().fetchStory(page, limit, uid, new Callback<ArrayList<SEStory>>() {
             @Override
             public void success(ArrayList<SEStory> data, Response response) {
                 storyList = data;

@@ -30,6 +30,7 @@ import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.index.activity.AuditionActivity;
 import com.snail.education.ui.index.activity.ExamActivity;
 import com.snail.education.ui.index.activity.MsgActivity;
+import com.snail.education.ui.index.activity.OrganizationActivity;
 import com.snail.education.ui.index.activity.SignInActivity;
 import com.snail.education.ui.index.activity.StudentActivity;
 import com.snail.education.ui.index.activity.SubjectActivity;
@@ -240,7 +241,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
                 startActivity(teacherIntent);
                 break;
             case R.id.organizationImage:
-                Intent organizationIntent = new Intent(getActivity(), TeacherActivity.class);
+                Intent organizationIntent = new Intent(getActivity(), OrganizationActivity.class);
                 startActivity(organizationIntent);
                 break;
             case R.id.studentImage:

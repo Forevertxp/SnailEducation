@@ -266,10 +266,13 @@ public class StoryAdapter extends BaseAdapter {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            SEComment comment = getItem(position);
-            // 向ViewHolder中填入的数据
-            holder.title.setText(comment.getUser_nickname() + "回复" + comment.getTo_user_nickname());
-            holder.text.setText(comment.getMsg());
+            // 最多只显示5条评论
+            if (position<6){
+                SEComment comment = getItem(position);
+                // 向ViewHolder中填入的数据
+                holder.title.setText(comment.getUser_nickname() + "回复" + comment.getTo_user_nickname());
+                holder.text.setText(comment.getMsg());
+            }
 
 //            int colorPos = position % colors.length;
 //            convertView.setBackgroundColor(colors[colorPos]);
