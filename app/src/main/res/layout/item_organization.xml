@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/teacherAvatar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dip"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/p_yLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/oPlace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:textColor="@color/gray"
+                android:layout_marginLeft="5dip"
+                android:layout_below="@+id/title"
+                android:text=""
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/oYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:textColor="@color/gray"
+                android:layout_marginLeft="5dip"
+                android:layout_below="@+id/oname"
+                android:text=""
+                android:textSize="13sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/p_yLL"
+            android:layout_toRightOf="@+id/teacherAvatar"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/oCourse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_textview_bg"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:textColor="@color/green"
+                android:layout_marginLeft="5dip"
+                android:layout_below="@+id/title"
+                android:text=""
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/oTeacher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_textview_bg"
+                android:gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:textColor="@color/blue"
+                android:layout_marginLeft="5dip"
+                android:layout_below="@+id/oname"
+                android:text=""
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/teacherAvatar"
+            android:background="@color/lightgrey"
+            android:layout_marginTop="10dp" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
