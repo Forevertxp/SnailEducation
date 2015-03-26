@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.snail.education" >
+    package="com.snail.education">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -21,12 +21,13 @@
         android:name="com.snail.education.app.SEAPP"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
+        android:configChanges="keyboardHidden|orientation"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.snail.education.ui.IndexActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent" >
+            android:theme="@android:style/Theme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,8 +37,7 @@
         <activity
             android:name="com.snail.education.ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent" >
-        </activity>
+            android:theme="@android:style/Theme.Translucent"></activity>
         <activity
             android:name="cn.sharesdk.framework.ShareSDKUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -54,7 +54,7 @@
         <activity
             android:name="com.snail.education.wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -123,28 +123,19 @@
             android:label="@string/title_activity_download" />
         <activity
             android:name="com.snail.education.ui.index.activity.SubjectActivity"
-            android:label="@string/title_activity_subject" >
-        </activity>
+            android:label="@string/title_activity_subject"></activity>
         <activity
             android:name="com.snail.education.ui.index.activity.ExamActivity"
-            android:label="@string/title_activity_exam" >
-        </activity>
+            android:label="@string/title_activity_exam"></activity>
         <activity
             android:name="com.snail.education.ui.index.activity.SubItemActivity"
-            android:label="@string/title_activity_sub_item" >
-        </activity>
+            android:label="@string/title_activity_sub_item"></activity>
         <activity
             android:name="com.snail.education.ui.index.activity.ExamArticleActivity"
-            android:label="@string/title_activity_exam_article" >
-        </activity>
+            android:label="@string/title_activity_exam_article"></activity>
         <activity
             android:name="com.snail.education.ui.index.activity.MsgActivity"
-            android:label="@string/title_activity_msg" >
-        </activity>
-        <activity
-            android:name=".ui.story.deploy.DeployStoryActivity"
-            android:label="@string/title_activity_deply_story" >
-        </activity>
+            android:label="@string/title_activity_msg"></activity>
     </application>
 
 </manifest>
