@@ -2,7 +2,9 @@ package com.snail.photo.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.snail.photo.R;
+import com.snail.photo.upload.Constants;
 import com.snail.photo.upload.UploadResult;
 import com.snail.photo.upload.UploadService;
 import com.snail.photo.util.Bimp;
@@ -42,10 +46,14 @@ import com.snail.photo.util.FileUtils;
 import com.snail.photo.util.ImageItem;
 import com.snail.photo.util.PublicWay;
 import com.snail.photo.util.Res;
+import com.snail.svprogresshud.SVProgressHUD;
 
 import java.io.File;
 
+import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import retrofit.mime.TypedFile;
 
 
@@ -65,6 +73,7 @@ public class UploadPicActivity extends Activity {
     private LinearLayout ll_popup;
     public static Bitmap bimap;
 
+    private EditText msgET;
     private TextView sendTextView;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +167,7 @@ public class UploadPicActivity extends Activity {
             }
         });
 
+        msgET = (EditText) findViewById(R.id.msgET);
         sendTextView = (TextView) findViewById(R.id.selectimg_send);
         sendTextView.setOnClickListener(new OnClickListener() {
             @Override
@@ -169,19 +179,39 @@ public class UploadPicActivity extends Activity {
     }
 
     public void doUpload() {
+        if (Constants.upload_uid.equals(""))
+            return;
+        SVProgressHUD.showInView(this, "正在上传，请稍后...", true);
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://api.nowthinkgo.com")
                 .build();
-        final UploadService service = restAdapter.create(UploadService.class);
+        UploadService service = restAdapter.create(UploadService.class);
+        String msg = msgET.getText().toString();
         File imageFile = new File(Bimp.tempSelectBitmap.get(0).imagePath);
         TypedFile imageTypedFile = new TypedFile("application/octet-stream", imageFile);
-        new Thread(new Runnable() {
+        service.deployMsg(Constants.upload_uid, msg, imageTypedFile, new Callback<UploadResult>() {
             @Override
-            public void run() {
-                UploadResult result = service.uploadAssets("65", "MPCC", null);
-            }
-        }).start();
+            public void success(UploadResult result, Response response) {
+                if (result.state) {
+                    SVProgressHUD.dismiss(UploadPicActivity.this);
+                    Constants.upload_result = true;
+                    for (int i = 0; i < PublicWay.activityList.size(); i++) {
+                        if (null != PublicWay.activityList.get(i)) {
+                            Bimp.tempSelectBitmap.clear();
+                            PublicWay.activityList.get(i).finish();
+                        }
+                    }
+                }
 
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Constants.upload_result = false;
+                SVProgressHUD.dismiss(UploadPicActivity.this);
+                SVProgressHUD.showInViewWithoutIndicator(UploadPicActivity.this, "上传失败", 2.0f);
+            }
+        });
     }
 
     @SuppressLint("HandlerLeak")
