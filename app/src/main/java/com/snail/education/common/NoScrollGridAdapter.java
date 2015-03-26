@@ -57,6 +57,8 @@ public class NoScrollGridAdapter extends BaseAdapter {
         ImageView imageView = (ImageView) convertView.findViewById(R.id.iv_image);
         Picasso.with(ctx)
                 .load(imageUrls.get(position))
+                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.ic_launcher)
                 .into(imageView);
         int column;
         if (imageUrls.size() < 3) {

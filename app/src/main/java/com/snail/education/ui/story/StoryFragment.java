@@ -1,7 +1,10 @@
 package com.snail.education.ui.story;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,9 +18,11 @@ import android.widget.Toast;
 import com.snail.education.R;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.SEDataRetriever;
+import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.BaseSearchActivity;
 import com.snail.photo.activity.UploadPicActivity;
+import com.snail.photo.upload.Constants;
 import com.snail.pulltorefresh.PullToRefreshBase;
 import com.snail.pulltorefresh.PullToRefreshListView;
 
@@ -27,6 +32,8 @@ public class StoryFragment extends Fragment {
     private PullToRefreshListView storyListView;
     private StoryAdapter adapter;
     private SEDataRetriever dataRetriver;
+
+    private static int UPLOAD = 0x12;
 
     public StoryFragment() {
         super();
@@ -95,8 +102,26 @@ public class StoryFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == Menu.NONE) {
+            if (!SEAuthManager.getInstance().isAuthenticated()) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("您尚未登录")
+                        .setMessage("登录后才能购买，是否去登录？")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .show();
+                return true;
+            }
             Intent intent = new Intent(getActivity(), UploadPicActivity.class);
-            startActivity(intent);
+            Constants.upload_uid = SEAuthManager.getInstance().getAccessUser().getId();
+            Constants.upload_result = false;
+            startActivityForResult(intent, UPLOAD);
             return true;
         }
 
@@ -107,6 +132,14 @@ public class StoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         adapter.refreshIfNeeded();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UPLOAD && Constants.upload_result) {
+            performRefresh();
+        }
     }
 
     private void performRefresh() {

@@ -23,6 +23,7 @@ import com.snail.education.protocol.manager.SEStoryManger;
 import com.snail.education.protocol.model.SEStory;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.activity.ImagePagerActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,12 +84,11 @@ public class StoryAdapter extends BaseAdapter {
         holder.tv_content.setText(story.getUser_say());
         holder.tv_msg.setText(story.getMsg());
         String imageUrl = story.getUser_icon();
-        DisplayImageOptions options = new DisplayImageOptions.Builder()//
-                .cacheInMemory(true)//
-                .cacheOnDisk(true)//
-                .bitmapConfig(Bitmap.Config.RGB_565)//
-                .build();
-        ImageLoader.getInstance().displayImage(imageUrl, holder.iv_avatar, options);
+        Picasso.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.ic_launcher)
+                .into(holder.iv_avatar);
         final ArrayList<String> imageUrls = story.getPics();
         if (imageUrls == null || imageUrls.size() == 0) { // 没有图片资源就隐藏GridView
             holder.imageGridView.setVisibility(View.GONE);
@@ -267,7 +267,7 @@ public class StoryAdapter extends BaseAdapter {
             }
 
             // 最多只显示5条评论
-            if (position<6){
+            if (position < 6) {
                 SEComment comment = getItem(position);
                 // 向ViewHolder中填入的数据
                 holder.title.setText(comment.getUser_nickname() + "回复" + comment.getTo_user_nickname());
