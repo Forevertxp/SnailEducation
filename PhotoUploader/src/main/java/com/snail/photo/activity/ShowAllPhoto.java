@@ -116,7 +116,7 @@ public class ShowAllPhoto extends Activity {
         public void onClick(View v) {
             //清空选择的图片
             Bimp.tempSelectBitmap.clear();
-            intent.setClass(mContext, MainActivity.class);
+            intent.setClass(mContext, UploadPicActivity.class);
             startActivity(intent);
         }
     }
@@ -173,7 +173,7 @@ public class ShowAllPhoto extends Activity {
 //					PublicWay.photoService.onActivityResult(0, -2,
 //							intent);
 //				}
-                intent.setClass(mContext, MainActivity.class);
+                intent.setClass(mContext, UploadPicActivity.class);
                 startActivity(intent);
                 // Intent intent = new Intent();
                 // Bundle bundle = new Bundle();

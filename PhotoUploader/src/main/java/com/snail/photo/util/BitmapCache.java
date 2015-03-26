@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.snail.photo.activity.MainActivity;
+import com.snail.photo.activity.UploadPicActivity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,12 +16,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BitmapCache extends Activity {
 
 	public Handler h = new Handler();
 	public final String TAG = getClass().getSimpleName();
 	private HashMap<String, SoftReference<Bitmap>> imageCache = new HashMap<String, SoftReference<Bitmap>>();
+
+    private ExecutorService mImageThreadPool = null; // 通过线程池控制同时加载的图片数，避免本地相册过大造成的卡顿
 	
 	
 	public void put(String path, Bitmap bmp) {
@@ -64,41 +68,58 @@ public class BitmapCache extends Activity {
 		}
 		iv.setImageBitmap(null);
 
-		new Thread() {
-			Bitmap thumb;
+        getThreadPool().execute(new Runnable() {
+            Bitmap thumb;
+            @Override
+            public void run() {
+                try {
+                    if (isThumbPath) {
+                        thumb = BitmapFactory.decodeFile(thumbPath);
+                        if (thumb == null) {
+                            thumb = revitionImageSize(sourcePath);
+                        }
+                    } else {
+                        thumb = revitionImageSize(sourcePath);
+                    }
+                } catch (Exception e) {
 
-			public void run() {
+                }
+                if (thumb == null) {
+                    thumb = UploadPicActivity.bimap;
+                }
+                Log.e(TAG, "-------thumb------"+thumb);
+                put(path, thumb);
 
-				try {
-					if (isThumbPath) {
-						thumb = BitmapFactory.decodeFile(thumbPath);
-						if (thumb == null) {
-							thumb = revitionImageSize(sourcePath);						
-						}						
-					} else {
-						thumb = revitionImageSize(sourcePath);											
-					}
-				} catch (Exception e) {	
-					
-				}
-				if (thumb == null) {
-					thumb = MainActivity.bimap;
-				}
-				Log.e(TAG, "-------thumb------"+thumb);
-				put(path, thumb);
-
-				if (callback != null) {
-					h.post(new Runnable() {
-						@Override
-						public void run() {
-							callback.imageLoad(iv, thumb, sourcePath);
-						}
-					});
-				}
-			}
-		}.start();
-
+                if (callback != null) {
+                    h.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.imageLoad(iv, thumb, sourcePath);
+                        }
+                    });
+                }
+            }
+        });
 	}
+
+    /**
+     * 获取线程池的方法，因为涉及到并发的问题，我们加上同步锁
+     * @author 田晓鹏
+     * @return
+     */
+    public ExecutorService getThreadPool(){
+        if(mImageThreadPool == null){
+            synchronized(ExecutorService.class){
+                if(mImageThreadPool == null){
+                    //为了下载图片更加的流畅，我们用了50个线程来加载图片
+                    mImageThreadPool = Executors.newFixedThreadPool(30);
+                }
+            }
+        }
+
+        return mImageThreadPool;
+
+    }
 
 	public Bitmap revitionImageSize(String path) throws IOException {
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(

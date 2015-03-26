@@ -1,5 +1,4 @@
-package com.snail.education.ui.story.deploy;
-
+package com.snail.photo.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,23 +32,31 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.photo.R;
-import com.snail.photo.activity.AlbumActivity;
-import com.snail.photo.activity.GalleryActivity;
+import com.snail.photo.upload.UploadResult;
+import com.snail.photo.upload.UploadService;
 import com.snail.photo.util.Bimp;
 import com.snail.photo.util.FileUtils;
 import com.snail.photo.util.ImageItem;
 import com.snail.photo.util.PublicWay;
 import com.snail.photo.util.Res;
 
+import java.io.File;
+
+import retrofit.RestAdapter;
+import retrofit.mime.TypedFile;
+
 
 /**
- * @author tianxiaopeng
- * @version 2015年3月25日  下午11:48:34
+ * 首页面activity
+ *
+ * @author king
+ * @version 2014年10月18日  下午11:48:34
+ * @QQ:595163260
  */
-public class DeployStoryActivity extends SEBaseActivity {
+public class UploadPicActivity extends Activity {
 
     private GridView noScrollgridview;
     private GridAdapter adapter;
@@ -57,8 +65,11 @@ public class DeployStoryActivity extends SEBaseActivity {
     private LinearLayout ll_popup;
     public static Bitmap bimap;
 
+    private TextView sendTextView;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         Res.init(this);
         bimap = BitmapFactory.decodeResource(
                 getResources(),
@@ -71,7 +82,7 @@ public class DeployStoryActivity extends SEBaseActivity {
 
     public void Init() {
 
-        pop = new PopupWindow(DeployStoryActivity.this);
+        pop = new PopupWindow(UploadPicActivity.this);
 
         View view = getLayoutInflater().inflate(R.layout.item_popupwindows, null);
 
@@ -109,7 +120,7 @@ public class DeployStoryActivity extends SEBaseActivity {
         });
         bt2.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(DeployStoryActivity.this,
+                Intent intent = new Intent(UploadPicActivity.this,
                         AlbumActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
@@ -135,10 +146,10 @@ public class DeployStoryActivity extends SEBaseActivity {
                                     long arg3) {
                 if (arg2 == Bimp.tempSelectBitmap.size()) {
                     Log.i("ddddddd", "----------");
-                    ll_popup.startAnimation(AnimationUtils.loadAnimation(DeployStoryActivity.this, R.anim.activity_translate_in));
+                    ll_popup.startAnimation(AnimationUtils.loadAnimation(UploadPicActivity.this, R.anim.activity_translate_in));
                     pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
                 } else {
-                    Intent intent = new Intent(DeployStoryActivity.this,
+                    Intent intent = new Intent(UploadPicActivity.this,
                             GalleryActivity.class);
                     intent.putExtra("position", "1");
                     intent.putExtra("ID", arg2);
@@ -146,6 +157,30 @@ public class DeployStoryActivity extends SEBaseActivity {
                 }
             }
         });
+
+        sendTextView = (TextView) findViewById(R.id.selectimg_send);
+        sendTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doUpload();
+            }
+        });
+
+    }
+
+    public void doUpload() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://api.nowthinkgo.com")
+                .build();
+        final UploadService service = restAdapter.create(UploadService.class);
+        File imageFile = new File(Bimp.tempSelectBitmap.get(0).imagePath);
+        TypedFile imageTypedFile = new TypedFile("application/octet-stream", imageFile);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UploadResult result = service.uploadAssets("65", "MPCC", null);
+            }
+        }).start();
 
     }
 
@@ -235,6 +270,7 @@ public class DeployStoryActivity extends SEBaseActivity {
             }
         };
 
+        // 可能会导致handler 泄露 ，by 田晓鹏
         public void loading() {
             new Thread(new Runnable() {
                 public void run() {
