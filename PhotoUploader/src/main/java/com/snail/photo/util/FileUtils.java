@@ -10,19 +10,19 @@ import android.os.Environment;
 public class FileUtils {
 	
 	public static String SDPATH = Environment.getExternalStorageDirectory()
-			+ "/Photo_LJ/";
+			+ "/SnialData/";
 
-	public static void saveBitmap(Bitmap bm, String picName) {
+	public static String saveBitmap(Bitmap bm, String picName) {
 		try {
 			if (!isFileExist("")) {
 				File tempf = createSDDir("");
 			}
-			File f = new File(SDPATH, picName + ".JPEG"); 
+			File f = new File(SDPATH, picName + ".jpg");
 			if (f.exists()) {
 				f.delete();
 			}
 			FileOutputStream out = new FileOutputStream(f);
-			bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			bm.compress(Bitmap.CompressFormat.JPEG, 80, out);
 			out.flush();
 			out.close();
 		} catch (FileNotFoundException e) {
@@ -30,6 +30,7 @@ public class FileUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+        return SDPATH +  picName + ".jpg";
 	}
 
 	public static File createSDDir(String dirName) throws IOException {

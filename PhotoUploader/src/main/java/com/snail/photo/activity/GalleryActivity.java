@@ -1,5 +1,6 @@
 package com.snail.photo.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class GalleryActivity extends Activity {
 	private int position;
 	//当前的位置
 	private int location = 0;
-	
+
 	private ArrayList<View> listViews = null;
 	private ViewPagerFixed pager;
 	private MyPageAdapter adapter;
@@ -55,7 +56,7 @@ public class GalleryActivity extends Activity {
 	public List<Bitmap> bmp = new ArrayList<Bitmap>();
 	public List<String> drr = new ArrayList<String>();
 	public List<String> del = new ArrayList<String>();
-	
+
 	private Context mContext;
 
 	RelativeLayout photo_relativeLayout;
@@ -80,16 +81,23 @@ public class GalleryActivity extends Activity {
 		pager = (ViewPagerFixed) findViewById(Res.getWidgetID("gallery01"));
 		pager.setOnPageChangeListener(pageChangeListener);
 		for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-			initListViews( Bimp.tempSelectBitmap.get(i).getBitmap() );
+            // initListViews( Bimp.tempSelectBitmap.get(i).getBitmap() );
+            // gridview中的bitmap已被压缩
+            try {
+                Bitmap bitmap = Bimp .revitionImageSize(Bimp.tempSelectBitmap.get(i).imagePath);
+                initListViews(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 		}
-		
+
 		adapter = new MyPageAdapter(listViews);
 		pager.setAdapter(adapter);
 		pager.setPageMargin((int)getResources().getDimensionPixelOffset(Res.getDimenID("ui_10_dip")));
 		int id = intent.getIntExtra("ID", 0);
 		pager.setCurrentItem(id);
 	}
-	
+
 	private OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
 
 		public void onPageSelected(int arg0) {
@@ -104,7 +112,7 @@ public class GalleryActivity extends Activity {
 
 		}
 	};
-	
+
 	private void initListViews(Bitmap bm) {
 		if (listViews == null)
 			listViews = new ArrayList<View>();
@@ -115,7 +123,7 @@ public class GalleryActivity extends Activity {
 				LayoutParams.MATCH_PARENT));
 		listViews.add(img);
 	}
-	
+
 	// 返回按钮添加的监听器
 	private class BackListener implements OnClickListener {
 
@@ -124,7 +132,7 @@ public class GalleryActivity extends Activity {
 			startActivity(intent);
 		}
 	}
-	
+
 	// 删除按钮添加的监听器
 	private class DelListener implements OnClickListener {
 
@@ -133,8 +141,8 @@ public class GalleryActivity extends Activity {
 				Bimp.tempSelectBitmap.clear();
 				Bimp.max = 0;
 				send_bt.setText(Res.getString("finish")+"(" + Bimp.tempSelectBitmap.size() + "/"+PublicWay.num+")");
-				Intent intent = new Intent("data.broadcast.action");  
-                sendBroadcast(intent);  
+				Intent intent = new Intent("data.broadcast.action");
+                sendBroadcast(intent);
 				finish();
 			} else {
 				Bimp.tempSelectBitmap.remove(location);
@@ -176,7 +184,7 @@ public class GalleryActivity extends Activity {
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
+
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if(position==1){
 				this.finish();
@@ -190,8 +198,8 @@ public class GalleryActivity extends Activity {
 		}
 		return true;
 	}
-	
-	
+
+
 	class MyPageAdapter extends PagerAdapter {
 
 		private ArrayList<View> listViews;

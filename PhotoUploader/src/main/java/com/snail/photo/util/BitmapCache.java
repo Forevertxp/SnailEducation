@@ -21,60 +21,62 @@ import java.util.concurrent.Executors;
 
 public class BitmapCache extends Activity {
 
-	public Handler h = new Handler();
-	public final String TAG = getClass().getSimpleName();
-	private HashMap<String, SoftReference<Bitmap>> imageCache = new HashMap<String, SoftReference<Bitmap>>();
+    public Handler h = new Handler();
+    public final String TAG = getClass().getSimpleName();
+    private HashMap<String, SoftReference<Bitmap>> imageCache = new HashMap<String, SoftReference<Bitmap>>();
 
     private ExecutorService mImageThreadPool = null; // 通过线程池控制同时加载的图片数，避免本地相册过大造成的卡顿
-	
-	
-	public void put(String path, Bitmap bmp) {
-		if (!TextUtils.isEmpty(path) && bmp != null) {
-			imageCache.put(path, new SoftReference<Bitmap>(bmp));
-		}
-	}
 
-	public void displayBmp(final ImageView iv, final String thumbPath,
-			final String sourcePath, final ImageCallback callback) {
-		if (TextUtils.isEmpty(thumbPath) && TextUtils.isEmpty(sourcePath)) {
-			Log.e(TAG, "no paths pass in");
-			return;
-		}
 
-		final String path;
-		final boolean isThumbPath;
-		if (!TextUtils.isEmpty(thumbPath)) {
-			path = thumbPath;
-			isThumbPath = true;
-		} else if (!TextUtils.isEmpty(sourcePath)) {
-			path = sourcePath;
-			isThumbPath = false;
-		} else {
-			// iv.setImageBitmap(null);
-			return;
-		}
+    public void put(String path, Bitmap bmp) {
+        if (!TextUtils.isEmpty(path) && bmp != null) {
+            imageCache.put(path, new SoftReference<Bitmap>(bmp));
+        }
+    }
 
-		if (imageCache.containsKey(path)) {
-			SoftReference<Bitmap> reference = imageCache.get(path);
-			Bitmap bmp = reference.get();
-			if (bmp != null) {
-				if (callback != null) {
-					callback.imageLoad(iv, bmp, sourcePath);
-				}
-				iv.setImageBitmap(bmp);
-				Log.d(TAG, "hit cache");
-				return;
-			}
-		}
-		iv.setImageBitmap(null);
+    public void displayBmp(final ImageView iv, final String thumbPath,
+                           final String sourcePath, final ImageCallback callback) {
+        if (TextUtils.isEmpty(thumbPath) && TextUtils.isEmpty(sourcePath)) {
+            Log.e(TAG, "no paths pass in");
+            return;
+        }
+
+        final String path;
+        final boolean isThumbPath;
+        if (!TextUtils.isEmpty(thumbPath)) {
+            path = thumbPath;
+            isThumbPath = true;
+        } else if (!TextUtils.isEmpty(sourcePath)) {
+            path = sourcePath;
+            isThumbPath = false;
+        } else {
+            // iv.setImageBitmap(null);
+            return;
+        }
+
+        if (imageCache.containsKey(path)) {
+            SoftReference<Bitmap> reference = imageCache.get(path);
+            Bitmap bmp = reference.get();
+            if (bmp != null) {
+                if (callback != null) {
+                    callback.imageLoad(iv, bmp, sourcePath);
+                }
+                iv.setImageBitmap(bmp);
+                Log.d(TAG, "hit cache");
+                return;
+            }
+        }
+        iv.setImageBitmap(null);
 
         getThreadPool().execute(new Runnable() {
             Bitmap thumb;
+
             @Override
             public void run() {
                 try {
                     if (isThumbPath) {
-                        thumb = BitmapFactory.decodeFile(thumbPath);
+                        //thumb = BitmapFactory.decodeFile(thumbPath);
+                        thumb = revitionImageSize(thumbPath);
                         if (thumb == null) {
                             thumb = revitionImageSize(sourcePath);
                         }
@@ -87,7 +89,7 @@ public class BitmapCache extends Activity {
                 if (thumb == null) {
                     thumb = UploadPicActivity.bimap;
                 }
-                Log.e(TAG, "-------thumb------"+thumb);
+                Log.e(TAG, "-------thumb------" + thumb);
                 put(path, thumb);
 
                 if (callback != null) {
@@ -100,19 +102,20 @@ public class BitmapCache extends Activity {
                 }
             }
         });
-	}
+    }
 
     /**
      * 获取线程池的方法，因为涉及到并发的问题，我们加上同步锁
-     * @author 田晓鹏
+     *
      * @return
+     * @author 田晓鹏
      */
-    public ExecutorService getThreadPool(){
-        if(mImageThreadPool == null){
-            synchronized(ExecutorService.class){
-                if(mImageThreadPool == null){
+    public ExecutorService getThreadPool() {
+        if (mImageThreadPool == null) {
+            synchronized (ExecutorService.class) {
+                if (mImageThreadPool == null) {
                     //为了下载图片更加的流畅，我们用了50个线程来加载图片
-                    mImageThreadPool = Executors.newFixedThreadPool(30);
+                    mImageThreadPool = Executors.newFixedThreadPool(20);
                 }
             }
         }
@@ -121,32 +124,32 @@ public class BitmapCache extends Activity {
 
     }
 
-	public Bitmap revitionImageSize(String path) throws IOException {
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-				new File(path)));
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(in, null, options);
-		in.close();
-		int i = 0;
-		Bitmap bitmap = null;
-		while (true) {
-			if ((options.outWidth >> i <= 256)
-					&& (options.outHeight >> i <= 256)) {
-				in = new BufferedInputStream(
-						new FileInputStream(new File(path)));
-				options.inSampleSize = (int) Math.pow(2.0D, i);
-				options.inJustDecodeBounds = false;
-				bitmap = BitmapFactory.decodeStream(in, null, options);
-				break;
-			}
-			i += 1;
-		}
-		return bitmap;
-	}
+    public Bitmap revitionImageSize(String path) throws IOException {
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(
+                new File(path)));
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(in, null, options);
+        in.close();
+        int i = 0;
+        Bitmap bitmap = null;
+        while (true) {
+            if ((options.outWidth >> i <= 256)
+                    && (options.outHeight >> i <= 256)) {
+                in = new BufferedInputStream(
+                        new FileInputStream(new File(path)));
+                options.inSampleSize = (int) Math.pow(2.0D, i);
+                options.inJustDecodeBounds = false;
+                bitmap = BitmapFactory.decodeStream(in, null, options);
+                break;
+            }
+            i += 1;
+        }
+        return bitmap;
+    }
 
-	public interface ImageCallback {
-		public void imageLoad(ImageView imageView, Bitmap bitmap,
+    public interface ImageCallback {
+        public void imageLoad(ImageView imageView, Bitmap bitmap,
                               Object... params);
-	}
+    }
 }

@@ -60,15 +60,15 @@ public class AlbumActivity extends Activity {
     public static List<ImageBucket> contentList;
     public static Bitmap bitmap;
 
+    private boolean isReg = false;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(Res.getLayoutID("plugin_camera_album"));
         PublicWay.activityList.add(this);
         mContext = this;
-        //注册一个广播，这个广播主要是用于在GalleryActivity进行预览时，防止当所有图片都删除完后，再回到该页面时被取消选中的图片仍处于选中状态
-        IntentFilter filter = new IntentFilter("data.broadcast.action");
-        registerReceiver(broadcastReceiver, filter);
+        register();
         bitmap = BitmapFactory.decodeResource(getResources(), Res.getDrawableID("plugin_camera_no_pictures"));
         init();
         initListener();
@@ -234,5 +234,28 @@ public class AlbumActivity extends Activity {
     protected void onRestart() {
         isShowOkBt();
         super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregister();
+    }
+
+    private void register() {
+        if (!isReg) {
+            //注册一个广播，这个广播主要是用于在GalleryActivity进行预览时，防止当所有图片都删除完后，再回到该页面时被取消选中的图片仍处于选中状态
+            IntentFilter filter = new IntentFilter("data.broadcast.action");
+            registerReceiver(broadcastReceiver, filter);
+            isReg = true;
+        }
+    }
+
+    private void unregister() {
+        if (isReg) {
+            //注册一个广播，这个广播主要是用于在GalleryActivity进行预览时，防止当所有图片都删除完后，再回到该页面时被取消选中的图片仍处于选中状态
+            unregisterReceiver(broadcastReceiver);
+            isReg = false;
+        }
     }
 }

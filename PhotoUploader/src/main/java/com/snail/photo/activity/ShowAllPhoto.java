@@ -51,6 +51,8 @@ public class ShowAllPhoto extends Activity {
     private Context mContext;
     public static ArrayList<ImageItem> dataList = new ArrayList<ImageItem>();
 
+    private boolean isReg = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,8 +124,7 @@ public class ShowAllPhoto extends Activity {
     }
 
     private void init() {
-        IntentFilter filter = new IntentFilter("data.broadcast.action");
-        registerReceiver(broadcastReceiver, filter);
+        register();
         progressBar = (ProgressBar) findViewById(Res.getWidgetID("showallphoto_progressbar"));
         progressBar.setVisibility(View.GONE);
         gridView = (GridView) findViewById(Res.getWidgetID("showallphoto_myGrid"));
@@ -225,6 +226,28 @@ public class ShowAllPhoto extends Activity {
         // TODO Auto-generated method stub
         isShowOkBt();
         super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregister();
+    }
+
+    private void register() {
+        if (!isReg) {
+            IntentFilter filter = new IntentFilter("data.broadcast.action");
+            registerReceiver(broadcastReceiver, filter);
+            isReg = true;
+        }
+    }
+
+    private void unregister() {
+        if (isReg) {
+            //注册一个广播，这个广播主要是用于在GalleryActivity进行预览时，防止当所有图片都删除完后，再回到该页面时被取消选中的图片仍处于选中状态
+            unregisterReceiver(broadcastReceiver);
+            isReg = false;
+        }
     }
 
 }

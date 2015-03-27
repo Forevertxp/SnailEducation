@@ -2,9 +2,7 @@ package com.snail.photo.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,8 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,6 +40,7 @@ import com.snail.photo.upload.UploadService;
 import com.snail.photo.util.Bimp;
 import com.snail.photo.util.FileUtils;
 import com.snail.photo.util.ImageItem;
+import com.snail.photo.util.PictureUtil;
 import com.snail.photo.util.PublicWay;
 import com.snail.photo.util.Res;
 import com.snail.svprogresshud.SVProgressHUD;
@@ -58,8 +55,6 @@ import retrofit.mime.TypedFile;
 
 
 /**
- * 首页面activity
- *
  * @author king
  * @version 2014年10月18日  下午11:48:34
  * @QQ:595163260
@@ -73,6 +68,7 @@ public class UploadPicActivity extends Activity {
     private LinearLayout ll_popup;
     public static Bitmap bimap;
 
+    private ImageView backIV;
     private EditText msgET;
     private TextView sendTextView;
 
@@ -80,9 +76,11 @@ public class UploadPicActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Res.init(this);
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inSampleSize = 4;
         bimap = BitmapFactory.decodeResource(
                 getResources(),
-                R.drawable.icon_addpic_unfocused);
+                R.drawable.icon_addpic_unfocused, o);
         PublicWay.activityList.add(this);
         parentView = getLayoutInflater().inflate(R.layout.activity_selectimg, null);
         setContentView(parentView);
@@ -90,6 +88,18 @@ public class UploadPicActivity extends Activity {
     }
 
     public void Init() {
+
+        backIV = (ImageView)findViewById(R.id.backIV);
+        backIV.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < PublicWay.activityList.size(); i++) {
+                    if (null != PublicWay.activityList.get(i)) {
+                        PublicWay.activityList.get(i).finish();
+                    }
+                }
+            }
+        });
 
         pop = new PopupWindow(UploadPicActivity.this);
 
@@ -178,6 +188,24 @@ public class UploadPicActivity extends Activity {
 
     }
 
+    Thread photoCompress = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            TypedFile[] photos = new TypedFile[9];
+            for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
+                String tempPath;
+                // 判断照片是否有旋转
+//            int degree = PictureUtil.readPictureDegree(Bimp.tempSelectBitmap.get(i).imagePath);
+                Bitmap bitmap = PictureUtil.getSmallBitmap(Bimp.tempSelectBitmap.get(i).imagePath);
+//            if (degree != 0)
+//                bitmap = PictureUtil.rotaingImageView(degree, bitmap);
+                tempPath = FileUtils.saveBitmap(bitmap, "snail_temp" + i);
+                File imageFile = new File(tempPath);
+                photos[i] = new TypedFile("application/octet-stream", imageFile);
+            }
+        }
+    });
+
     public void doUpload() {
         if (Constants.upload_uid.equals(""))
             return;
@@ -187,20 +215,32 @@ public class UploadPicActivity extends Activity {
                 .build();
         UploadService service = restAdapter.create(UploadService.class);
         String msg = msgET.getText().toString();
-        File imageFile = new File(Bimp.tempSelectBitmap.get(0).imagePath);
-        TypedFile imageTypedFile = new TypedFile("application/octet-stream", imageFile);
-        service.deployMsg(Constants.upload_uid, msg, imageTypedFile, new Callback<UploadResult>() {
+        TypedFile[] photos = new TypedFile[9];
+        for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
+            String tempPath;
+            // 判断照片是否有旋转
+//            int degree = PictureUtil.readPictureDegree(Bimp.tempSelectBitmap.get(i).imagePath);
+            Bitmap bitmap = PictureUtil.getSmallBitmap(Bimp.tempSelectBitmap.get(i).imagePath);
+//            if (degree != 0)
+//                bitmap = PictureUtil.rotaingImageView(degree, bitmap);
+            tempPath = FileUtils.saveBitmap(bitmap, "snail_temp" + i);
+            File imageFile = new File(tempPath);
+            photos[i] = new TypedFile("application/octet-stream", imageFile);
+        }
+        service.deployMsg(Constants.upload_uid, msg, photos[0], photos[1], photos[2], photos[3], photos[4], photos[5], photos[6], photos[7], photos[8], new Callback<UploadResult>() {
             @Override
             public void success(UploadResult result, Response response) {
+                SVProgressHUD.dismiss(UploadPicActivity.this);
                 if (result.state) {
-                    SVProgressHUD.dismiss(UploadPicActivity.this);
                     Constants.upload_result = true;
+                    Bimp.tempSelectBitmap.clear();
                     for (int i = 0; i < PublicWay.activityList.size(); i++) {
                         if (null != PublicWay.activityList.get(i)) {
-                            Bimp.tempSelectBitmap.clear();
                             PublicWay.activityList.get(i).finish();
                         }
                     }
+                } else {
+                    SVProgressHUD.showInViewWithoutIndicator(UploadPicActivity.this, result.msg, 2.0f);
                 }
 
             }
@@ -212,6 +252,12 @@ public class UploadPicActivity extends Activity {
                 SVProgressHUD.showInViewWithoutIndicator(UploadPicActivity.this, "上传失败", 2.0f);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SVProgressHUD.dismiss(this);
     }
 
     @SuppressLint("HandlerLeak")
@@ -233,7 +279,8 @@ public class UploadPicActivity extends Activity {
         }
 
         public void update() {
-            loading();
+//            loading();
+            notifyDataSetChanged();
         }
 
         public int getCount() {
@@ -289,37 +336,37 @@ public class UploadPicActivity extends Activity {
             public ImageView image;
         }
 
-        Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case 1:
-                        adapter.notifyDataSetChanged();
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-        };
+//        Handler handler = new Handler() {
+//            public void handleMessage(Message msg) {
+//                switch (msg.what) {
+//                    case 1:
+//                        adapter.notifyDataSetChanged();
+//                        break;
+//                }
+//                super.handleMessage(msg);
+//            }
+//        };
 
         // 可能会导致handler 泄露 ，by 田晓鹏
-        public void loading() {
-            new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        if (Bimp.max == Bimp.tempSelectBitmap.size()) {
-                            Message message = new Message();
-                            message.what = 1;
-                            handler.sendMessage(message);
-                            break;
-                        } else {
-                            Bimp.max += 1;
-                            Message message = new Message();
-                            message.what = 1;
-                            handler.sendMessage(message);
-                        }
-                    }
-                }
-            }).start();
-        }
+//        public void loading() {
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    while (true) {
+//                        if (Bimp.max == Bimp.tempSelectBitmap.size()) {
+//                            Message message = new Message();
+//                            message.what = 1;
+//                            handler.sendMessage(message);
+//                            break;
+//                        } else {
+//                            Bimp.max += 1;
+//                            Message message = new Message();
+//                            message.what = 1;
+//                            handler.sendMessage(message);
+//                        }
+//                    }
+//                }
+//            }).start();
+//        }
     }
 
     public String getString(String s) {
@@ -358,6 +405,15 @@ public class UploadPicActivity extends Activity {
                     Bimp.tempSelectBitmap.add(takePhoto);
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bimap != null) {
+            bimap.recycle();
+            bimap = null;
         }
     }
 
