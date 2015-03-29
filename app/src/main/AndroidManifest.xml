@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.snail.education">
+    package="com.snail.education" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -18,16 +18,16 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.snail.education.app.SEAPP"
+        android:name=".app.SEAPP"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
         android:configChanges="keyboardHidden|orientation"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="com.snail.education.ui.IndexActivity"
+            android:name=".ui.IndexActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent">
+            android:theme="@android:style/Theme.Translucent" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,9 +35,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.snail.education.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent"></activity>
+            android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name="cn.sharesdk.framework.ShareSDKUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -46,15 +46,15 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <!-- 微信分享回调 -->
         <activity
-            android:name="com.snail.education.wxapi.WXEntryActivity"
+            android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!-- 微信支付回调 -->
         <activity
-            android:name="com.snail.education.wxapi.WXPayEntryActivity"
+            android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -64,41 +64,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.snail.education.ui.BaseSearchActivity"
+            android:name=".ui.BaseSearchActivity"
             android:label="@string/title_activity_base_search" />
         <activity
-            android:name="com.snail.education.ui.index.activity.AuditionActivity"
+            android:name=".ui.index.activity.AuditionActivity"
             android:label="蜗牛试听" />
         <activity
-            android:name="com.snail.education.ui.activity.ImagePagerActivity"
+            android:name=".ui.activity.ImagePagerActivity"
             android:label="@string/title_activity_image_pager" />
         <activity
-            android:name="com.snail.education.ui.course.CourseDetailActivity"
+            android:name=".ui.course.CourseDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_course_detail" />
         <activity
-            android:name="com.snail.education.ui.index.activity.TeacherActivity"
+            android:name=".ui.index.activity.TeacherActivity"
             android:label="@string/title_activity_teacher" />
         <activity
-            android:name="com.snail.education.ui.index.activity.OrganizationActivity"
+            android:name=".ui.index.activity.OrganizationActivity"
             android:label="@string/title_activity_organization" />
         <activity
-            android:name="com.snail.education.ui.index.activity.StudentActivity"
+            android:name=".ui.index.activity.StudentActivity"
             android:label="@string/title_activity_student" />
         <activity
-            android:name="com.snail.education.ui.information.activity.InfoDetailActivity"
+            android:name=".ui.information.activity.InfoDetailActivity"
             android:label="@string/title_activity_info_detail" />
         <activity
-            android:name="com.snail.education.ui.index.activity.StudentInfoActivity"
+            android:name=".ui.index.activity.StudentInfoActivity"
             android:label="@string/title_activity_student_info" />
         <activity
-            android:name="com.snail.education.ui.course.CourseListActivity"
+            android:name=".ui.course.CourseListActivity"
             android:label="@string/title_activity_course_list" />
         <activity
-            android:name="com.snail.education.ui.information.activity.ShowWebImageActivity"
+            android:name=".ui.information.activity.ShowWebImageActivity"
             android:label="@string/title_activity_show_web_image" />
         <activity
-            android:name="com.snail.education.ui.course.pay.CoursePayActivity"
+            android:name=".ui.course.pay.CoursePayActivity"
             android:label="@string/title_activity_course_pay" />
 
         <!-- alipay sdk begin 支付宝 -->
@@ -110,32 +110,40 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <!-- alipay sdk end -->
         <activity
-            android:name="com.snail.education.ui.index.activity.SignInActivity"
+            android:name=".ui.index.activity.SignInActivity"
             android:label="@string/title_activity_sign_in" />
         <activity
-            android:name="com.snail.education.ui.me.activity.UserRegActivity"
+            android:name=".ui.me.activity.UserRegActivity"
             android:label="@string/title_activity_user_reg" />
         <activity
-            android:name="com.snail.education.ui.me.activity.UserUpdateActivity"
+            android:name=".ui.me.activity.UserUpdateActivity"
             android:label="@string/title_activity_user_update" />
         <activity
-            android:name="com.snail.education.ui.me.activity.DownloadActivity"
+            android:name=".ui.me.activity.DownloadActivity"
             android:label="@string/title_activity_download" />
         <activity
-            android:name="com.snail.education.ui.index.activity.SubjectActivity"
-            android:label="@string/title_activity_subject"></activity>
+            android:name=".ui.index.activity.SubjectActivity"
+            android:label="@string/title_activity_subject" />
         <activity
-            android:name="com.snail.education.ui.index.activity.ExamActivity"
-            android:label="@string/title_activity_exam"></activity>
+            android:name=".ui.index.activity.ExamActivity"
+            android:label="@string/title_activity_exam" />
         <activity
-            android:name="com.snail.education.ui.index.activity.SubItemActivity"
-            android:label="@string/title_activity_sub_item"></activity>
+            android:name=".ui.index.activity.SubItemActivity"
+            android:label="@string/title_activity_sub_item" />
         <activity
-            android:name="com.snail.education.ui.index.activity.ExamArticleActivity"
-            android:label="@string/title_activity_exam_article"></activity>
+            android:name=".ui.index.activity.ExamArticleActivity"
+            android:label="@string/title_activity_exam_article" />
         <activity
-            android:name="com.snail.education.ui.index.activity.MsgActivity"
-            android:label="@string/title_activity_msg"></activity>
+            android:name=".ui.index.activity.MsgActivity"
+            android:label="@string/title_activity_msg" />
+        <activity
+            android:name=".ui.me.activity.UserCourseActivity"
+            android:label="@string/title_activity_user_course" >
+        </activity>
+        <activity
+            android:name=".ui.index.activity.SearchResultActivity"
+            android:label="@string/title_activity_search_result" >
+        </activity>
     </application>
 
 </manifest>
