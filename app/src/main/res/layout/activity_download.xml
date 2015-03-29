@@ -28,7 +28,7 @@
 
     <!-- Don't set background for ViewPager. It doesn't work because of page margin -->
 
-    <com.snail.education.ui.me.activity.ViewPagerCompat
+    <com.snail.education.ui.me.NoScrollViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"

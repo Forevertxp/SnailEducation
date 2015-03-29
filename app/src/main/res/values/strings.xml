@@ -57,5 +57,7 @@
     <string name="title_activity_msg">MsgActivity</string>
     <string name="title_activity_index">IndexActivity</string>
     <string name="title_activity_deply_story">DeplyStoryActivity</string>
+    <string name="title_activity_user_course">UserCourseActivity</string>
+    <string name="title_activity_search_result">SearchResultActivity</string>
 
 </resources>

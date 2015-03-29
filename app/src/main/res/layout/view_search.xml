@@ -13,6 +13,7 @@
         android:id="@+id/et_searchtext_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:imeOptions="actionSearch"
         android:drawableLeft="@drawable/search_bar_icon_normal"
         android:hint="课程/机构/教师"
         android:textSize="14sp"
