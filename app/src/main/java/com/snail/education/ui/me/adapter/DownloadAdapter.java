@@ -70,7 +70,10 @@ public class DownloadAdapter extends BaseAdapter {
         }
         CourseDB course = courseList.get(position);
         holder.tv_title.setText(course.getName());
-        //holder.tv_progress.setText("0");
+        String progress = "0%";
+        if (course.getProgress() != null && !course.getProgress().equals(""))
+            progress = course.getProgress();
+        holder.tv_progress.setText(progress);
         String imageUrl = course.getThumb();
         DisplayImageOptions options = new DisplayImageOptions.Builder()//
                 .cacheInMemory(true)//

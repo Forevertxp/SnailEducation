@@ -115,8 +115,32 @@ public class SECourseManager {
                 }
             }
         });
+    }
 
+    /**
+     * 我的学习进度课程列表
+     *
+     * @param callback
+     */
+    public void refreshMyCourseList(int sta, int uid, int page, int limit, final SECallBack callback) {
+        getCourseService().fetchMyCourseList(sta, uid, page, limit, new Callback<SECourseResult>() {
+            @Override
+            public void success(SECourseResult result, Response response) {
+                if (result.state) {
+                    courseList = result.data;
+                }
+                if (callback != null) {
+                    callback.success();
+                }
+            }
 
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(new ServiceError(error));
+                }
+            }
+        });
     }
 
     /**

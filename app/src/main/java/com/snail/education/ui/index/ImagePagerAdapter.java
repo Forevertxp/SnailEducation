@@ -58,11 +58,12 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
             holder = (ViewHolder) view.getTag();
         }
         int width = context.getResources().getDisplayMetrics().widthPixels;
+        int height = context.getResources().getDisplayMetrics().heightPixels;
         Picasso.with(context)
                 .load(SEConfig.getInstance().getAPIBaseURL() + adImageList.get(position).getImg())
                 .placeholder(R.drawable.ic_launcher)
                 .error(R.drawable.ic_launcher)
-                .resize(width, 360)
+                .resize(width, (int)(height*0.3))
                 .into(holder.imageView);
         return view;
     }

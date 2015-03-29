@@ -4,9 +4,11 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.model.SEAdvertisement;
 import com.snail.education.protocol.model.SECourse;
 import com.snail.education.protocol.model.SEIndexCount;
+import com.snail.education.protocol.model.SESearch;
 import com.snail.education.protocol.result.SEAdResult;
 import com.snail.education.protocol.result.SECourseResult;
 import com.snail.education.protocol.result.SEIndexCountResult;
+import com.snail.education.protocol.result.SESearchResult;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.protocol.service.SEIndexService;
 
@@ -24,6 +26,7 @@ public class SEIndexManager {
     private static SEIndexManager s_instance;
     private ArrayList<SECourse> courseList = new ArrayList<SECourse>();  // 具体课程列表
     private ArrayList<SEAdvertisement> adList = new ArrayList<SEAdvertisement>();  // 广告栏
+    private ArrayList<SESearch> searchList = new ArrayList<SESearch>(); // 搜索结果
     private SEIndexCount countInfo;
     private SEIndexService indexService;
 
@@ -52,6 +55,10 @@ public class SEIndexManager {
 
     public SEIndexCount getCountInfo() {
         return countInfo;
+    }
+
+    public ArrayList<SESearch> getSearchList() {
+        return searchList;
     }
 
     /**
@@ -117,6 +124,32 @@ public class SEIndexManager {
             public void success(SECourseResult result, Response response) {
                 if (result.state) {
                     courseList = result.data;
+                }
+                if (callback != null) {
+                    callback.success();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(new ServiceError(error));
+                }
+            }
+        });
+    }
+
+    /**
+     * 首页搜索
+     *
+     * @param callback
+     */
+    public void search(String opt, String key, int page, int limit, final SECallBack callback) {
+        getIndexService().search(opt, key, page, limit, new Callback<SESearchResult>() {
+            @Override
+            public void success(SESearchResult result, Response response) {
+                if (result.state) {
+                    searchList = result.data;
                 }
                 if (callback != null) {
                     callback.success();

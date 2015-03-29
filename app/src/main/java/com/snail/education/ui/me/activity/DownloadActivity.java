@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.snail.education.R;
 import com.snail.education.ui.activity.SEBaseActivity;
+import com.snail.education.ui.me.NoScrollViewPager;
 import com.snail.education.ui.me.adapter.DownloadAdapter;
 
 import java.lang.reflect.Constructor;
@@ -51,7 +52,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
     protected MyAdapter myAdapter = null;
 
     //viewpager
-    protected ViewPager mPager;
+    protected NoScrollViewPager mPager;
 
     //选项卡控件
     protected TitleIndicator mIndicator;
@@ -147,7 +148,8 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         Log.d(TAG, "mTabs.size() == " + mTabs.size() + ", cur: " + mCurrentTab);
         myAdapter = new MyAdapter(this, DownloadActivity.this.getSupportFragmentManager(), mTabs);
 
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = (NoScrollViewPager) findViewById(R.id.pager);
+        mPager.setNoScroll(true);
         mPager.setAdapter(myAdapter);
         mPager.setOnPageChangeListener(this);
         mPager.setOffscreenPageLimit(mTabs.size());
@@ -170,6 +172,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
                     DownloadAdapter.CHECKBOS_VISIBLE = false;
                     switch (mCurrentTab) {
                         case 0:
+                            ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
                             break;
                         case 1:
                             ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
@@ -182,6 +185,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
                     DownloadAdapter.CHECKBOS_VISIBLE = true;
                     switch (mCurrentTab) {
                         case 0:
+                            ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
                             break;
                         case 1:
                             ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();

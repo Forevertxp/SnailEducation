@@ -280,7 +280,12 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
         course.setThumb(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getThumb());
         course.setVideo(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getVideo());
         try {
+            if (db.findById(CourseDB.class, courseDetail.getId()) != null) {
+                SVProgressHUD.showInViewWithoutIndicator(this, "缓存列表已存在", 2.0f);
+                return;
+            }
             db.save(course);
+            SVProgressHUD.showInViewWithoutIndicator(this, "成功添加至缓存列表", 2.0f);
         } catch (DbException e) {
             e.printStackTrace();
         }

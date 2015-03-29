@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -82,6 +83,9 @@ public class InformationAdapter extends BaseAdapter {
                 convertView = View.inflate(context, R.layout.view_information_top, null);
                 topViewHolder = new TopViewHolder();
                 topViewHolder.autoSlidingPagerView = (SEAutoSlidingPagerView) convertView.findViewById(R.id.autoSlideImage);
+                int height = context.getResources().getDisplayMetrics().heightPixels;
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)(height*0.3));
+                topViewHolder.autoSlidingPagerView.setLayoutParams(layoutParams);
                 convertView.setTag(topViewHolder);
             } else {
                 topViewHolder = (TopViewHolder) convertView.getTag();

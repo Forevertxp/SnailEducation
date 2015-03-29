@@ -2,18 +2,23 @@ package com.snail.education.common;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.snail.education.R;
+import com.snail.education.ui.index.activity.SearchResultActivity;
+import com.snail.svprogresshud.SVProgressHUD;
 
 /**
  * SearchText
@@ -26,7 +31,7 @@ public class SESearchBox extends LinearLayout {
     private ImageView ib_searchtext_delete;
     private EditText et_searchtext_search;
 
-    public SESearchBox(Context context, AttributeSet attrs) {
+    public SESearchBox(final Context context, AttributeSet attrs) {
         super(context, attrs);
         // TODO Auto-generated constructor stub
         //从一个打气筒获得一个view
@@ -46,6 +51,22 @@ public class SESearchBox extends LinearLayout {
         });
         //给编辑框添加文本改变事件
         et_searchtext_search.addTextChangedListener(new MyTextWatcher());
+        et_searchtext_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    if (TextUtils.isEmpty(et_searchtext_search.getText().toString())) {
+                        SVProgressHUD.showInViewWithoutIndicator(context, "请输入关键字", 2.0f);
+                        return true;
+                    }
+                    Intent intent = new Intent(context, SearchResultActivity.class);
+                    intent.putExtra("keywords", et_searchtext_search.getText().toString());
+                    context.startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public EditText getEditTextView() {

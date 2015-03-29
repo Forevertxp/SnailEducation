@@ -42,6 +42,18 @@ public interface SECourseService {
                                 Callback<SECourseResult> cb);
 
     /**
+     * 我的学习列表
+     *
+     * @param cb
+     */
+    @GET("/api/myLearnList")
+    public void fetchMyCourseList(@Query("sta") int sta,
+                                  @Query("uid") int uid,
+                                  @Query("page") int page,
+                                  @Query("limit") int limit,
+                                  Callback<SECourseResult> cb);
+
+    /**
      * 具体课程信息
      *
      * @param cb

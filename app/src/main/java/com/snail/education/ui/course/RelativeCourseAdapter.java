@@ -27,7 +27,7 @@ public class RelativeCourseAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SECourse> courseList;
 
-    public RelativeCourseAdapter(Context context,ArrayList<SECourse> courseList) {
+    public RelativeCourseAdapter(Context context, ArrayList<SECourse> courseList) {
         super();
         this.context = context;
         this.courseList = courseList;
@@ -57,6 +57,10 @@ public class RelativeCourseAdapter extends BaseAdapter {
             holder.iv_avatar = (CircularImageView) convertView.findViewById(R.id.iv_avatar);
             holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
             holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
+            holder.tv_teacher = (TextView) convertView.findViewById(R.id.tv_teacher);
+            holder.tv_free = (TextView) convertView.findViewById(R.id.tv_free);
+            holder.tv_count = (TextView) convertView.findViewById(R.id.tv_count);
+            holder.tv_praise = (TextView) convertView.findViewById(R.id.tv_praise);
             holder.tv_category = (TextView) convertView.findViewById(R.id.tv_category);
             holder.btn_learn = (Button) convertView.findViewById(R.id.btn_learn);
             convertView.setTag(holder);
@@ -65,8 +69,17 @@ public class RelativeCourseAdapter extends BaseAdapter {
         }
         SECourse course = courseList.get(position);
         holder.tv_title.setText(course.getName());
+        if (course.get_free().equals("Y")) {
+            holder.tv_free.setVisibility(View.VISIBLE);
+            holder.tv_free.setText("free");
+        } else {
+            holder.tv_free.setVisibility(View.GONE);
+        }
         holder.tv_content.setText(course.getOname());
-        holder.tv_category.setText(course.getCname());
+        holder.tv_category.setText(course.getCname() + "/公开课");
+        holder.tv_teacher.setText("讲师：" + course.getTname());
+        holder.tv_count.setText(course.getStudent() + "人在学习");
+        holder.tv_praise.setText(course.getPraise());
         String imageUrl = SEConfig.getInstance().getAPIBaseURL() + course.getIcon();
         DisplayImageOptions options = new DisplayImageOptions.Builder()//
                 .cacheInMemory(true)//
@@ -106,10 +119,13 @@ public class RelativeCourseAdapter extends BaseAdapter {
         }
     }
 
-
     class ViewHolder {
         private CircularImageView iv_avatar;
         private TextView tv_title;
+        private TextView tv_teacher;
+        private TextView tv_count;
+        private TextView tv_praise;
+        private TextView tv_free;
         private TextView tv_content;
         private TextView tv_category;
         private Button btn_learn;

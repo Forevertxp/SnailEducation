@@ -3,6 +3,7 @@ package com.snail.education.protocol.service;
 import com.snail.education.protocol.result.SEAdResult;
 import com.snail.education.protocol.result.SECourseResult;
 import com.snail.education.protocol.result.SEIndexCountResult;
+import com.snail.education.protocol.result.SESearchResult;
 
 import retrofit.Callback;
 import retrofit.http.GET;
@@ -12,6 +13,18 @@ import retrofit.http.Query;
  * Created by tianxiaopeng on 15-1-20.
  */
 public interface SEIndexService {
+
+    /**
+     * 查询搜索
+     *
+     * @param cb
+     */
+    @GET("/api/search")
+    public void search(@Query("opt") String opt,
+                       @Query("key") String key,
+                       @Query("page") int page,
+                       @Query("limit") int limit,
+                       Callback<SESearchResult> cb);
 
     /**
      * 查询首页 名师、机构、学员数量
@@ -30,7 +43,7 @@ public interface SEIndexService {
      */
     @GET("/api/ad")
     public void fetchAdInfo(@Query("type") int type,
-                                Callback<SEAdResult> cb);
+                            Callback<SEAdResult> cb);
 
     /**
      * 首页课程列表
@@ -40,5 +53,5 @@ public interface SEIndexService {
      */
     @GET("/api/indexTopClass")
     public void fetchIndexCourse(@Query("limit") int limit,
-                            Callback<SECourseResult> cb);
+                                 Callback<SECourseResult> cb);
 }

@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -78,6 +80,29 @@ public class UserLoginFragment extends Fragment implements Callback,
         weiboImage.setOnClickListener(this);
         weixinImage.setOnClickListener(this);
         qqImage.setOnClickListener(this);
+
+        userText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                      int arg3) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                                          int arg2, int arg3) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                String user = userText.getText().toString().trim();
+                if (user != null && (!user.equals(""))) {
+
+                } else {
+                    passText.setText("");
+                }
+            }
+        });
 
         // 点击屏幕其他地方，隐藏输入法
         v.setOnTouchListener(new View.OnTouchListener() {

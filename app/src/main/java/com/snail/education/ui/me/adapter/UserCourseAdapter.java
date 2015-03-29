@@ -1,4 +1,4 @@
-package com.snail.education.ui.course;
+package com.snail.education.ui.me.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SECourseManager;
 import com.snail.education.protocol.model.SECourse;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.ui.course.CourseDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,14 @@ import java.util.List;
 /**
  * Created by tianxiaopeng on 15-1-10.
  */
-public class CourseAdapter extends BaseAdapter {
+public class UserCourseAdapter extends BaseAdapter {
 
 
     private Context context;
     private List<SECourse> courseList;
+    private static int COURSE_LIMIT = 10;
 
-    public CourseAdapter(Context context) {
+    public UserCourseAdapter(Context context) {
         super();
         this.context = context;
         updatePresentingInformation(1);
@@ -73,17 +75,8 @@ public class CourseAdapter extends BaseAdapter {
         }
         SECourse course = courseList.get(position);
         holder.tv_title.setText(course.getName());
-        if (course.get_free().equals("Y")) {
-            holder.tv_free.setVisibility(View.VISIBLE);
-            holder.tv_free.setText("free");
-        } else {
-            holder.tv_free.setVisibility(View.GONE);
-        }
         holder.tv_content.setText(course.getOname());
-        holder.tv_category.setText(course.getCname()+"/公开课");
         holder.tv_teacher.setText("讲师：" + course.getTname());
-        holder.tv_count.setText(course.getStudent() + "人在学习");
-        holder.tv_praise.setText(course.getPraise());
         String imageUrl = SEConfig.getInstance().getAPIBaseURL() + course.getIcon();
         DisplayImageOptions options = new DisplayImageOptions.Builder()//
                 .cacheInMemory(true)//
@@ -97,12 +90,11 @@ public class CourseAdapter extends BaseAdapter {
         holder.btn_learn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent();
-                intent.setClass(context, CourseDetailActivity.class);
-                intent.putExtra("id", id);
-                intent.putExtra("name", name);
-                context.startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setClass(context, CourseDetailActivity.class);
+//                intent.putExtra("id", id);
+//                intent.putExtra("name", name);
+//                context.startActivity(intent);
             }
         });
         return convertView;
@@ -125,9 +117,9 @@ public class CourseAdapter extends BaseAdapter {
         }
     }
 
-    public void refresh(String free, int tid, int oid, int cid, final SECallBack callback) {
+    public void refresh(int sta, int uid, int page, final SECallBack callback) {
         SECourseManager courseManager = SECourseManager.getInstance();
-        courseManager.refreshCourseList(free, tid, oid, cid, new SECallBack() {
+        courseManager.refreshMyCourseList(sta, uid, page, COURSE_LIMIT, new SECallBack() {
             @Override
             public void success() {
                 updatePresentingInformation(1);

@@ -25,6 +25,15 @@ public class CourseDB {
     @Column(column = "size")
     private long size;  //已经下载的课程大小
 
+    @Column(column = "isInQueue")
+    private int isInQueue; //是否添加到下载队列
+
+    @Column(column = "isdone")
+    private int isdone; //是否已完成下载 0 初始状态 1 正在下载
+
+    @Column(column = "progress")
+    private String progress; // 下载进度
+
     public int getId() {
         return id;
     }
@@ -63,5 +72,29 @@ public class CourseDB {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public int getIsdone() {
+        return isdone;
+    }
+
+    public void setIsdone(int isdone) {
+        this.isdone = isdone;
+    }
+
+    public int getIsInQueue() {
+        return isInQueue;
+    }
+
+    public void setIsInQueue(int isInQueue) {
+        this.isInQueue = isInQueue;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 }

@@ -53,10 +53,10 @@ public class SignInActivity extends SEBaseActivity implements OnGestureListener,
 
     private TextView shareText;
 
-    private String text = "MBA联考科目细则";
-    private String imageurl = "http://h.hiphotos.baidu.com/image/pic/item/ac4bd11373f082028dc9b2a749fbfbedaa641bca.jpg";
-    private String title = "android 测试";
-    private String url = "http://api.nowthinkgo.com/api/newsHtml?id=52";
+    private String text = "MBA联考通";
+    private String imageurl = "http://api.nowthinkgo.com/upload/ad/001.jpg";
+    private String title = "MBA联考通——MBA考试神器";
+    private String url = "http://www.snailedu.com/app";
 
     private SharePopupWindow share;
 

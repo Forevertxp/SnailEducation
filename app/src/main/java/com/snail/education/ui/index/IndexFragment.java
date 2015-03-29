@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -84,6 +85,9 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
         });
 
         autoSlidingPagerView = (SEAutoSlidingPagerView) view.findViewById(R.id.autoSlidePagerView);
+        int height = getActivity().getResources().getDisplayMetrics().heightPixels;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)(height*0.3));
+        autoSlidingPagerView.setLayoutParams(layoutParams);
         //获得焦点
         autoSlidingPagerView.setFocusable(true);
         autoSlidingPagerView.requestFocus();
