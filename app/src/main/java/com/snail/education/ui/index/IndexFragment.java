@@ -28,6 +28,7 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEIndexManager;
 import com.snail.education.protocol.model.SEIndexCount;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.ui.MainFragment;
 import com.snail.education.ui.index.activity.AuditionActivity;
 import com.snail.education.ui.index.activity.ExamActivity;
 import com.snail.education.ui.index.activity.MsgActivity;
@@ -86,7 +87,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
 
         autoSlidingPagerView = (SEAutoSlidingPagerView) view.findViewById(R.id.autoSlidePagerView);
         int height = getActivity().getResources().getDisplayMetrics().heightPixels;
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)(height*0.3));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (height * 0.3));
         autoSlidingPagerView.setLayoutParams(layoutParams);
         //获得焦点
         autoSlidingPagerView.setFocusable(true);
@@ -231,6 +232,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
                 startActivity(listeningIntent);
                 break;
             case R.id.course:
+                MainFragment.newInstance().switchToPage(2);
                 break;
             case R.id.subject:
                 Intent subjectIntent = new Intent(getActivity(), SubjectActivity.class);

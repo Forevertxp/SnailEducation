@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ public class MainFragment extends Fragment {
     private MainPagerAdapter _viewPagerAdapter;
     private SETabBar _tabBar;
 
+    private static Activity mActivity;
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -35,13 +38,6 @@ public class MainFragment extends Fragment {
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -105,20 +101,8 @@ public class MainFragment extends Fragment {
         return fragmentView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        if (_tabBar.getSelectedTabIndex() == 4)
-//        {
-//            if (!MWTAuthManager.getInstance().isAuthenticated())
-//            {
-//                _tabBar.setSelectedTabIndex(0);
-//            }
-//        }
-    }
-
     private void setupActionBar() {
-        ActionBar actionBar = getActivity().getActionBar();
+        ActionBar actionBar = mActivity.getActionBar();
 
         try {
             actionBar.getClass().getDeclaredMethod("setShowHideAnimationEnabled", boolean.class).invoke(actionBar, false);
@@ -134,6 +118,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mActivity = activity;
     }
 
     @Override
@@ -163,35 +148,35 @@ public class MainFragment extends Fragment {
         switchToPage(tabIndex);
     }
 
-    private void switchToPage(int tabIndex) {
+    public void switchToPage(int tabIndex) {
         switch (tabIndex) {
             case 0:
                 setActionBarVisible(false);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) getActivity()).setTitleText("");
+                ((MainActivity) mActivity).setTitleText("");
                 break;
             case 1:
                 setActionBarVisible(true);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) getActivity()).setTitleText("MBA咨询");
+                ((MainActivity) mActivity).setTitleText("MBA咨询");
                 // getActivity().getActionBar().setTitle("MBA咨询");
                 break;
             case 2:
                 setActionBarVisible(true);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) getActivity()).setTitleText("蜗牛课程");
+                ((MainActivity) mActivity).setTitleText("蜗牛课程");
                 // getActivity().getActionBar().setTitle("蜗牛课程");
                 break;
             case 3:
                 setActionBarVisible(true);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) getActivity()).setTitleText("            蜗牛故事");
+                ((MainActivity) mActivity).setTitleText("            蜗牛故事");
                 // getActivity().getActionBar().setTitle("蜗牛故事");
                 break;
             case 4:
                 setActionBarVisible(true);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) getActivity()).setTitleText("蜗牛房");
+                ((MainActivity) mActivity).setTitleText("蜗牛房");
                 // getActivity().getActionBar().setTitle("蜗牛房");
                 break;
             default:
@@ -216,7 +201,7 @@ public class MainFragment extends Fragment {
     }
 
     private void setActionBarVisible(boolean actionBarVisible) {
-        ActionBar actionBar = getActivity().getActionBar();
+        ActionBar actionBar = mActivity.getActionBar();
 
         try {
             actionBar.getClass().getDeclaredMethod("setShowHideAnimationEnabled", boolean.class).invoke(actionBar, false);

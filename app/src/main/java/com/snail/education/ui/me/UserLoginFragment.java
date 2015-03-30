@@ -26,6 +26,7 @@ import com.snail.education.R;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.ui.me.activity.UserPasswordActivity;
 import com.snail.education.ui.me.activity.UserRegActivity;
 
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class UserLoginFragment extends Fragment implements Callback,
     private Bundle bundle;
     private TextView regTV;
     private EditText userText, passText;
-    private Button loginBtn;
+    private Button loginBtn, findPassBtn;
     private ImageView weixinImage, qqImage, weiboImage;
 
     @Override
@@ -69,6 +70,7 @@ public class UserLoginFragment extends Fragment implements Callback,
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_user_login, container, false);
         loginBtn = (Button) v.findViewById(R.id.loginBtn);
+        findPassBtn = (Button) v.findViewById(R.id.findPassBtn);
         regTV = (TextView) v.findViewById(R.id.registerTextView);
         userText = (EditText) v.findViewById(R.id.usernameEdit);
         passText = (EditText) v.findViewById(R.id.passEdit);
@@ -77,6 +79,7 @@ public class UserLoginFragment extends Fragment implements Callback,
         weixinImage = (ImageView) v.findViewById(R.id.weixinImage);
         regTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
+        findPassBtn.setOnClickListener(this);
         weiboImage.setOnClickListener(this);
         weixinImage.setOnClickListener(this);
         qqImage.setOnClickListener(this);
@@ -145,6 +148,8 @@ public class UserLoginFragment extends Fragment implements Callback,
                 login(username, password);
                 break;
             case R.id.findPassBtn:
+                Intent passIntent = new Intent(getActivity(), UserPasswordActivity.class);
+                startActivity(passIntent);
                 break;
             case R.id.weiboImage:
                 authorize(new SinaWeibo(getActivity()));

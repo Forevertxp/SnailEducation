@@ -1,11 +1,13 @@
 package com.snail.education.protocol.service;
 
+import com.snail.education.protocol.result.SEPasswordResult;
 import com.snail.education.protocol.result.SEUserInfoResult;
 import com.snail.education.protocol.result.SEUserResult;
 
 import java.io.File;
 
 import retrofit.Callback;
+import retrofit.client.Response;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -34,6 +36,30 @@ public interface SEUserService {
                         @Part("pass") String pass,
                         @Part("repass") String repass,
                         Callback<SEUserResult> cb);
+
+    /**
+     * 找回密码--获取验证码
+     *
+     * @param user
+     * @param cb
+     */
+    @GET("/api/user/findPass")
+    public void findPass(@Query("user") String user,
+                         Callback<SEPasswordResult> cb);
+
+    /**
+     * 找回密码--密码重置
+     *
+     * @param user
+     * @param cb
+     */
+    @GET("/api/user/reMakePass")
+    public void reMakePass(@Query("user") String user,
+                           @Query("code") String code,
+                           @Query("pass") String pass,
+                           @Query("repass") String repass,
+                           Callback<SEPasswordResult> cb);
+
 
     /**
      * 更新
@@ -72,5 +98,13 @@ public interface SEUserService {
     @GET("/api/user/userHouseCount")
     public void fetchInformation(@Query("uid") int uid,
                                  Callback<SEUserInfoResult> cb);
+
+    /**
+     * 蜗牛评测
+     *
+     * @param cb
+     */
+    @GET("/app/evaluation")
+    public void evaluation(Callback<Response> cb);
 
 }

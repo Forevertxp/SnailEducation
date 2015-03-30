@@ -24,6 +24,7 @@ import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.model.SEUserInfo;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.me.activity.DownloadActivity;
+import com.snail.education.ui.me.activity.EvaluationActivity;
 import com.snail.education.ui.me.activity.UserCourseActivity;
 import com.snail.education.ui.me.activity.UserUpdateActivity;
 
@@ -34,7 +35,7 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
     private UserHeaderView headerView;
     private TextView orderText, saleText, processText, collectText;
     private Button logoutBtn;
-    private RelativeLayout processRL, downloadRL, profileRL;
+    private RelativeLayout processRL, downloadRL, profileRL, evaluationRL;
 
     public UserMeFragment() {
         // Required empty public constructor
@@ -65,10 +66,12 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
         processRL = (RelativeLayout) view.findViewById(R.id.processRL);
         downloadRL = (RelativeLayout) view.findViewById(R.id.downloadRL);
         profileRL = (RelativeLayout) view.findViewById(R.id.profileRL);
+        evaluationRL = (RelativeLayout) view.findViewById(R.id.evaluationRL);
         userFrame.addView(headerView);
         logoutBtn = (Button) view.findViewById(R.id.logoutBtn);
         processRL.setOnClickListener(this);
         downloadRL.setOnClickListener(this);
+        evaluationRL.setOnClickListener(this);
         profileRL.setOnClickListener(this);
         logoutBtn.setOnClickListener(this);
         return view;
@@ -85,6 +88,9 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.profileRL:
                 onEditUserInfo();
+                break;
+            case R.id.evaluationRL:
+                onEvaluation();
                 break;
             case R.id.logoutBtn:
                 logout();
@@ -157,6 +163,15 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
         SEUser user = SEAuthManager.getInstance().getAccessUser();
         if (user != null) {
             Intent intent = new Intent(getActivity(), UserCourseActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
+    private void onEvaluation() {
+        SEUser user = SEAuthManager.getInstance().getAccessUser();
+        if (user != null) {
+            Intent intent = new Intent(getActivity(), EvaluationActivity.class);
             startActivity(intent);
         }
     }
