@@ -59,5 +59,7 @@
     <string name="title_activity_deply_story">DeplyStoryActivity</string>
     <string name="title_activity_user_course">UserCourseActivity</string>
     <string name="title_activity_search_result">SearchResultActivity</string>
+    <string name="title_activity_evaluation">EvaluationActivity</string>
+    <string name="title_activity_user_password">UserPasswordActivity</string>
 
 </resources>
