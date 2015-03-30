@@ -23,9 +23,9 @@ import com.snail.education.common.SEThemer;
 
 
 public class MainFragment extends Fragment {
-    private ViewPager _viewPager;
     private MainPagerAdapter _viewPagerAdapter;
     private SETabBar _tabBar;
+    private static ViewPager _viewPager;
 
     private static Activity mActivity;
 
@@ -103,7 +103,6 @@ public class MainFragment extends Fragment {
 
     private void setupActionBar() {
         ActionBar actionBar = mActivity.getActionBar();
-
         try {
             actionBar.getClass().getDeclaredMethod("setShowHideAnimationEnabled", boolean.class).invoke(actionBar, false);
         } catch (Exception exception) {
@@ -202,7 +201,6 @@ public class MainFragment extends Fragment {
 
     private void setActionBarVisible(boolean actionBarVisible) {
         ActionBar actionBar = mActivity.getActionBar();
-
         try {
             actionBar.getClass().getDeclaredMethod("setShowHideAnimationEnabled", boolean.class).invoke(actionBar, false);
         } catch (Exception exception) {

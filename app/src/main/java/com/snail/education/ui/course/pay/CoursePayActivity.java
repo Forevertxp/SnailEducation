@@ -290,7 +290,7 @@ public class CoursePayActivity extends SEBaseActivity {
      */
     public void pay(SEOrder order) {
         // 订单
-        String orderInfo = getOrderInfo(order.getBody(), "该测试商品的详细描述", order.getMoney());
+        String orderInfo = getOrderInfo(order.getSn(), order.getBody(), "蜗牛课程", order.getMoney());
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);
@@ -364,7 +364,7 @@ public class CoursePayActivity extends SEBaseActivity {
     /**
      * create the order info. 创建订单信息
      */
-    public String getOrderInfo(String subject, String body, String price) {
+    public String getOrderInfo(String trade_no, String subject, String body, String price) {
         // 签约合作者身份ID
         String orderInfo = "partner=" + "\"" + PARTNER + "\"";
 
@@ -372,7 +372,8 @@ public class CoursePayActivity extends SEBaseActivity {
         orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
 
         // 商户网站唯一订单号
-        orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+        //orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+        orderInfo += "&out_trade_no=" + "\"" + trade_no + "\"";
 
         // 商品名称
         orderInfo += "&subject=" + "\"" + subject + "\"";
