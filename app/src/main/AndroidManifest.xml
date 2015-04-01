@@ -70,7 +70,7 @@
             android:name="com.snail.education.ui.index.activity.AuditionActivity"
             android:label="蜗牛试听" />
         <activity
-            android:name="com.snail.education.ui.activity.ImagePagerActivity"
+            android:name=".ui.story.activity.ImagePagerActivity"
             android:label="@string/title_activity_image_pager" />
         <activity
             android:name="com.snail.education.ui.course.CourseDetailActivity"
