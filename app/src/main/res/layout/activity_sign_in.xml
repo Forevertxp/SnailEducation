@@ -181,7 +181,7 @@
 
         <TextView
             android:id="@+id/signInCount"
-            android:text="你已经坚持学习了 1 天"
+            android:text="你已经坚持学习了   天"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
