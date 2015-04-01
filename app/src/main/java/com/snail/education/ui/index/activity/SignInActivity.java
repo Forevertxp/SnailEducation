@@ -15,16 +15,25 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.snail.education.R;
+import com.snail.education.protocol.manager.SEAuthManager;
+import com.snail.education.protocol.manager.SERestManager;
+import com.snail.education.protocol.model.SEUser;
+import com.snail.education.protocol.result.SESignListResult;
+import com.snail.education.protocol.result.SESignResult;
+import com.snail.education.protocol.service.SEIndexService;
 import com.snail.education.sharesdk.ShareModel;
 import com.snail.education.sharesdk.SharePopupWindow;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.index.calender.CalendarAdapter;
+import com.snail.svprogresshud.SVProgressHUD;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -32,6 +41,8 @@ import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.framework.utils.UIHandler;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class SignInActivity extends SEBaseActivity implements OnGestureListener, PlatformActionListener, Callback {
 
@@ -51,7 +62,11 @@ public class SignInActivity extends SEBaseActivity implements OnGestureListener,
     private String lidianTime;
     private String state = "";
 
+    private SEIndexService indexService;
+    private SEUser user;
     private TextView shareText;
+    private TextView signInCountText;
+    private ImageView signIV;
 
     private String text = "MBA联考通";
     private String imageurl = "http://api.nowthinkgo.com/upload/ad/001.jpg";
@@ -78,7 +93,11 @@ public class SignInActivity extends SEBaseActivity implements OnGestureListener,
         setContentView(R.layout.activity_sign_in);
         setTitleText("签到");
 
+        indexService = SERestManager.getInstance().create(SEIndexService.class);
+        user = SEAuthManager.getInstance().getAccessUser();
+
         shareText = (TextView) findViewById(R.id.shareText);
+        signInCountText = (TextView) findViewById(R.id.signInCount);
         shareText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +126,57 @@ public class SignInActivity extends SEBaseActivity implements OnGestureListener,
 
         topText = (TextView) findViewById(R.id.tv_month);
         addTextToTopTextView(topText);
+
+        signIV = (ImageView) findViewById(R.id.iv_sign);
+        signIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
+
+        initSignInfo();
+    }
+
+    private void initSignInfo() {
+        if (user == null)
+            return;
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        indexService.fetchSignInfo(user.getId(), year, month, new retrofit.Callback<SESignListResult>() {
+            @Override
+            public void success(SESignListResult result, Response response) {
+                if (result.state) {
+                    signInCountText.setText("你已经坚持学习了 " + result.count + " 天");
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void signIn() {
+        if (user == null)
+            return;
+        indexService.userSign(user.getId(), new retrofit.Callback<SESignResult>() {
+            @Override
+            public void success(SESignResult result, Response response) {
+                if (result.state) {
+                    signInCountText.setText("你已经坚持学习了 " + result.count + " 天");
+                } else {
+                    SVProgressHUD.showInViewWithoutIndicator(SignInActivity.this, result.msg, 2.0f);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
     }
 
     private void share() {

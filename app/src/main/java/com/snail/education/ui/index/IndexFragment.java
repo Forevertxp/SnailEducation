@@ -1,8 +1,10 @@
 package com.snail.education.ui.index;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -25,7 +27,9 @@ import com.snail.education.common.SEAutoSlidingPagerView;
 import com.snail.education.common.SESearchBox;
 import com.snail.education.common.SETabBar;
 import com.snail.education.protocol.SECallBack;
+import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SEIndexManager;
+import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SEIndexCount;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.MainFragment;
@@ -80,6 +84,22 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
         signinText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SEAuthManager.getInstance().getAccessUser() == null) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("您尚未登陆")
+                            .setMessage("登陆后才能签到，是否去登陆？")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .show();
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), SignInActivity.class);
                 startActivity(intent);
             }

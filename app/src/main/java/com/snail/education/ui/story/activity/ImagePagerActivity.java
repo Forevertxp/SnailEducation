@@ -1,4 +1,4 @@
-package com.snail.education.ui.activity;
+package com.snail.education.ui.story.activity;
 
 import java.util.ArrayList;
 

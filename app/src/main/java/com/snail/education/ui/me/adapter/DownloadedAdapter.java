@@ -14,16 +14,15 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
 import com.snail.education.database.CourseDB;
-import com.snail.education.ui.activity.ImagePagerActivity;
+import com.snail.education.ui.story.activity.ImagePagerActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by tianxiaopeng on 15-1-17.
  */
-public class DownloadAdapter extends BaseAdapter {
+public class DownloadedAdapter extends BaseAdapter {
 
 
     private Context context;
@@ -32,7 +31,7 @@ public class DownloadAdapter extends BaseAdapter {
 
     private List<Boolean> boolList; // 用来记录checkbox的选中状态
 
-    public DownloadAdapter(Context context, List<CourseDB> courseList, List<Boolean> boolList) {
+    public DownloadedAdapter(Context context, List<CourseDB> courseList, List<Boolean> boolList) {
         super();
         this.context = context;
         this.courseList = courseList;

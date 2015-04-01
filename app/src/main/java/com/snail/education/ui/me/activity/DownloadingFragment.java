@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +21,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.snail.education.R;
 import com.snail.education.database.CourseDB;
-import com.snail.education.ui.me.adapter.DownloadAdapter;
+import com.snail.education.ui.me.adapter.DownloadingAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,8 +43,8 @@ public class DownloadingFragment extends BaseFragment {
     private int downloadingID; //正在下载的视频ID
     private int downloadingProgress;//正在下载的视频的下载进度
 
-    public DownloadAdapter adapter;
-    private DownloadAdapter.ViewHolder viewHolder;
+    public DownloadingAdapter adapter;
+    private DownloadingAdapter.ViewHolder viewHolder;
 
     private HttpHandler handler;
     private DbUtils db;
@@ -67,9 +66,9 @@ public class DownloadingFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent,
                                     View view, int position, long id) {
-                viewHolder = (DownloadAdapter.ViewHolder) view.getTag();
+                viewHolder = (DownloadingAdapter.ViewHolder) view.getTag();
                 viewHolder.tv_progress.setTag(courseList.get(position).getId());
-                if (DownloadAdapter.CHECKBOS_VISIBLE) {
+                if (DownloadingAdapter.CHECKBOS_VISIBLE) {
                     viewHolder.cb.toggle();
                     if (viewHolder.cb.isChecked()) {
                         boolList.set(position, true);
@@ -129,7 +128,7 @@ public class DownloadingFragment extends BaseFragment {
                 for (int i = 0; i < courseList.size(); i++) {
                     boolList.add(false);
                 }
-                adapter = new DownloadAdapter(getActivity(), courseList, boolList);
+                adapter = new DownloadingAdapter(getActivity(), courseList, boolList);
                 downloadingLV.setAdapter(adapter);
             }
 
@@ -155,6 +154,8 @@ public class DownloadingFragment extends BaseFragment {
                     @Override
                     public void onStart() {
                         Toast.makeText(getActivity(), "开始下载", Toast.LENGTH_SHORT).show();
+                        if (tempTV.getText().toString().equals("暂停"))
+                            tempTV.setText("0%");
                         isDownloading = true;
                         downloadingID = id;
                     }
@@ -174,7 +175,7 @@ public class DownloadingFragment extends BaseFragment {
                             if (c != null) {
                                 c.setIsdone(1);
                                 c.setProgress("已完成");
-                                db.update(c, "isdone","progress");
+                                db.update(c, "isdone", "progress");
                             }
                             isDownloading = false;
                             downloadingID = 0;
@@ -252,16 +253,17 @@ public class DownloadingFragment extends BaseFragment {
     }
 
     public void chooseOrDeChoose() {
-        for (int i = 0; i < courseList.size(); i++) {
-            if (isChooseAll) {
+        if (isChooseAll) {
+            for (int i = 0; i < courseList.size(); i++) {
                 boolList.set(i, false);
-                isChooseAll = false;
-            } else {
-                boolList.set(i, true);
-                isChooseAll = true;
             }
+            isChooseAll = false;
+        } else {
+            for (int i = 0; i < courseList.size(); i++) {
+                boolList.set(i, true);
+            }
+            isChooseAll = true;
         }
         adapter.notifyDataSetChanged();
     }
-
 }

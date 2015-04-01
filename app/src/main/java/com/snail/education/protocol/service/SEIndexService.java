@@ -4,6 +4,8 @@ import com.snail.education.protocol.result.SEAdResult;
 import com.snail.education.protocol.result.SECourseResult;
 import com.snail.education.protocol.result.SEIndexCountResult;
 import com.snail.education.protocol.result.SESearchResult;
+import com.snail.education.protocol.result.SESignListResult;
+import com.snail.education.protocol.result.SESignResult;
 
 import retrofit.Callback;
 import retrofit.http.GET;
@@ -54,4 +56,28 @@ public interface SEIndexService {
     @GET("/api/indexTopClass")
     public void fetchIndexCourse(@Query("limit") int limit,
                                  Callback<SECourseResult> cb);
+
+    /**
+     * 首页签到信息
+     *
+     * @param uid year month
+     * @param cb
+     */
+    @GET("/api/calendar/list")
+    public void fetchSignInfo(@Query("uid") String uid,
+                              @Query("year") int year,
+                              @Query("month") int month,
+                              Callback<SESignListResult> cb);
+
+    /**
+     * 签到
+     *
+     * @param uid
+     * @param cb
+     */
+    @GET("/api/calendar/sign")
+    public void userSign(@Query("uid") String uid,
+                         Callback<SESignResult> cb);
+
+
 }

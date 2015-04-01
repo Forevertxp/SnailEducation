@@ -2,7 +2,6 @@ package com.snail.education.ui.story;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
 import com.snail.education.common.NoScrollGridAdapter;
 import com.snail.education.common.NoScrollGridView;
@@ -22,7 +19,7 @@ import com.snail.education.protocol.manager.SEComment;
 import com.snail.education.protocol.manager.SEStoryManger;
 import com.snail.education.protocol.model.SEStory;
 import com.snail.education.protocol.result.ServiceError;
-import com.snail.education.ui.activity.ImagePagerActivity;
+import com.snail.education.ui.story.activity.ImagePagerActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

@@ -8,21 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.lidroid.xutils.DbUtils;
-import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.exception.DbException;
-import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.snail.education.R;
 import com.snail.education.database.CourseDB;
-import com.snail.education.ui.me.adapter.DownloadAdapter;
+import com.snail.education.ui.me.adapter.DownloadedAdapter;
+import com.snail.education.ui.me.adapter.DownloadingAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +32,8 @@ public class DownloadedFragment extends BaseFragment {
 
     private boolean isChooseAll = false; //标记是否已全选
 
-    public DownloadAdapter adapter;
-    private DownloadAdapter.ViewHolder viewHolder;
+    public DownloadedAdapter adapter;
+    private DownloadingAdapter.ViewHolder viewHolder;
 
     private HttpHandler handler;
 
@@ -58,8 +53,8 @@ public class DownloadedFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent,
                                     View view, int position, long id) {
-                viewHolder = (DownloadAdapter.ViewHolder) view.getTag();
-                if (DownloadAdapter.CHECKBOS_VISIBLE) {
+                viewHolder = (DownloadingAdapter.ViewHolder) view.getTag();
+                if (DownloadingAdapter.CHECKBOS_VISIBLE) {
                     viewHolder.cb.toggle();
                     if (viewHolder.cb.isChecked()) {
                         boolList.set(position, true);
@@ -85,7 +80,7 @@ public class DownloadedFragment extends BaseFragment {
                 for (int i = 0; i < courseList.size(); i++) {
                     boolList.add(false);
                 }
-                adapter = new DownloadAdapter(getActivity(), courseList, boolList);
+                adapter = new DownloadedAdapter(getActivity(), courseList, boolList);
                 downloadingLV.setAdapter(adapter);
             }
 

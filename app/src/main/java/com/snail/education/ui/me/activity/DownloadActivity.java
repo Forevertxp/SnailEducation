@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -20,22 +19,14 @@ import android.widget.Toast;
 import com.snail.education.R;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.me.NoScrollViewPager;
-import com.snail.education.ui.me.adapter.DownloadAdapter;
+import com.snail.education.ui.me.adapter.DownloadedAdapter;
+import com.snail.education.ui.me.adapter.DownloadingAdapter;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPageChangeListener {
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private FragmentActivity myContext;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private static final String TAG = "DxFragmentActivity";
 
@@ -60,6 +51,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
     private LinearLayout editLL;
     private TextView chooseTV, deleteTV;
     private boolean isEditing = false;
+    private boolean isChooseAll = false;
 
     public TitleIndicator getIndicator() {
         return mIndicator;
@@ -168,32 +160,50 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         setRightTextListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (isEditing) {
-                    DownloadAdapter.CHECKBOS_VISIBLE = false;
+
                     switch (mCurrentTab) {
                         case 0:
-                            ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
+                            if (((DownloadedFragment) myAdapter.getItem(0)).adapter != null) {
+                                DownloadedAdapter.CHECKBOS_VISIBLE = false;
+                                ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
+                                editLL.setVisibility(View.INVISIBLE);
+                                setRightText("编辑");
+                                isEditing = false;
+                            }
                             break;
                         case 1:
-                            ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+                            if (((DownloadingFragment) myAdapter.getItem(1)).adapter != null) {
+                                DownloadingAdapter.CHECKBOS_VISIBLE = false;
+                                ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+                                editLL.setVisibility(View.INVISIBLE);
+                                setRightText("编辑");
+                                isEditing = false;
+                            }
                             break;
                     }
-                    editLL.setVisibility(View.INVISIBLE);
-                    setRightText("编辑");
-                    isEditing = false;
                 } else {
-                    DownloadAdapter.CHECKBOS_VISIBLE = true;
                     switch (mCurrentTab) {
                         case 0:
-                            ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
+                            if (((DownloadedFragment) myAdapter.getItem(0)).adapter != null) {
+                                DownloadedAdapter.CHECKBOS_VISIBLE = true;
+                                ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
+                                setRightText("取消");
+                                editLL.setVisibility(View.VISIBLE);
+                                isEditing = true;
+                            }
                             break;
                         case 1:
-                            ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+                            if (((DownloadingFragment) myAdapter.getItem(1)).adapter != null) {
+                                DownloadingAdapter.CHECKBOS_VISIBLE = true;
+                                ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+                                setRightText("取消");
+                                editLL.setVisibility(View.VISIBLE);
+                                isEditing = true;
+                            }
                             break;
                     }
-                    setRightText("取消");
-                    editLL.setVisibility(View.VISIBLE);
-                    isEditing = true;
                 }
             }
         });
@@ -201,6 +211,13 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         chooseTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isChooseAll) {
+                    isChooseAll = true;
+                    chooseTV.setText("取消");
+                } else {
+                    isChooseAll = false;
+                    chooseTV.setText("全选");
+                }
                 // 分别调用Fragment中方法
                 switch (mCurrentTab) {
                     case 0:
@@ -257,6 +274,22 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
     public void onPageSelected(int position) {
         mIndicator.onSwitched(position);
         mCurrentTab = position;
+        // 切换tab时，取消之前的编辑状态
+        if (isEditing) {
+            if (((DownloadedFragment) myAdapter.getItem(0)).adapter != null) {
+                DownloadedAdapter.CHECKBOS_VISIBLE = false;
+                ((DownloadedFragment) myAdapter.getItem(0)).adapter.notifyDataSetChanged();
+            }
+            if (((DownloadingFragment) myAdapter.getItem(1)).adapter != null) {
+                DownloadingAdapter.CHECKBOS_VISIBLE = false;
+                ((DownloadingFragment) myAdapter.getItem(1)).adapter.notifyDataSetChanged();
+            }
+            editLL.setVisibility(View.INVISIBLE);
+            setRightText("编辑");
+            isEditing = false;
+            isChooseAll = false;
+            chooseTV.setText("全选");
+        }
     }
 
     @Override

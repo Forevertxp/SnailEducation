@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.snail.education.R;
+import com.snail.education.app.SEConfig;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
@@ -88,6 +89,9 @@ public class CoursePayActivity extends SEBaseActivity {
     private Button zfbPay, wxPay;
 
     private int pay_type = 0; //0支付宝 1微信
+
+    private String aLiPayCallback = SEConfig.getInstance().getAPIBaseURL() + "api/payCallback";  //支付宝回调地址
+    private String wxPayCallback = SEConfig.getInstance().getAPIBaseURL() + "api/wxPayCallback";  //微信支付回调地址
 
     private SECourseService courseService;
 
@@ -373,6 +377,7 @@ public class CoursePayActivity extends SEBaseActivity {
 
         // 商户网站唯一订单号
         //orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+        // 从服务端获取到的订单号
         orderInfo += "&out_trade_no=" + "\"" + trade_no + "\"";
 
         // 商品名称
