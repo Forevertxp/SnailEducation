@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
+import com.lidroid.xutils.db.sqlite.WhereBuilder;
 import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
@@ -77,7 +78,7 @@ public class DownloadingFragment extends BaseFragment {
                     }
                 } else {
                     if (!isDownloading) {
-                        doDownload(courseList.get(position).getId(), courseList.get(position).getVideo(), "/sdcard/snailvideo" + courseList.get(position).getId() + ".mp4");
+                        doDownload(courseList.get(position).getId(), courseList.get(position).getVideo(), DownloadActivity.SDPATH + "/snailvideo" + courseList.get(position).getId() + ".mp4");
                     } else {
                         // 点击的正在下载的视频
                         if (courseList.get(position).getId() == downloadingID) {
@@ -85,7 +86,7 @@ public class DownloadingFragment extends BaseFragment {
                             // 遍历剩下的列表，检查是否有等待下载的
                             try {
                                 CourseDB course = db.findFirst(Selector.from(CourseDB.class)
-                                        .where("isInQueue", "=", 1));
+                                        .where("isInQueue", "=", 1).and(WhereBuilder.b("id", "<>", courseList.get(position).getId())));
                                 if (course != null) {
                                     doDownload(course.getId(), course.getVideo(), "/sdcard/snailvideo" + course.getId() + ".mp4");
                                 }
@@ -122,7 +123,7 @@ public class DownloadingFragment extends BaseFragment {
         try {
             if (db.findAll(CourseDB.class) != null) {
                 courseList = db.findAll(Selector.from(CourseDB.class)
-                        .where("isdone", "=", 0)
+                        .where("isdone", "<>", 1)
                         .orderBy("id"));
                 // checkbox 初始为未选中状态
                 for (int i = 0; i < courseList.size(); i++) {
@@ -158,12 +159,34 @@ public class DownloadingFragment extends BaseFragment {
                             tempTV.setText("0%");
                         isDownloading = true;
                         downloadingID = id;
+                        try {
+                            CourseDB c = db.findById(CourseDB.class, id);
+                            if (c != null) {
+                                c.setIsdone(2);
+                                db.update(c, "isdone");
+                            }
+                        } catch (DbException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
                     public void onLoading(long total, long current, boolean isUploading) {
                         tempTV.setText(current + "/" + total);
                         downloadingProgress = (int) (current * 100 / total);
+                        if (!isDownloading) {
+                            isDownloading = true;
+                            downloadingID = id;
+                            try {
+                                CourseDB c = db.findById(CourseDB.class, id);
+                                if (c != null) {
+                                    c.setIsdone(2);
+                                    db.update(c, "isdone");
+                                }
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
 
                     @Override
@@ -186,9 +209,9 @@ public class DownloadingFragment extends BaseFragment {
                         // 遍历剩下的列表，检查是否有等待下载的
                         try {
                             CourseDB course = db.findFirst(Selector.from(CourseDB.class)
-                                    .where("isInQueue", "=", 1));
+                                    .where("isInQueue", "=", 1).and(WhereBuilder.b("id", "<>", id)));
                             if (course != null) {
-                                doDownload(course.getId(), course.getVideo(), "/sdcard/snailvideo" + course.getId() + ".mp4");
+                                doDownload(course.getId(), course.getVideo(), DownloadActivity.SDPATH + "/snailvideo" + course.getId() + ".mp4");
                             }
 
                         } catch (DbException e) {
@@ -202,6 +225,15 @@ public class DownloadingFragment extends BaseFragment {
                         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                         isDownloading = false;
                         downloadingID = 0;
+                        try {
+                            CourseDB c = db.findById(CourseDB.class, id);
+                            if (c != null) {
+                                c.setIsdone(0);
+                                db.update(c, "isdone");
+                            }
+                        } catch (DbException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
     }
@@ -244,7 +276,8 @@ public class DownloadingFragment extends BaseFragment {
             if (c != null) {
                 c.setIsInQueue(0);
                 c.setProgress(downloadingProgress + "%");
-                db.update(c, "isInQueue", "progress");
+                c.setIsdone(0);
+                db.update(c, "isInQueue", "progress", "isdone");
             }
             tempTV.setText("暂停");
         } catch (DbException e) {
@@ -264,6 +297,40 @@ public class DownloadingFragment extends BaseFragment {
             }
             isChooseAll = true;
         }
+        adapter.notifyDataSetChanged();
+    }
+
+    public void deleteCourse() {
+        boolean existDownloadingCourse = false;
+        for (int i = 0; i < courseList.size(); i++) {
+            if (boolList.get(i)) {
+                if (courseList.get(i).getIsdone() == 2) {
+                    doStopDownload(courseList.get(i).getId());
+                    existDownloadingCourse = true;
+                }
+                File file = new File(DownloadActivity.SDPATH + "/snailvideo" + courseList.get(i).getId() + ".mp4");
+                if (file.exists()) {
+                    file.delete();
+                }
+                try {
+                    db.deleteById(CourseDB.class, courseList.get(i).getId());
+                    courseList.remove(courseList.get(i));
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (existDownloadingCourse)
+            try {
+                CourseDB course = db.findFirst(Selector.from(CourseDB.class)
+                        .where("isInQueue", "=", 1));
+                if (course != null) {
+                    doDownload(course.getId(), course.getVideo(), "/sdcard/snailvideo" + course.getId() + ".mp4");
+                }
+
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
         adapter.notifyDataSetChanged();
     }
 }

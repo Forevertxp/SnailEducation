@@ -1,6 +1,8 @@
 package com.snail.education.ui.me.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.snail.education.R;
+import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.me.NoScrollViewPager;
 import com.snail.education.ui.me.adapter.DownloadedAdapter;
@@ -32,6 +35,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
 
     public static final String EXTRA_TAB = "tab";
     public static final String EXTRA_QUIT = "extra.quit";
+    public static final String SDPATH = "/sdcard/SnialData";
 
     protected int mCurrentTab = 0;
     protected int mLastTab = -1;
@@ -221,7 +225,7 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
                 // 分别调用Fragment中方法
                 switch (mCurrentTab) {
                     case 0:
-                        Toast.makeText(DownloadActivity.this, mCurrentTab + "", Toast.LENGTH_SHORT).show();
+                        ((DownloadedFragment) myAdapter.getItem(0)).chooseOrDeChoose();
                         break;
                     case 1:
                         ((DownloadingFragment) myAdapter.getItem(1)).chooseOrDeChoose();
@@ -234,12 +238,28 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
         deleteTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (mCurrentTab) {
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                }
+                new AlertDialog.Builder(DownloadActivity.this)
+                        .setTitle("请确认")
+                        .setMessage("确定要删除所选课程？")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (mCurrentTab) {
+                                    case 0:
+                                        ((DownloadedFragment) myAdapter.getItem(0)).deleteCourse();
+                                        break;
+                                    case 1:
+                                        ((DownloadingFragment) myAdapter.getItem(1)).deleteCourse();
+                                        break;
+                                }
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .show();
+
             }
         });
 

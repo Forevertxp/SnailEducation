@@ -29,7 +29,7 @@ public class CourseDB {
     private int isInQueue; //是否添加到下载队列
 
     @Column(column = "isdone")
-    private int isdone; //是否已完成下载 0 初始状态 1 正在下载
+    private int isdone; //是否已完成下载 0 初始状态 1 完成下载 2 正在下载过程中
 
     @Column(column = "progress")
     private String progress; // 下载进度

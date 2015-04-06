@@ -2,7 +2,11 @@ package com.snail.education.ui.me.activity;
 
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import com.snail.education.database.CourseDB;
 import com.snail.education.ui.me.adapter.DownloadedAdapter;
 import com.snail.education.ui.me.adapter.DownloadingAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +38,9 @@ public class DownloadedFragment extends BaseFragment {
     private boolean isChooseAll = false; //标记是否已全选
 
     public DownloadedAdapter adapter;
-    private DownloadingAdapter.ViewHolder viewHolder;
+    private DownloadedAdapter.ViewHolder viewHolder;
 
-    private HttpHandler handler;
+    private DbUtils db;
 
     public DownloadedFragment() {
         // Required empty public constructor
@@ -47,14 +52,15 @@ public class DownloadedFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_downloading, container, false);
         downloadingLV = (ListView) view.findViewById(R.id.downloadingLV);
+        db = DbUtils.create(getActivity());
         initDownloadingData();
         downloadingLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent,
                                     View view, int position, long id) {
-                viewHolder = (DownloadingAdapter.ViewHolder) view.getTag();
-                if (DownloadingAdapter.CHECKBOS_VISIBLE) {
+                viewHolder = (DownloadedAdapter.ViewHolder) view.getTag();
+                if (DownloadedAdapter.CHECKBOS_VISIBLE) {
                     viewHolder.cb.toggle();
                     if (viewHolder.cb.isChecked()) {
                         boolList.set(position, true);
@@ -62,7 +68,7 @@ public class DownloadedFragment extends BaseFragment {
                         boolList.set(position, false);
                     }
                 } else {
-                    doPlay(courseList.get(position).getVideo(), "/sdcard/snailvideo" + courseList.get(position).getId() + ".mp4");
+                    doPlay(courseList.get(position).getVideo(), DownloadActivity.SDPATH + "/snailvideo" + courseList.get(position).getId() + ".mp4");
                 }
             }
         });
@@ -91,17 +97,42 @@ public class DownloadedFragment extends BaseFragment {
     }
 
     public void doPlay(String sourceUrl, String targetUrl) {
-
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String type = "video/mp4";
+        Uri uri = Uri.parse("file://" + targetUrl);
+        intent.setDataAndType(uri, type);
+        intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        startActivity(intent);
     }
 
     public void chooseOrDeChoose() {
-        for (int i = 0; i < courseList.size(); i++) {
-            if (isChooseAll) {
+        if (isChooseAll) {
+            for (int i = 0; i < courseList.size(); i++) {
                 boolList.set(i, false);
-                isChooseAll = false;
-            } else {
+            }
+            isChooseAll = false;
+        } else {
+            for (int i = 0; i < courseList.size(); i++) {
                 boolList.set(i, true);
-                isChooseAll = true;
+            }
+            isChooseAll = true;
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    public void deleteCourse() {
+        for (int i = 0; i < courseList.size(); i++) {
+            if (boolList.get(i)) {
+                File file = new File(DownloadActivity.SDPATH + "/snailvideo" + courseList.get(i).getId() + ".mp4");
+                if (file.exists()) {
+                    file.delete();
+                }
+                try {
+                    db.deleteById(CourseDB.class, courseList.get(i).getId());
+                    courseList.remove(courseList.get(i));
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
         }
         adapter.notifyDataSetChanged();
