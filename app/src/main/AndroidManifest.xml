@@ -70,7 +70,7 @@
             android:name="com.snail.education.ui.index.activity.AuditionActivity"
             android:label="蜗牛试听" />
         <activity
-            android:name=".ui.story.activity.ImagePagerActivity"
+            android:name="com.snail.education.ui.story.activity.ImagePagerActivity"
             android:label="@string/title_activity_image_pager" />
         <activity
             android:name="com.snail.education.ui.course.CourseDetailActivity"
@@ -120,7 +120,8 @@
             android:label="@string/title_activity_user_update" />
         <activity
             android:name="com.snail.education.ui.me.activity.DownloadActivity"
-            android:label="@string/title_activity_download" />
+            android:label="@string/title_activity_download"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.snail.education.ui.index.activity.SubjectActivity"
             android:label="@string/title_activity_subject" />
@@ -151,6 +152,15 @@
         <activity
             android:name="com.snail.education.ui.me.activity.UserPasswordActivity"
             android:label="@string/title_activity_user_password" >
+        </activity>
+        <activity
+            android:name="com.snail.education.ui.me.activity.VideoPlayActivity"
+            android:label="@string/title_activity_video_play"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="com.snail.education.ui.index.activity.TeacherInfoActivity"
+            android:label="@string/title_activity_teacher_info" >
         </activity>
     </application>
 
