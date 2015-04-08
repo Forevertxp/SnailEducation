@@ -1,6 +1,7 @@
 package com.snail.education.ui.index.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -105,7 +106,9 @@ public class TeacherActivity extends SEBaseActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 //这里要利用adapter.getItem(position)来获取当前position所对应的对象
-                Toast.makeText(getApplication(), ((SortModel) adapter.getItem(position)).getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(TeacherActivity.this, TeacherInfoActivity.class);
+                intent.putExtra("id", ((SortModel) adapter.getItem(position)).getId());
+                startActivity(intent);
             }
         });
 
@@ -172,6 +175,7 @@ public class TeacherActivity extends SEBaseActivity {
 
         for (int i = 0; i < teacherArrayList.size(); i++) {
             SortModel sortModel = new SortModel();
+            sortModel.setId(teacherArrayList.get(i).getId());
             sortModel.setName(teacherArrayList.get(i).getName());
             sortModel.setOname(teacherArrayList.get(i).getOname());
             sortModel.setJob(teacherArrayList.get(i).getJob());

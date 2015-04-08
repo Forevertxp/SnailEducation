@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -35,7 +36,8 @@ public class DownloadActivity extends SEBaseActivity implements ViewPager.OnPage
 
     public static final String EXTRA_TAB = "tab";
     public static final String EXTRA_QUIT = "extra.quit";
-    public static final String SDPATH = "/sdcard/SnialData";
+    public static final String SDPATH = Environment.getExternalStorageDirectory()
+            .getPath() + "/SnialData";
 
     protected int mCurrentTab = 0;
     protected int mLastTab = -1;

@@ -97,11 +97,8 @@ public class DownloadedFragment extends BaseFragment {
     }
 
     public void doPlay(String sourceUrl, String targetUrl) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String type = "video/mp4";
-        Uri uri = Uri.parse("file://" + targetUrl);
-        intent.setDataAndType(uri, type);
-        intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+        intent.putExtra("videoPath", targetUrl);
         startActivity(intent);
     }
 
