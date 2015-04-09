@@ -2,6 +2,10 @@ package com.snail.education.ui.story;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +19,25 @@ import com.snail.education.R;
 import com.snail.education.common.NoScrollGridAdapter;
 import com.snail.education.common.NoScrollGridView;
 import com.snail.education.protocol.SECallBack;
+import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SEComment;
+import com.snail.education.protocol.manager.SERestManager;
 import com.snail.education.protocol.manager.SEStoryManger;
 import com.snail.education.protocol.model.SEStory;
+import com.snail.education.protocol.model.SEUser;
+import com.snail.education.protocol.result.SEStoryPraiseResult;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.protocol.service.SEStoryService;
 import com.snail.education.ui.story.activity.ImagePagerActivity;
+import com.snail.svprogresshud.SVProgressHUD;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by tianxiaopeng on 15-1-17.
@@ -58,7 +72,7 @@ public class StoryAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup) {
+    public View getView(final int position, View convertView, ViewGroup viewGroup) {
         ViewHolder holder = null;
         if (convertView == null) {
             convertView = View.inflate(context, R.layout.item_story, null);
@@ -70,6 +84,7 @@ public class StoryAdapter extends BaseAdapter {
             holder.imageGridView = (NoScrollGridView) convertView.findViewById(R.id.imageGridView);
             holder.timeText = (TextView) convertView.findViewById(R.id.timeText);
             holder.messageText = (TextView) convertView.findViewById(R.id.messageText);
+            holder.likeImage = (ImageView) convertView.findViewById(R.id.likeImage);
             holder.likeText = (TextView) convertView.findViewById(R.id.likeText);
             holder.commentListView = (ListView) convertView.findViewById(R.id.commentListView);
             convertView.setTag(holder);
@@ -108,11 +123,22 @@ public class StoryAdapter extends BaseAdapter {
             }
         });
         holder.timeText.setText(story.get_time());
-        holder.likeText.setText(story.get_praised() + "");
+        if (story.get_praised() == 1) {
+            holder.likeImage.setBackgroundResource(R.drawable.ic_liked);
+        } else {
+            holder.likeImage.setBackgroundResource(R.drawable.ic_like);
+        }
+        holder.likeText.setText(story.getPraise() + "");
         holder.messageText.setText(story.getRep_count() + "");
         MyBaseAdapter adapter = new MyBaseAdapter(context, story.getRep());
         holder.commentListView.setAdapter(adapter);
         setListViewHeightBasedOnChildren(holder.commentListView);
+        holder.likeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                praiseStory(position);
+            }
+        });
         return convertView;
     }
 
@@ -210,6 +236,37 @@ public class StoryAdapter extends BaseAdapter {
 
     }
 
+    private void praiseStory(final int position) {
+        SEUser user = SEAuthManager.getInstance().getAccessUser();
+        if (user == null) {
+            return;
+        }
+        SEStoryService storyService = SERestManager.getInstance().create(SEStoryService.class);
+        final SEStory story = storyList.get(position);
+        storyService.praiseStory(story.getId(), user.getId(), new Callback<SEStoryPraiseResult>() {
+            @Override
+            public void success(SEStoryPraiseResult result, Response response) {
+                if (result.state) {
+                    story.setPraise(result.count);
+                    if (result.sta.equals("add")) {
+                        story.set_praised(1);
+                    } else if (result.sta.equals("del")) {
+                        story.set_praised(0);
+                    }
+                    storyList.set(position, story);
+                    notifyDataSetChanged();
+                } else {
+                    SVProgressHUD.showInViewWithoutIndicator(context, result.msg, 2.0f);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                SVProgressHUD.showInViewWithoutIndicator(context, error.getMessage(), 2.0f);
+            }
+        });
+    }
+
     class ViewHolder {
         private ImageView iv_avatar;
         private TextView tv_title;
@@ -219,6 +276,7 @@ public class StoryAdapter extends BaseAdapter {
         private TextView timeText;
         private TextView messageText;
         private TextView likeText;
+        private ImageView likeImage;
         private ListView commentListView;
     }
 
@@ -267,7 +325,10 @@ public class StoryAdapter extends BaseAdapter {
             if (position < 6) {
                 SEComment comment = getItem(position);
                 // 向ViewHolder中填入的数据
-                holder.title.setText(comment.getUser_nickname() + "回复" + comment.getTo_user_nickname());
+                SpannableString ss = new SpannableString(comment.getUser_nickname() + " 回复 " + comment.getTo_user_nickname()+":");
+                ss.setSpan(new ForegroundColorSpan(Color.argb(100,0, 154, 205)), 0, comment.getUser_nickname().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new ForegroundColorSpan(Color.argb(100,0,154, 205)), comment.getUser_nickname().length() + 4, comment.getUser_nickname().length() + 4 + comment.getTo_user_nickname().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                holder.title.setText(ss);
                 holder.text.setText(comment.getMsg());
             }
 

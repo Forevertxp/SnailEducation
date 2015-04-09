@@ -48,7 +48,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
     private SEAutoSlidingPagerView autoSlidingPagerView;
     private ImageView rightImage;
     private ImageView listeningImage, courseImage, subjectImage, examImage;
-    private ImageView teacherImage, organizationImage, studentImage;
+    private RelativeLayout teacherRL, organizationRL, studentRL;
     private TextView signinText, teacherText, organizationText, studentText;
     private ListView courseListView;
     private final SEIndexManager indexManager = SEIndexManager.getInstance();
@@ -132,13 +132,13 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
         studentText = (TextView) view.findViewById(R.id.studentText);
         initCountInfo();
 
-        teacherImage = (ImageView) view.findViewById(R.id.teacherImage);
-        organizationImage = (ImageView) view.findViewById(R.id.organizationImage);
-        studentImage = (ImageView) view.findViewById(R.id.studentImage);
+        teacherRL = (RelativeLayout) view.findViewById(R.id.teacherRL);
+        organizationRL = (RelativeLayout) view.findViewById(R.id.organizationRL);
+        studentRL = (RelativeLayout) view.findViewById(R.id.studentRL);
 
-        teacherImage.setOnClickListener(this);
-        organizationImage.setOnClickListener(this);
-        studentImage.setOnClickListener(this);
+        teacherRL.setOnClickListener(this);
+        organizationRL.setOnClickListener(this);
+        studentRL.setOnClickListener(this);
 
         courseListView = (ListView) view.findViewById(R.id.indexCourse);
         initCourseList();
@@ -262,15 +262,15 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
                 Intent examIntent = new Intent(getActivity(), ExamActivity.class);
                 startActivity(examIntent);
                 break;
-            case R.id.teacherImage:
+            case R.id.teacherRL:
                 Intent teacherIntent = new Intent(getActivity(), TeacherActivity.class);
                 startActivity(teacherIntent);
                 break;
-            case R.id.organizationImage:
+            case R.id.organizationRL:
                 Intent organizationIntent = new Intent(getActivity(), OrganizationActivity.class);
                 startActivity(organizationIntent);
                 break;
-            case R.id.studentImage:
+            case R.id.studentRL:
                 Intent studentIntent = new Intent(getActivity(), StudentActivity.class);
                 startActivity(studentIntent);
                 break;

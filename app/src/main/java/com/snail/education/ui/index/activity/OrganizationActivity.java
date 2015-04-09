@@ -1,6 +1,7 @@
 package com.snail.education.ui.index.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -95,7 +96,9 @@ public class OrganizationActivity extends SEBaseActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 //这里要利用adapter.getItem(position)来获取当前position所对应的对象
-                Toast.makeText(getApplication(), ((SEOrg) adapter.getItem(position)).getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(OrganizationActivity.this, OrganizationInfoActivity.class);
+                intent.putExtra("id", ((SEOrg) adapter.getItem(position)).getId());
+                startActivity(intent);
             }
         });
 

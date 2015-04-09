@@ -3,6 +3,7 @@ package com.snail.education.protocol.service;
 import com.snail.education.protocol.result.SEStudentResult;
 
 import retrofit.Callback;
+import retrofit.client.Response;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -28,6 +29,6 @@ public interface SEStudentService {
      */
     @GET("/api/studentInfo/{studentID}")
     public void fetchStudentInfo(@Path("studentID") int studentID,
-                                 Callback<String> cb);
+                                 Callback<Response> cb);
 
 }

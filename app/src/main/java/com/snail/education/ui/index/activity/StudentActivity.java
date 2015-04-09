@@ -16,6 +16,8 @@ import com.snail.education.ui.index.adapter.StudentAdapter;
 import com.snail.pulltorefresh.PullToRefreshBase;
 import com.snail.pulltorefresh.PullToRefreshListView;
 
+import java.io.Serializable;
+
 public class StudentActivity extends SEBaseActivity {
 
     private PullToRefreshListView studentListView;
@@ -72,6 +74,7 @@ public class StudentActivity extends SEBaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(StudentActivity.this, StudentInfoActivity.class);
+                intent.putExtra("student", (Serializable) adapter.getItem(position));
                 startActivity(intent);
             }
         });

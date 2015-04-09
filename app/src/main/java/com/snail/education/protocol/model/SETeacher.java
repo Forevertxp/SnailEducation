@@ -2,10 +2,12 @@ package com.snail.education.protocol.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by tianxiaopeng on 15-3-22.
  */
-public class SETeacher {
+public class SETeacher implements Serializable {
     private String id;
     private String fid;
     private String sid;

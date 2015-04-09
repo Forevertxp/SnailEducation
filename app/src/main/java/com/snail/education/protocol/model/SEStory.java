@@ -68,4 +68,12 @@ public class SEStory {
     public int get_praised() {
         return _praised;
     }
+
+    public void set_praised(int _praised) {
+        this._praised = _praised;
+    }
+
+    public void setPraise(int praise) {
+        this.praise = praise;
+    }
 }

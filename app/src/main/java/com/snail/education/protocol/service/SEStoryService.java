@@ -1,6 +1,7 @@
 package com.snail.education.protocol.service;
 
 import com.snail.education.protocol.model.SEStory;
+import com.snail.education.protocol.result.SEStoryPraiseResult;
 
 import java.util.ArrayList;
 
@@ -43,5 +44,15 @@ public interface SEStoryService {
                             @Part("name") TypedFile name,
                             Callback<ArrayList<SEStory>> cb);
 
+    /**
+     * 故事点赞
+     *
+     * @param cb
+     */
+    @FormUrlEncoded
+    @POST("/api/sotryPraise")
+    public void praiseStory(@Field("id") String id,
+                            @Field("uid") String uid,
+                            Callback<SEStoryPraiseResult> cb);
 
 }
