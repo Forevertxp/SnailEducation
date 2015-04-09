@@ -162,6 +162,10 @@
             android:name="com.snail.education.ui.index.activity.TeacherInfoActivity"
             android:label="@string/title_activity_teacher_info" >
         </activity>
+        <activity
+            android:name="com.snail.education.ui.index.activity.OrganizationInfoActivity"
+            android:label="@string/title_activity_organization_info" >
+        </activity>
     </application>
 
 </manifest>
