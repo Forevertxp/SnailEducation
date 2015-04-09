@@ -74,19 +74,30 @@
         <TextView
             android:id="@+id/timeText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp" />
 
         <ImageView
             android:id="@+id/likeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/likeText"
-            android:src="@drawable/ic_like" />
+            android:layout_margin="5dp" />
 
         <TextView
             android:id="@+id/likeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:padding="3dp"
+            android:layout_toLeftOf="@+id/line" />
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:background="@color/lightgrey"
+            android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/messageImage" />
 
         <ImageView
@@ -94,19 +105,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/messageText"
-            android:src="@drawable/ic_like" />
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_comment" />
 
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/enterImage" />
+            android:layout_toLeftOf="@+id/enterImage"
+            android:padding="3dp"
+            android:layout_marginRight="10dp" />
 
         <ImageView
             android:id="@+id/enterImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:padding="5dp"
             android:src="@drawable/ic_next" />
     </RelativeLayout>
 

@@ -63,5 +63,6 @@
     <string name="title_activity_user_password">UserPasswordActivity</string>
     <string name="title_activity_video_play">VideoPlayActivity</string>
     <string name="title_activity_teacher_info">TeacherInfoActivity</string>
+    <string name="title_activity_organization_info">OrganizationInfoActivity</string>
 
 </resources>

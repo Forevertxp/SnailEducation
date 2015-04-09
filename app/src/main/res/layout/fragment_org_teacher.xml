@@ -2,11 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.snail.education.ui.index.activity.TeacherCourseFragment">
+    tools:context="com.snail.education.ui.index.activity.OrgTeacherFragment">
 
     <ListView
-        android:id="@+id/courseListView"
+        android:id="@+id/teacherList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>
-
 </FrameLayout>
