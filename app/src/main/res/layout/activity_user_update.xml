@@ -233,7 +233,8 @@
                 android:background="@drawable/button_selector"
                 android:text="保 存"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="18sp"
+                android:padding="8dp" />
 
         </LinearLayout>
 
