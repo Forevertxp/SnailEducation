@@ -1,6 +1,9 @@
 package com.snail.education.ui.course.pay;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +26,7 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
 import com.snail.education.protocol.manager.SERestManager;
+import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SECart;
 import com.snail.education.protocol.model.SEOrder;
 import com.snail.education.protocol.model.SEUser;
@@ -157,6 +161,18 @@ public class CoursePayActivity extends SEBaseActivity {
             @Override
             public void success() {
                 ArrayList<SECart> cartArrayList = courseManager.getCartList();
+                if (cartArrayList.size() == 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CoursePayActivity.this);
+                    builder.setCancelable(false);
+                    builder.setTitle("提示")
+                            .setMessage("你的购物车已空")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            }).show();
+                    return;
+                }
                 float total = 0;
                 for (SECart cart : cartArrayList) {
                     total += Float.parseFloat(cart.getData().getPrice());

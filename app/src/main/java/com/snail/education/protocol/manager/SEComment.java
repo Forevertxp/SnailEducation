@@ -40,4 +40,32 @@ public class SEComment {
     public String getTo_user_nickname() {
         return to_user_nickname;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setToid(String toid) {
+        this.toid = toid;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public void setUser_nickname(String user_nickname) {
+        this.user_nickname = user_nickname;
+    }
+
+    public void setTo_user_nickname(String to_user_nickname) {
+        this.to_user_nickname = to_user_nickname;
+    }
 }

@@ -76,4 +76,12 @@ public class SEStory {
     public void setPraise(int praise) {
         this.praise = praise;
     }
+
+    public void setRep(ArrayList<SEComment> rep) {
+        this.rep = rep;
+    }
+
+    public void setRep_count(int rep_count) {
+        this.rep_count = rep_count;
+    }
 }

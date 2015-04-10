@@ -85,13 +85,14 @@ public class StoryAdapter extends BaseAdapter {
             holder.timeText = (TextView) convertView.findViewById(R.id.timeText);
             holder.messageText = (TextView) convertView.findViewById(R.id.messageText);
             holder.likeImage = (ImageView) convertView.findViewById(R.id.likeImage);
+            holder.messageImage = (ImageView) convertView.findViewById(R.id.messageImage);
             holder.likeText = (TextView) convertView.findViewById(R.id.likeText);
             holder.commentListView = (ListView) convertView.findViewById(R.id.commentListView);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        SEStory story = storyList.get(position);
+        final SEStory story = storyList.get(position);
         holder.tv_title.setText(story.getUser_nickname());
         holder.tv_content.setText(story.getUser_say());
         holder.tv_msg.setText(story.getMsg());
@@ -137,6 +138,16 @@ public class StoryAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 praiseStory(position);
+            }
+        });
+        holder.messageImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.snailedu.sendmessage");
+                intent.putExtra("id", story.getId());
+                intent.putExtra("toid", story.getUid());
+                intent.putExtra("position", position);
+                context.sendBroadcast(intent);
             }
         });
         return convertView;
@@ -236,6 +247,16 @@ public class StoryAdapter extends BaseAdapter {
 
     }
 
+    protected void updateView(int position, SEComment comment) {
+        SEStory story = storyList.get(position);
+        ArrayList<SEComment> commentArrayList = story.getRep();
+        commentArrayList.add(0, comment);
+        story.setRep(commentArrayList);
+        story.setRep_count(commentArrayList.size());
+        storyList.set(position, story);
+        notifyDataSetChanged();
+    }
+
     private void praiseStory(final int position) {
         SEUser user = SEAuthManager.getInstance().getAccessUser();
         if (user == null) {
@@ -277,6 +298,7 @@ public class StoryAdapter extends BaseAdapter {
         private TextView messageText;
         private TextView likeText;
         private ImageView likeImage;
+        private ImageView messageImage;
         private ListView commentListView;
     }
 
@@ -292,11 +314,13 @@ public class StoryAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return dataList.size();
+            // 最多显示10条评论
+            return dataList.size() < 10 ? dataList.size() : 10;
         }
 
         @Override
         public SEComment getItem(int position) {
+            // 最多只显示10条评论
             return dataList.get(position);
         }
 
@@ -321,16 +345,13 @@ public class StoryAdapter extends BaseAdapter {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            // 最多只显示5条评论
-            if (position < 6) {
-                SEComment comment = getItem(position);
-                // 向ViewHolder中填入的数据
-                SpannableString ss = new SpannableString(comment.getUser_nickname() + " 回复 " + comment.getTo_user_nickname()+":");
-                ss.setSpan(new ForegroundColorSpan(Color.argb(100,0, 154, 205)), 0, comment.getUser_nickname().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ss.setSpan(new ForegroundColorSpan(Color.argb(100,0,154, 205)), comment.getUser_nickname().length() + 4, comment.getUser_nickname().length() + 4 + comment.getTo_user_nickname().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                holder.title.setText(ss);
-                holder.text.setText(comment.getMsg());
-            }
+            SEComment comment = getItem(position);
+            // 向ViewHolder中填入的数据
+            SpannableString ss = new SpannableString(comment.getUser_nickname() + " 回复 " + comment.getTo_user_nickname() + ":");
+            ss.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 154, 205)), 0, comment.getUser_nickname().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 154, 205)), comment.getUser_nickname().length() + 4, comment.getUser_nickname().length() + 4 + comment.getTo_user_nickname().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.title.setText(ss);
+            holder.text.setText(comment.getMsg());
 
 //            int colorPos = position % colors.length;
 //            convertView.setBackgroundColor(colors[colorPos]);

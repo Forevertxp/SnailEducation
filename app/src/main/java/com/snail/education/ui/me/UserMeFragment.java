@@ -23,6 +23,7 @@ import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.model.SEUserInfo;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.ui.course.pay.CoursePayActivity;
 import com.snail.education.ui.me.activity.DownloadActivity;
 import com.snail.education.ui.me.activity.EvaluationActivity;
 import com.snail.education.ui.me.activity.UserCourseActivity;
@@ -35,7 +36,7 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
     private UserHeaderView headerView;
     private TextView orderText, saleText, processText, collectText;
     private Button logoutBtn;
-    private RelativeLayout processRL, downloadRL, profileRL, evaluationRL;
+    private RelativeLayout saleRL,processRL, downloadRL, profileRL, evaluationRL;
 
     public UserMeFragment() {
         // Required empty public constructor
@@ -63,12 +64,14 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
         saleText = (TextView) view.findViewById(R.id.saleText);
         processText = (TextView) view.findViewById(R.id.processText);
         collectText = (TextView) view.findViewById(R.id.collectText);
+        saleRL = (RelativeLayout) view.findViewById(R.id.saleRL);
         processRL = (RelativeLayout) view.findViewById(R.id.processRL);
         downloadRL = (RelativeLayout) view.findViewById(R.id.downloadRL);
         profileRL = (RelativeLayout) view.findViewById(R.id.profileRL);
         evaluationRL = (RelativeLayout) view.findViewById(R.id.evaluationRL);
         userFrame.addView(headerView);
         logoutBtn = (Button) view.findViewById(R.id.logoutBtn);
+        saleRL.setOnClickListener(this);
         processRL.setOnClickListener(this);
         downloadRL.setOnClickListener(this);
         evaluationRL.setOnClickListener(this);
@@ -80,6 +83,9 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.saleRL:
+                onUserSale();
+                break;
             case R.id.processRL:
                 onUserCourse();
                 break;
@@ -157,6 +163,14 @@ public class UserMeFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+    }
+
+    private void onUserSale() {
+        SEUser user = SEAuthManager.getInstance().getAccessUser();
+        if (user != null) {
+            Intent intent = new Intent(getActivity(), CoursePayActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void onUserCourse() {
