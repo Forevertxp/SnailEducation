@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_course_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.snail.education.ui.course.CourseDetailActivity">
@@ -19,10 +20,10 @@
             android:id="@+id/waitingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:indeterminate="false"
             android:layout_centerInParent="true"
-            android:indeterminateDrawable="@drawable/progress_bar_style" />
+            android:indeterminate="false"
+            android:indeterminateDrawable="@drawable/progress_bar_style"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/coverImage"
@@ -45,15 +46,16 @@
             android:id="@+id/issrt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开始"
-            android:textColor="@android:color/black" />
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_play" />
 
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/quanping"
+            android:layout_marginRight="30dp"
             android:layout_toRightOf="@+id/issrt"
             android:background="@android:color/white"
             android:max="255" />
@@ -69,118 +71,142 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="全屏"
-            android:textColor="@android:color/black" />
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_full_screen" />
 
         <Button
             android:id="@+id/xiaoping"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="小屏"
-            android:visibility="gone"
-            android:textColor="@android:color/black" />
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_small_screen"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/infoLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="215dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/lightgray"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingTop="5dp">
 
-            <TextView
+            <RelativeLayout
+                android:id="@+id/listenRL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="收藏"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <TextView
+                <ImageView
+                    android:id="@+id/listenImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_listener" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/listenImage"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="88人"
+                    android:textSize="14sp" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/collectRL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="赞"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <TextView
+                <ImageView
+                    android:id="@+id/collectImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_collect" />
+
+                <TextView
+                    android:id="@+id/collectionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="14dp"
+                    android:layout_toRightOf="@+id/collectImage"
+                    android:text="88人" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/lightgrey" />
+
+            <RelativeLayout
+                android:id="@+id/downloadRL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="分享"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/shareImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_download" />
+
+                <TextView
+                    android:id="@+id/studentText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/shareImage"
+                    android:text="下载"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
-            <TextView
-                android:id="@+id/coursePrice"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:textSize="18sp"
-                android:layout_marginLeft="20dp"
-                android:textColor="@color/red" />
+                android:layout_above="@+id/courseInfo"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/ic_logo_gray" />
 
             <TextView
-                android:id="@+id/courseFree"
+                android:id="@+id/courseInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:layout_toRightOf="@+id/coursePrice"
-                android:layout_marginLeft="30dp"
-                android:layout_centerVertical="true"
-                android:textColor="@color/green" />
-
-            <Button
-                android:id="@+id/btn_download"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:text="离线缓存"
-                android:background="@drawable/btn_bg"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_alignParentRight="true" />
+                android:layout_centerInParent="true"
+                android:layout_margin="10dp"
+                android:text="暂无课程信息"
+                android:textColor="#999999" />
         </RelativeLayout>
-
-        <TextView
-            android:id="@+id/courseInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="相关课程"
-            android:paddingLeft="15dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textSize="16sp"
-            android:textColor="@color/green"
-            android:background="@color/lightgray" />
-
-        <ListView
-            android:id="@+id/relativeCourse"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
 
     </LinearLayout>
 </RelativeLayout>

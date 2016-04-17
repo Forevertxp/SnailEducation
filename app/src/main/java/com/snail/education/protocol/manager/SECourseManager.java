@@ -5,11 +5,20 @@ import com.snail.education.protocol.model.SECart;
 import com.snail.education.protocol.model.SECourse;
 import com.snail.education.protocol.model.SECourseCate;
 import com.snail.education.protocol.model.SECourseDetail;
+import com.snail.education.protocol.result.MCBannerResult;
+import com.snail.education.protocol.result.MCCollectionResult;
+import com.snail.education.protocol.result.MCCommonResult;
+import com.snail.education.protocol.result.MCCourSectionResult;
+import com.snail.education.protocol.result.MCCourseListResult;
+import com.snail.education.protocol.result.MCKeywordResult;
+import com.snail.education.protocol.result.MCSearchResult;
+import com.snail.education.protocol.result.MCVideoResult;
 import com.snail.education.protocol.result.SECartResult;
 import com.snail.education.protocol.result.SECourseCateResult;
 import com.snail.education.protocol.result.SECourseDetailResult;
 import com.snail.education.protocol.result.SECourseResult;
 import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.protocol.result.VideoCollectionResult;
 import com.snail.education.protocol.service.SECourseService;
 
 import java.util.ArrayList;
@@ -196,10 +205,272 @@ public class SECourseManager {
                 }
             }
         });
+    }
+    //－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－ 新接口 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－//
 
+    /**
+     * 首页轮播图
+     *
+     * @param callback
+     */
+    public void fetchHomeBanner(final Callback<MCBannerResult> callback) {
+        getCourseService().fetchHomeBanner(new Callback<MCBannerResult>() {
+            @Override
+            public void success(MCBannerResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+    }
+
+    /**
+     * 课程子分类
+     *
+     * @param callback
+     */
+    public void fetchCourseSection(String pid, final Callback<MCCourSectionResult> callback) {
+        getCourseService().fetchCourseSection(pid, new Callback<MCCourSectionResult>() {
+            @Override
+            public void success(MCCourSectionResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取知识点对应的视频
+     *
+     * @param callback
+     */
+    public void fetchVideoInfo(String pointId, final Callback<MCVideoResult> callback) {
+        getCourseService().fetchVideoInfo(pointId, new Callback<MCVideoResult>() {
+            @Override
+            public void success(MCVideoResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
 
     }
 
+    /**
+     * 首页课程列表
+     *
+     * @param callback
+     */
+    public void fetchHomeCourseList(String pid, final Callback<MCCourseListResult> callback) {
+        getCourseService().fetchHomeCourseList(pid, new Callback<MCCourseListResult>() {
+            @Override
+            public void success(MCCourseListResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取搜索关键词
+     *
+     * @param callback
+     */
+    public void fetchKeyWordList(final Callback<MCKeywordResult> callback) {
+        getCourseService().fetchKeywordList(new Callback<MCKeywordResult>() {
+            @Override
+            public void success(MCKeywordResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+    }
+
+    /**
+     * 视频检索
+     *
+     * @param callback
+     */
+    public void searchVideoList(String keyword, final Callback<MCSearchResult> callback) {
+        getCourseService().searchVideoList(keyword, new Callback<MCSearchResult>() {
+            @Override
+            public void success(MCSearchResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 获取收藏状态
+     *
+     * @param callback
+     */
+    public void getCollectionState(String courseId, String type, final Callback<VideoCollectionResult> callback) {
+        SEAuthManager am = SEAuthManager.getInstance();
+        if (!am.isAuthenticated())
+            return;
+        getCourseService().getColletionState(am.getAccessUser().getId(), courseId, type, new Callback<VideoCollectionResult>() {
+            @Override
+            public void success(VideoCollectionResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 更新课程观看数量
+     *
+     * @param callback
+     */
+    public void updateCourseInfo(String courseId, final Callback<MCCommonResult> callback) {
+        getCourseService().updateCourseInfo(courseId, new Callback<MCCommonResult>() {
+            @Override
+            public void success(MCCommonResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+
+    }
+
+
+    /**
+     * 收藏/取消收藏视频
+     *
+     * @param callback
+     */
+    public void collectVideo(String collectionId, String state, String userId, String type, final Callback<MCCommonResult> callback) {
+        getCourseService().collectVideo(collectionId, state, userId, type, new Callback<MCCommonResult>() {
+            @Override
+            public void success(MCCommonResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 收藏/取消收藏视频
+     *
+     * @param callback
+     */
+    public void removeAllCollection(String userId, final Callback<MCCommonResult> callback) {
+        getCourseService().removeAllCollection(userId, new Callback<MCCommonResult>() {
+            @Override
+            public void success(MCCommonResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 获取收藏的视频
+     *
+     * @param callback
+     */
+    public void fetchCollectionVideoList(String userId, final Callback<MCCollectionResult> callback) {
+        getCourseService().fetchCollectionVideoList(userId, new Callback<MCCollectionResult>() {
+            @Override
+            public void success(MCCollectionResult result, Response response) {
+                if (callback != null) {
+                    callback.success(result, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (callback != null) {
+                    callback.failure(error);
+                }
+            }
+        });
+
+    }
 
 }
 

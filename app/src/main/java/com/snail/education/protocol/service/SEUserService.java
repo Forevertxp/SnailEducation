@@ -1,5 +1,7 @@
 package com.snail.education.protocol.service;
 
+import com.snail.education.protocol.result.MCCommonResult;
+import com.snail.education.protocol.result.MCUploadResult;
 import com.snail.education.protocol.result.SEPasswordResult;
 import com.snail.education.protocol.result.SEUserInfoResult;
 import com.snail.education.protocol.result.SEUserResult;
@@ -26,15 +28,14 @@ public interface SEUserService {
     /**
      * 注册
      *
-     * @param sn user pass repass
-     * @param cb
+     * @param phone code
+     * @param pass
      */
-    @Multipart
-    @POST("/api/user/reg")
-    public void regUser(@Part("sn") String sn,
-                        @Part("user") String user,
-                        @Part("pass") String pass,
-                        @Part("repass") String repass,
+    @FormUrlEncoded
+    @POST("/swift/user/reg")
+    public void regUser(@Field("phone") String phone,
+                        @Field("code") String code,
+                        @Field("passwd") String pass,
                         Callback<SEUserResult> cb);
 
     /**
@@ -50,14 +51,13 @@ public interface SEUserService {
     /**
      * 找回密码--密码重置
      *
-     * @param user
+     * @param phone
      * @param cb
      */
-    @GET("/api/user/reMakePass")
-    public void reMakePass(@Query("user") String user,
+    @GET("/swift/user/modifypasswd")
+    public void reMakePass(@Query("phone") String phone,
                            @Query("code") String code,
-                           @Query("pass") String pass,
-                           @Query("repass") String repass,
+                           @Query("passwd") String passwd,
                            Callback<SEPasswordResult> cb);
 
 
@@ -68,25 +68,25 @@ public interface SEUserService {
      * @param cb
      */
     @Multipart
-    @POST("/api/user/update")
-    public void updateUser(@Part("uid") String uid,
-                           @Part("nickname") String nickname,
-                           @Part("say") String say,
+    @POST("/swift/user/updateInfo")
+    public void updateUser(@Part("id") String uid,
                            @Part("name") String name,
-                           @Part("mail") String mail,
-                           Callback<SEUserResult> cb);
+                           @Part("avator") String avator,
+                           @Part("local") String local,
+                           @Part("sex") String sex,
+                           @Part("descript") String descript,
+                           Callback<MCCommonResult> cb);
 
     /**
      * 上传头像
      *
-     * @param uid image
+     * @param  file
      * @param cb
      */
     @Multipart
-    @POST("/api/userUpIcon")
-    public void updateUserIcon(@Part("uid") String uid,
-                               @Part("image") TypedFile image,
-                               Callback<SEUserResult> cb);
+    @POST("/swift/user/fileUpload")
+    public void updateUserIcon(@Part("file") TypedFile file,
+                               Callback<MCUploadResult> cb);
 
 
     /**

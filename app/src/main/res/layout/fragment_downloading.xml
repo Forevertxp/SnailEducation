@@ -5,9 +5,9 @@
     android:background="@color/white"
     tools:context="com.snail.education.ui.me.com.snailedu.photo.com.snailedu.photo.activity.DownloadingFragment">
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/downloadingLV"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"></com.baoyz.swipemenulistview.SwipeMenuListView>
 
 </RelativeLayout>

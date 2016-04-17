@@ -4,9 +4,13 @@
     android:layout_height="match_parent"
     tools:context="tree.love.animtabsview.demo.MainActivity$PlaceholderFragment">
 
-    <WebView
-        android:id="@+id/teacherInfo"
+    <TextView
+        android:id="@+id/orgInfo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></WebView>
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:lineSpacingExtra="5dp"
+        android:padding="10dp"
+        android:textColor="@color/text_grey"></TextView>
 
 </RelativeLayout>

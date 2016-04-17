@@ -1,6 +1,8 @@
 package com.snail.education.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -90,12 +92,44 @@ public class SETabBar extends FrameLayout {
         }
 
         if (isValidIndex(_selectedTabIndex)) {
-            getItemViewAt(_selectedTabIndex).setDisplayStyle(MWTTabItemView.DisplayStyle.NORMAL);
+            Bitmap normalBmp = null;
+            switch (_selectedTabIndex) {
+                case 0:
+                    normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_course_normal);
+                    break;
+                case 1:
+                    normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_enroll_nomal);
+                    break;
+                case 2:
+                    normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_search_normal);
+                    break;
+                case 3:
+                    normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_user_normal);
+                    break;
+            }
+            getItemViewAt(_selectedTabIndex).setDisplayStyle(MWTTabItemView.DisplayStyle.NORMAL, normalBmp);
         }
+
 
         _selectedTabIndex = selectedTabIndex;
 
-        getItemViewAt(_selectedTabIndex).setDisplayStyle(MWTTabItemView.DisplayStyle.SELECTED);
+
+        Bitmap selectedBmp = null;
+        switch (_selectedTabIndex) {
+            case 0:
+                selectedBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_course_selected);
+                break;
+            case 1:
+                selectedBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_enroll_selected);
+                break;
+            case 2:
+                selectedBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_search_selected);
+                break;
+            case 3:
+                selectedBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_user_selected);
+                break;
+        }
+        getItemViewAt(_selectedTabIndex).setDisplayStyle(MWTTabItemView.DisplayStyle.SELECTED, selectedBmp);
 
         if (_onTabSelectionEventListener != null) {
             _onTabSelectionEventListener.onDidSelectTab(_selectedTabIndex);

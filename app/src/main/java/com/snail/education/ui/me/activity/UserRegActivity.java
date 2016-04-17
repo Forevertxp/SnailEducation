@@ -1,23 +1,24 @@
 package com.snail.education.ui.me.activity;
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.text.style.ForegroundColorSpan;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,33 +26,56 @@ import com.snail.education.R;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SEUserManager;
-import com.snail.education.protocol.model.SEUser;
+import com.snail.education.protocol.result.MCCommonResult;
 import com.snail.education.protocol.result.SEUserResult;
 import com.snail.education.protocol.result.ServiceError;
-import com.snail.education.ui.activity.SEBaseActivity;
+import com.snail.education.ui.MainActivity;
 import com.snail.svprogresshud.SVProgressHUD;
 
-import java.util.Date;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-public class UserRegActivity extends SEBaseActivity {
+public class UserRegActivity extends Activity implements View.OnClickListener {
 
-    private EditText phoneET, passET, passAgainET;
+    private ImageView iv_back;
+    private EditText phoneET, codeET, passET;
     private TextView protocolTV;
-    private ImageView iv_switch_open, iv_switch_close;
-    private Button regBtn;
+    private Button codeBtn, regBtn;
 
     private String user, pass, repass;
-    private boolean isAgree = true;
+
+    private CountDownTimer mDownTimer = new CountDownTimer(60000, 1000) {
+
+        @Override
+        protected void finalize() throws Throwable {
+            super.finalize();
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            codeBtn.setText(millisUntilFinished / 1000 + "秒");
+        }
+
+        @Override
+        public void onFinish() {
+            codeBtn.setText("验证");
+            codeBtn.setClickable(true);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_user_reg);
-        setTitleText("注册");
+
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        iv_back.setOnClickListener(this);
 
         phoneET = (EditText) findViewById(R.id.et_name);
+        codeET = (EditText) findViewById(R.id.et_code);
         passET = (EditText) findViewById(R.id.et_password);
-        passAgainET = (EditText) findViewById(R.id.et_password_again);
 
         LinearLayout regLL = (LinearLayout) findViewById(R.id.regLL);
         regLL.setOnTouchListener(new View.OnTouchListener() {
@@ -65,57 +89,18 @@ public class UserRegActivity extends SEBaseActivity {
         });
 
 
-        iv_switch_open = (ImageView) findViewById(R.id.iv_switch_open);
-        iv_switch_close = (ImageView) findViewById(R.id.iv_switch_close);
-
-        iv_switch_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (iv_switch_open.getVisibility() == View.VISIBLE) {
-                    iv_switch_open.setVisibility(View.INVISIBLE);
-                    iv_switch_close.setVisibility(View.VISIBLE);
-                    isAgree = false;
-                } else {
-                    iv_switch_open.setVisibility(View.VISIBLE);
-                    iv_switch_close.setVisibility(View.INVISIBLE);
-                    isAgree = true;
-                }
-                changeColor();
-            }
-        });
-        iv_switch_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (iv_switch_open.getVisibility() == View.VISIBLE) {
-                    iv_switch_open.setVisibility(View.INVISIBLE);
-                    iv_switch_close.setVisibility(View.VISIBLE);
-                    isAgree = false;
-                } else {
-                    iv_switch_open.setVisibility(View.VISIBLE);
-                    iv_switch_close.setVisibility(View.INVISIBLE);
-                    isAgree = true;
-                }
-                changeColor();
-            }
-        });
-
         protocolTV = (TextView) findViewById(R.id.tv_protocol);
+        SpannableString msp = new SpannableString("注册意味着您同意服务条款和隐私政策，请验证完成后点击『提交』完成注册。");
+        msp.setSpan(new ForegroundColorSpan(Color.rgb(0, 187, 230)), 8, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        msp.setSpan(new ForegroundColorSpan(Color.rgb(0, 187, 230)), 13, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        protocolTV.setText(msp);
+
+        codeBtn = (Button) findViewById(R.id.btn_code);
         regBtn = (Button) findViewById(R.id.btn_reg);
 
-        protocolTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        regBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                regUser();
-            }
-        });
+        codeBtn.setOnClickListener(this);
+        protocolTV.setOnClickListener(this);
+        regBtn.setOnClickListener(this);
 
         phoneET.addTextChangedListener(new TextWatcher() {
 
@@ -135,15 +120,15 @@ public class UserRegActivity extends SEBaseActivity {
                 if (user != null && (!user.equals(""))) {
 
                 } else {
+                    codeET.setText("");
                     passET.setText("");
-                    passAgainET.setText("");
                 }
                 changeColor();
             }
         });
 
+        codeET.addTextChangedListener(textWatcher);
         passET.addTextChangedListener(textWatcher);
-        passAgainET.addTextChangedListener(textWatcher);
     }
 
     private TextWatcher textWatcher = new TextWatcher() {
@@ -166,58 +151,113 @@ public class UserRegActivity extends SEBaseActivity {
     // 改变登陆按钮文字颜色
     public void changeColor() {
         user = phoneET.getText().toString().trim();
-        pass = passET.getText().toString().trim();
-        repass = passAgainET.getText().toString().trim();
+        pass = codeET.getText().toString().trim();
+        repass = passET.getText().toString().trim();
         if ((user != null) && (!user.equals(""))
-                && (pass != null) && (!pass.equals("")) && (repass != null) && (!repass.equals("")) && isAgree) {
+                && (pass != null) && (!pass.equals("")) && (repass != null) && (!repass.equals(""))) {
             regBtn.setClickable(true);
-            regBtn.setBackgroundResource(R.drawable.button_selector);
+            regBtn.setTextColor(Color.WHITE);
         } else {
             regBtn.setClickable(false);
-            regBtn.setBackgroundResource(R.drawable.btn_normal);
+            regBtn.setTextColor(Color.LTGRAY);
         }
     }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_back:
+                finish();
+                break;
+            case R.id.btn_code:
+                fecthCode();
+                break;
+            case R.id.tv_protocol:
+                Intent intent = new Intent(UserRegActivity.this, PDFViewActivity.class);
+                intent.putExtra("title","服务条款");
+                intent.putExtra("fileName","protocol.pdf");
+                startActivity(intent);
+                break;
+            case R.id.btn_reg:
+                regUser();
+                break;
+        }
+
+    }
+
+    private void fecthCode() {
+        String phone = phoneET.getText().toString();
+        if (phone.length() != 11) {
+            SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, "请输入手机号", 2.0f);
+            return;
+        }
+        codeBtn.setClickable(false);
+        mDownTimer.start();
+        SEAuthManager am = SEAuthManager.getInstance();
+        am.requestSMSAuthCode(phone, new Callback<MCCommonResult>() {
+            @Override
+            public void success(MCCommonResult result, Response response) {
+                if (!result.apicode.equals("10000")) {
+                    SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, result.message, 2.0f);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
+
+    }
+
     private void regUser() {
-        String sn = "F" + new Date().getTime() + "d";
-        String user = phoneET.getText().toString();
+        String phone = phoneET.getText().toString();
+        if (phone.length() != 11) {
+            SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, "请输入手机号", 2.f);
+            return;
+        }
+        String code = codeET.getText().toString();
+        if (code.length() < 4) {
+            SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, "请输入验证码", 2.f);
+            return;
+        }
         String pass = passET.getText().toString();
-        String repass = passAgainET.getText().toString();
         if (pass.length() < 3) {
             SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, "密码不能小于三位", 2.f);
             return;
         }
-        if (!pass.equals(repass)) {
-            SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, "两次密码不一致，请重新输入", 2.f);
-            return;
-        }
-        SEUserManager.getInstance().regUser(sn, user, pass, repass, new SECallBack() {
+        SEUserManager.getInstance().regUser(phone, code, pass, new SECallBack() {
             @Override
             public void success() {
-                SEUserResult regResult = SEUserManager.getInstance().getRegResult();
-                if (regResult.state) {
-                    SEAuthManager.getInstance().updateUserInfo(regResult.data);
-                    new AlertDialog.Builder(UserRegActivity.this)
-                            .setTitle("成功")
-                            .setMessage("注册成功")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent();
-                                    intent.setAction("com.snail.user.login");
-                                    sendBroadcast(intent);
-                                    finish();
-                                }
-                            })
-                            .show();
-                } else {
-                    SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, regResult.msg, 2.f);
+                SEUserResult result = SEUserManager.getInstance().getRegResult();
+                if (!result.apicode.equals("10000")) {
+                    SVProgressHUD.showInViewWithoutIndicator(UserRegActivity.this, result.message, 2.0f);
+                    return;
                 }
-
+                login();
             }
 
             @Override
             public void failure(ServiceError error) {
                 Toast.makeText(UserRegActivity.this, "请求失败 " + error.message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void login() {
+        SEAuthManager am = SEAuthManager.getInstance();
+        am.authWithUsernamePassword(phoneET.getText().toString(), passET.getText().toString(), new Callback<SEUserResult>() {
+            @Override
+            public void success(SEUserResult seUserResult, Response response) {
+                Intent mainIntent = new Intent(UserRegActivity.this,
+                        MainActivity.class);
+                startActivity(mainIntent);
+                finish();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
             }
         });
     }

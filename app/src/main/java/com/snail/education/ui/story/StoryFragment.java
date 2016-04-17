@@ -44,6 +44,9 @@ import com.snail.pulltorefresh.PullToRefreshBase;
 import com.snail.pulltorefresh.PullToRefreshListView;
 import com.snail.svprogresshud.SVProgressHUD;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -64,6 +67,8 @@ public class StoryFragment extends Fragment {
     private String storyId;
     private String toUserId;
     private int position;
+
+    private EditText commentText;
 
     public StoryFragment() {
         super();
@@ -137,7 +142,7 @@ public class StoryFragment extends Fragment {
         pop.setContentView(view);
 
         RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent);
-        final EditText commentText = (EditText) view
+        commentText = (EditText) view
                 .findViewById(R.id.commentText);
         parent.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -160,6 +165,9 @@ public class StoryFragment extends Fragment {
         });
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(commentText.getWindowToken(), 0);
+
                 String comment = commentText.getText().toString();
                 sendMessage(comment);
             }
@@ -167,7 +175,6 @@ public class StoryFragment extends Fragment {
     }
 
     private void sendMessage(String comment) {
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         pop.dismiss();
         ll_popup.clearAnimation();
         SEStoryService storyService = SERestManager.getInstance().create(SEStoryService.class);
@@ -192,6 +199,7 @@ public class StoryFragment extends Fragment {
             @Override
             public void success(SEStoryRepResult result, Response response) {
                 if (result.state) {
+                    // 更新页面
                     adapter.updateView(position, result.data);
                 }
             }
@@ -228,6 +236,18 @@ public class StoryFragment extends Fragment {
             View parentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_story, null);
             ll_popup.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.activity_translate_in));
             pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+
+            commentText.setText("");
+            // 显示输入框 由于新页面未加载完全而无法弹窗输入框，因此适当延迟弹出时间
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    InputMethodManager inputMethodManager =
+                            (InputMethodManager) commentText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(commentText, 0);
+                }
+            }, 500);
         }
     };
 

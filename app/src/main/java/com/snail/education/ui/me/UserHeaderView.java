@@ -73,8 +73,8 @@ public class UserHeaderView extends FrameLayout {
 
     private void updateAvatarImageView() {
         String avatarUrl = "";
-        if (_user != null && !_user.getIcon().equals("") && _user.getIcon().indexOf("res/images/def.jpg") == -1) {
-            avatarUrl = SEConfig.getInstance().getAPIBaseURL() + _user.getIcon();
+        if (_user != null && !_user.getAvator().equals("") && _user.getAvator().indexOf("res/images/def.jpg") == -1) {
+            avatarUrl = SEConfig.getInstance().getAPIBaseURL() + _user.getAvator();
             DisplayImageOptions options = new DisplayImageOptions.Builder()//
                     .cacheInMemory(true)//
                     .cacheOnDisk(true)//
@@ -86,9 +86,9 @@ public class UserHeaderView extends FrameLayout {
 
     private void updateTextViews() {
         if (_user != null) {
-            nicknameTextView.setText(_user.getNickname());
-            signatureTextView.setText(_user.getSay());
-            scoreTextView.setText(_user.getPoint());
+            nicknameTextView.setText(_user.getName());
+            signatureTextView.setText(_user.getSign());
+            //scoreTextView.setText(_user.getl());
         }
     }
 }

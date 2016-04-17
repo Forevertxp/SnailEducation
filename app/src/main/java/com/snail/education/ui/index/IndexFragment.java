@@ -194,12 +194,12 @@ public class IndexFragment extends Fragment implements View.OnClickListener {
         indexManager.fetchAdInfo(1, new SECallBack() {
             @Override
             public void success() {
-                autoSlidingPagerView.setAdapter(new ImagePagerAdapter(getActivity(), indexManager.getAdList()));
-                autoSlidingPagerView.setOnPageChangeListener(new MyOnPageChangeListener());
-                autoSlidingPagerView.setInterval(4000);
-                autoSlidingPagerView.setScrollDurationFactor(2.0);
-
-                autoSlidingPagerView.startAutoScroll();
+//                autoSlidingPagerView.setAdapter(new ImagePagerAdapter(getActivity(), indexManager.getAdList()));
+//                autoSlidingPagerView.setOnPageChangeListener(new MyOnPageChangeListener());
+//                autoSlidingPagerView.setInterval(4000);
+//                autoSlidingPagerView.setScrollDurationFactor(2.0);
+//
+//                autoSlidingPagerView.startAutoScroll();
             }
 
             @Override

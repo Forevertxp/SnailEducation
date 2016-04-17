@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="TabBarBackgroundColor">#222222</color>
+    <color name="TabBarBackgroundColor">#EEEEEE</color>
     <color name="TabBarForegroundColor">#AAAAAA</color>
     <color name="SearchViewPlateBackgroundColor">#88FFFFFF</color>
     <color name="LightDividerLineColor">#AAAAAA</color>
-    <color name="ActionBarBackgroundColor">#111111</color>
+    <color name="ActionBarBackgroundColor">#FFFFFF</color>
     <color name="ActionBarForegroundColor">#008000</color>
     <color name="DarkTextColor">#444444</color>
     <color name="LightTextColor">#999999</color>
+    <color name="transparent_grey">#80000000</color>
+    <color name="common_blue">#00BBF8</color>
+    <color name="common_grey">#E6E6E6</color>
+    <color name="text_grey">#999999</color>
 
     <color name="white">#ffffff</color><!--白色 -->
     <color name="ivory">#fffff0</color><!--象牙色 -->

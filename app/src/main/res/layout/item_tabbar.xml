@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.snail.education.common.MWTTabItemView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_weight="1.0">
+    android:layout_weight="1.0"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/IconTextView"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:textAppearance="@style/TabBarIconTextAppearance"
-        android:layout_gravity="center_horizontal" />
+    <ImageView
+        android:id="@+id/IconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TabBarIconTextAppearance" />
 
     <TextView
         android:id="@+id/TitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TabBarTitleTextAppearance"
+        android:layout_gravity="center_horizontal"
         android:text="tab"
-        android:layout_gravity="center_horizontal" />
+        android:textAppearance="@style/TabBarTitleTextAppearance" />
 </com.snail.education.common.MWTTabItemView>

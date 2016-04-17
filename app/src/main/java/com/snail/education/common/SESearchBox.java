@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.snail.education.R;
-import com.snail.education.ui.index.activity.SearchResultActivity;
+import com.snail.education.ui.search.SearchResultActivity;
 import com.snail.svprogresshud.SVProgressHUD;
 
 /**

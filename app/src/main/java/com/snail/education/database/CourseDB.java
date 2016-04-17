@@ -3,6 +3,8 @@ package com.snail.education.database;
 import com.lidroid.xutils.db.annotation.Column;
 import com.lidroid.xutils.db.annotation.Id;
 import com.lidroid.xutils.db.annotation.NoAutoIncrement;
+import com.lidroid.xutils.http.HttpHandler;
+import com.snail.education.ui.me.adapter.DownloadAdapter;
 
 /**
  * Created by Administrator on 2015/3/18.
@@ -23,7 +25,7 @@ public class CourseDB {
     private String video;  //课程视频地址
 
     @Column(column = "size")
-    private long size;  //已经下载的课程大小
+    private long size;  //课程大小
 
     @Column(column = "isInQueue")
     private int isInQueue; //是否添加到下载队列
@@ -32,7 +34,10 @@ public class CourseDB {
     private int isdone; //是否已完成下载 0 初始状态 1 完成下载 2 正在下载过程中
 
     @Column(column = "progress")
-    private String progress; // 下载进度
+    private int progress; // 下载进度
+
+    private DownloadAdapter.ViewHolder viewHolder; //视图容器
+    private HttpHandler handler; //下载线程
 
     public int getId() {
         return id;
@@ -90,11 +95,27 @@ public class CourseDB {
         this.isInQueue = isInQueue;
     }
 
-    public String getProgress() {
+    public int getProgress() {
         return progress;
     }
 
-    public void setProgress(String progress) {
+    public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public DownloadAdapter.ViewHolder getViewHolder() {
+        return viewHolder;
+    }
+
+    public void setViewHolder(DownloadAdapter.ViewHolder viewHolder) {
+        this.viewHolder = viewHolder;
+    }
+
+    public HttpHandler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(HttpHandler handler) {
+        this.handler = handler;
     }
 }

@@ -4,7 +4,11 @@ package com.snail.education.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -45,6 +49,8 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         setupActionBar();
 
+        register();
+
         View fragmentView = inflater.inflate(R.layout.fragment_main, container, false);
 
         _viewPager = (ViewPager) fragmentView.findViewById(R.id.MainPager);
@@ -70,18 +76,15 @@ public class MainFragment extends Fragment {
 
         _tabBar = (SETabBar) fragmentView.findViewById(R.id.TabBar);
 
-        Typeface typeface = SEThemer.getInstance().getWTFont();
-        _tabBar.getItemViewAt(0).setIconTextWithTypeface("\uf10d", typeface); // Alt Home Icon
-        _tabBar.getItemViewAt(1).setIconTextWithTypeface("\uf10f", typeface); // Compass Icon
-        _tabBar.getItemViewAt(2).setIconTextWithTypeface("\uf110", typeface); // Picture Icon
-        _tabBar.getItemViewAt(3).setIconTextWithTypeface("\uf10a", typeface); // Alt Community Icon
-        _tabBar.getItemViewAt(4).setIconTextWithTypeface("\uf10e", typeface); // Alt User Icon
+        _tabBar.getItemViewAt(0).setNormalIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_course_normal));
+        _tabBar.getItemViewAt(1).setNormalIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_enroll_nomal));
+        _tabBar.getItemViewAt(2).setNormalIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_search_normal));
+        _tabBar.getItemViewAt(3).setNormalIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_user_normal));
 
-        _tabBar.getItemViewAt(0).setTitleText("首页");
-        _tabBar.getItemViewAt(1).setTitleText("MBA咨询");
-        _tabBar.getItemViewAt(2).setTitleText("蜗牛课程");
-        _tabBar.getItemViewAt(3).setTitleText("蜗牛故事");
-        _tabBar.getItemViewAt(4).setTitleText("蜗牛房");
+        _tabBar.getItemViewAt(0).setTitleText("课程");
+        _tabBar.getItemViewAt(1).setTitleText("报名");
+        _tabBar.getItemViewAt(2).setTitleText("搜索");
+        _tabBar.getItemViewAt(3).setTitleText("我的");
 
         _tabBar.setOnTabSelectionEventListener(new SETabBar.OnTabSelectionEventListener() {
             @Override
@@ -95,11 +98,44 @@ public class MainFragment extends Fragment {
             }
         });
 
-        _tabBar.limitTabNum(5);
+        _tabBar.limitTabNum(4);
         switchToPage(0);
 
         return fragmentView;
     }
+
+    private void register() {
+        IntentFilter filter1 = new IntentFilter("com.swiftacademy.screen.changed");
+        getActivity().registerReceiver(screenReceirver, filter1);
+
+        IntentFilter filter = new IntentFilter("com.swiftacademy.tab.change");
+        getActivity().registerReceiver(changeTabReceiver, filter);
+    }
+
+    private void unregister() {
+        getActivity().unregisterReceiver(changeTabReceiver);
+        getActivity().unregisterReceiver(screenReceirver);
+    }
+
+    private BroadcastReceiver changeTabReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switchToPage(0);
+        }
+    };
+
+    // 监听视频横竖屏
+    private BroadcastReceiver screenReceirver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean enterFullScreen = intent.getBooleanExtra("enterFullScreen", false);
+            if (enterFullScreen) {
+                _tabBar.setVisibility(View.GONE);
+            } else {
+                _tabBar.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 
     private void setupActionBar() {
         ActionBar actionBar = mActivity.getActionBar();
@@ -126,21 +162,14 @@ public class MainFragment extends Fragment {
     }
 
     private boolean handleOnWillSelectTab(int tabIndex) {
-        if (tabIndex == 4) {
-//            MWTAuthManager am = MWTAuthManager.getInstance();
-//            if (!am.isAuthenticated())
-//            {
-//                Intent intent = new Intent(getActivity(), MWTAuthSelectActivity.class);
-//                startActivityForResult(intent, 1);
-//                return false;
-//            }
-//            else
-//            {
-//                return true;
-//            }
-        }
 
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregister();
     }
 
     private void handleOnDidSelectTab(int tabIndex) {
@@ -155,28 +184,19 @@ public class MainFragment extends Fragment {
                 ((MainActivity) mActivity).setTitleText("");
                 break;
             case 1:
-                setActionBarVisible(true);
+                setActionBarVisible(false);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) mActivity).setTitleText("MBA咨询");
-                // getActivity().getActionBar().setTitle("MBA咨询");
+                ((MainActivity) mActivity).setTitleText("报名");
                 break;
             case 2:
-                setActionBarVisible(true);
+                setActionBarVisible(false);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) mActivity).setTitleText("蜗牛课程");
-                // getActivity().getActionBar().setTitle("蜗牛课程");
+                ((MainActivity) mActivity).setTitleText("搜索");
                 break;
             case 3:
-                setActionBarVisible(true);
+                setActionBarVisible(false);
                 _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) mActivity).setTitleText("            蜗牛故事");
-                // getActivity().getActionBar().setTitle("蜗牛故事");
-                break;
-            case 4:
-                setActionBarVisible(true);
-                _viewPager.setCurrentItem(tabIndex, false);
-                ((MainActivity) mActivity).setTitleText("蜗牛房");
-                // getActivity().getActionBar().setTitle("蜗牛房");
+                ((MainActivity) mActivity).setTitleText("");
                 break;
             default:
                 break;

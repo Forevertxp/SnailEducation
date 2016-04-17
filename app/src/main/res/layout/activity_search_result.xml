@@ -1,8 +1,15 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.snail.education.ui.index.activity.SearchResultActivity">
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.snail.education.ui.search.SearchResultActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/common_grey"></ImageView>
 
     <com.snail.pulltorefresh.PullToRefreshListView
         android:id="@+id/searchListView"
@@ -10,4 +17,4 @@
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent" />
 
-</RelativeLayout>
+</LinearLayout>

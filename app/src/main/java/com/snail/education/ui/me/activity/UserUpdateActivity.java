@@ -1,12 +1,9 @@
 package com.snail.education.ui.me.activity;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -15,21 +12,25 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bigkoo.pickerview.OptionsPickerView;
 import com.snail.circularimageview.CircularImageView;
 import com.snail.education.R;
 import com.snail.education.app.SEConfig;
+import com.snail.education.bean.ProvinceBean;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SEUserManager;
 import com.snail.education.protocol.model.SEUser;
+import com.snail.education.protocol.result.MCUploadResult;
 import com.snail.education.protocol.result.SEUserResult;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.ui.activity.SEBaseActivity;
-import com.snail.education.ui.me.UserMeFragment;
+import com.snail.education.ui.helper.SAXPraserHelper;
 import com.snail.imagechooser.api.ChooserType;
 import com.snail.imagechooser.api.ChosenImage;
 import com.snail.imagechooser.api.ImageChooserListener;
@@ -37,19 +38,31 @@ import com.snail.imagechooser.api.ImageChooserManager;
 import com.snail.svprogresshud.SVProgressHUD;
 import com.squareup.picasso.Picasso;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class UserUpdateActivity extends SEBaseActivity implements ImageChooserListener {
 
     private final static int MENU_AVATAR_FROM_CAPTURE = 0x123;
     private final static int MENU_AVATAR_FROM_GALLERY = 0x456;
 
-    private RelativeLayout updateRL;
-    private EditText nicknameET, signatureET, realnameET, emailET;
-    private TextView phoneTV;
+    private LinearLayout updateLL;
+    private EditText nicknameET, signatureET, emailET;
+    private TextView phoneTV, loaclTV;
     private Button _avatarButton;
     private CircularImageView avatarImageView;
-    private Button _saveBtn;
+    private ImageView iv_switch_man, iv_switch_woman;
 
     private SEUser _user;
 
@@ -58,8 +71,15 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
     private ImageChooserManager _imageChooserManager;
     private int _chooserType;
     private String _filePath;
+    private String _imageName; //上传成功后返回的图片名
 
     private boolean needToUpdate = false;
+    private int sex = 1;
+
+    private OptionsPickerView pvOptions;
+
+    private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
+    private ArrayList<ArrayList<String>> options2Items = new ArrayList<ArrayList<String>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +87,13 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
 
         setContentView(R.layout.activity_user_update);
         setTitleText("我的资料");
+        setRightText("保存");
+        setRightTextListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSave();
+            }
+        });
         setupViews();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -79,35 +106,34 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
     public void onSave() {
 
         String signature = signatureET.getText().toString();
-        String nickname = nicknameET.getText().toString();
-        String name = realnameET.getText().toString();
+        String name = nicknameET.getText().toString();
+        String local = loaclTV.getText().toString();
         String mail = emailET.getText().toString();
-        if (signature.equals("")) {
-            SVProgressHUD.showInViewWithoutIndicator(this, "请填写昵称", 2);
+        if (name.equals("")) {
+            SVProgressHUD.showInViewWithoutIndicator(this, "请填写真实姓名", 2);
             return;
         }
 
+        SEUser currentUser = SEAuthManager.getInstance().getAccessUser();
+        currentUser.setName(name);
+        currentUser.setLocal(local);
+        currentUser.setSex(sex + "");
+        currentUser.setSign(signature);
+        if (!TextUtils.isEmpty(_imageName))
+            currentUser.setAvator(_imageName);
+        final SEUser modifiedUser = currentUser;
+
         SVProgressHUD.showInView(this, "保存中，请稍候...", true);
-        SEUserManager.getInstance().modifyUserMe(nickname, signature, name, mail, new SECallBack() {
+        SEUserManager.getInstance().modifyUserMe(name, _imageName, local, sex + "", signature, new SECallBack() {
             @Override
             public void success() {
-                SVProgressHUD.dismiss(UserUpdateActivity.this);
-                SEUserResult regResult = SEUserManager.getInstance().getRegResult();
-                if (regResult.state) {
-                    SEAuthManager.getInstance().updateUserInfo(regResult.data);
-                    new AlertDialog.Builder(UserUpdateActivity.this)
-                            .setTitle("成功")
-                            .setMessage("保存成功")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    setResult(RESULT_OK);
-                                    finish();
-                                }
-                            })
-                            .show();
-                } else {
-                    SVProgressHUD.showInViewWithoutIndicator(UserUpdateActivity.this, regResult.msg, 2.f);
-                }
+                SVProgressHUD.showInViewWithoutIndicator(UserUpdateActivity.this, "更新成功!", 2);
+                Intent intent = getIntent();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("userInfo", modifiedUser);
+                intent.putExtras(bundle);
+                setResult(1, intent);
+                finish();
             }
 
             @Override
@@ -128,26 +154,76 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
 
         nicknameET = (EditText) findViewById(R.id.et_nickname);
         signatureET = (EditText) findViewById(R.id.et_signature);
-        realnameET = (EditText) findViewById(R.id.et_realname);
+        loaclTV = (TextView) findViewById(R.id.tv_local);
         emailET = (EditText) findViewById(R.id.et_email);
         phoneTV = (TextView) findViewById(R.id.tv_phone);
+
+        //选项选择器
+        pvOptions = new OptionsPickerView(this);
+
+        //省份
+        try {
+            options1Items = (ArrayList) getDistrictList("Province", "ProvinceName");
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //城市
+        List<ProvinceBean> cityList = new ArrayList<ProvinceBean>();
+        try {
+            cityList = getDistrictList("City", "CityName");
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < options1Items.size(); i++) {
+            ArrayList<String> options2Item = new ArrayList<String>();
+            for (int j = 0; j < cityList.size(); j++) {
+                if (cityList.get(j).getPid() == options1Items.get(i).getId())
+                    options2Item.add(cityList.get(j).getName());
+            }
+            options2Items.add(options2Item);
+        }
+
+        pvOptions.setPicker(options1Items, options2Items, true);
+        pvOptions.setTitle("选择城市");
+        pvOptions.setCyclic(false, false, true);
+        //监听确定选择按钮
+        pvOptions.setSelectOptions(1, 1);
+        pvOptions.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
+
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3) {
+                //返回的分别是三个级别的选中位置
+                String tx = options1Items.get(options1).getPickerViewText() + ","
+                        + options2Items.get(options1).get(option2);
+                loaclTV.setText(tx);
+            }
+        });
+        //点击弹出选项选择器
+        loaclTV.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                pvOptions.show();
+            }
+        });
+
 
         avatarImageView = (CircularImageView) findViewById(R.id.AvatarImageView);
         avatarImageView.setBorderWidth(4);
         avatarImageView.setBorderColor(getResources().getColor(R.color.lightgrey));
-        avatarImageView.addShadow();
 
-
-        _saveBtn = (Button) findViewById(R.id.user_save);
-        _saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSave();
-            }
-        });
-
-        updateRL = (RelativeLayout) findViewById(R.id.updateRL);
-        updateRL.setOnTouchListener(new View.OnTouchListener() {
+        updateLL = (LinearLayout) findViewById(R.id.updateLL);
+        updateLL.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -156,6 +232,51 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
                 return false;
             }
         });
+
+
+        iv_switch_man = (ImageView) findViewById(R.id.iv_switch_man);
+        iv_switch_woman = (ImageView) findViewById(R.id.iv_switch_women);
+
+        iv_switch_man.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iv_switch_man.setVisibility(View.INVISIBLE);
+                iv_switch_woman.setVisibility(View.VISIBLE);
+                sex = 1;
+            }
+        });
+        iv_switch_woman.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iv_switch_man.setVisibility(View.VISIBLE);
+                iv_switch_woman.setVisibility(View.INVISIBLE);
+                sex = 2;
+            }
+        });
+    }
+
+    private List<ProvinceBean> getDistrictList(String itemName, String attributeName) throws ParserConfigurationException, SAXException, IOException {
+        //实例化一个SAXParserFactory对象
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser;
+        //实例化SAXParser对象，创建XMLReader对象，解析器
+        parser = factory.newSAXParser();
+        XMLReader xmlReader = parser.getXMLReader();
+        //实例化handler，事件处理器
+        SAXPraserHelper helperHandler = new SAXPraserHelper(itemName, attributeName);
+        //解析器注册事件
+        xmlReader.setContentHandler(helperHandler);
+        //读取文件流
+        InputStream stream = null;
+        if (itemName.equals("Province")) {
+            stream = getResources().openRawResource(R.raw.provinces);
+        } else {
+            stream = getResources().openRawResource(R.raw.cities);
+        }
+        InputSource is = new InputSource(stream);
+        //解析文件
+        xmlReader.parse(is);
+        return helperHandler.getList();
     }
 
     private void updateUI() {
@@ -165,18 +286,25 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
 
     private void updateTextViews() {
         if (_user != null) {
-            nicknameET.setText(_user.getNickname());
-            signatureET.setText(_user.getSay());
-            realnameET.setText(_user.getName());
-            emailET.setText(_user.getMail());
-            phoneTV.setText(_user.getUser());
+            nicknameET.setText(_user.getName());
+            signatureET.setText(_user.getSign());
+            loaclTV.setText(_user.getLocal());
+            emailET.setText(_user.getEmail());
+            phoneTV.setText(_user.getPhone());
+            if (_user.getSex()!=null&&_user.getSex().equals("1")) {
+                iv_switch_man.setVisibility(View.INVISIBLE);
+                iv_switch_woman.setVisibility(View.VISIBLE);
+            } else {
+                iv_switch_man.setVisibility(View.VISIBLE);
+                iv_switch_woman.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
     private void updateAvatarImageView() {
         String avatarUrl = "";
         if (_user != null) {
-            avatarUrl = _user.getIcon();
+            avatarUrl = _user.getAvator();
         }
 
         if (_updatedAvatarFilename != null) {
@@ -190,12 +318,13 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
                     .resize(width, width)
                     .centerCrop()
                     .into(avatarImageView);
-        } else if (!avatarUrl.equals("") && avatarUrl.indexOf("res/images/def.jpg") == -1) {
+        } else if (!TextUtils.isEmpty(avatarUrl)) {
             Picasso.with(this)
-                    .load(SEConfig.getInstance().getAPIBaseURL() + avatarUrl)
+                    .load(SEConfig.getInstance().getAPIBaseURL() + "/upload/" + avatarUrl)
+                    .placeholder(R.drawable.ic_logo)
+                    .error(R.drawable.ic_logo)
                     .resize(150, 150)
                     .centerCrop()
-                            //.placeholder(new ColorDrawable(Color.GREEN))
                     .into(avatarImageView);
         }
     }
@@ -297,10 +426,8 @@ public class UserUpdateActivity extends SEBaseActivity implements ImageChooserLi
         SEUserManager.getInstance().uploadAvatar(_updatedAvatarFilename, new SECallBack() {
             @Override
             public void success() {
-                SEUserResult regResult = SEUserManager.getInstance().getRegResult();
-                if (regResult.state) {
-                    SEAuthManager.getInstance().updateUserInfo(regResult.data);
-                }
+                MCUploadResult uploadResult = SEUserManager.getInstance().getUploadResult();
+                _imageName = uploadResult.imageName;
             }
 
             @Override

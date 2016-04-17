@@ -1,6 +1,7 @@
 package com.snail.education.protocol.service;
 
 import com.snail.education.protocol.result.AccessTokenResult;
+import com.snail.education.protocol.result.MCCommonResult;
 import com.snail.education.protocol.result.SEUserResult;
 import com.snail.education.protocol.result.ServiceResult;
 
@@ -16,13 +17,13 @@ public interface AuthService {
 
 
     @FormUrlEncoded
-    @POST("/auth/sms")
-    public void requestSMSAuthCode(@Field("cellphone") String cellphone,
-                                   @Field("client_id") String clientID,
-                                   Callback<ServiceResult> cb);
+    @POST("/swift/user/getYzmByPhone")
+    public void requestSMSAuthCode(@Field("mobile") String mobile,
+                                   Callback<MCCommonResult> cb);
 
     /**
      * 手机加验证码登录  （咱未使用）
+     *
      * @param cellphone
      * @param clientID
      * @param verificationCode
@@ -37,14 +38,15 @@ public interface AuthService {
 
     /**
      * 用户名密码登录
-     * @param user
-     * @param pass
+     *
+     * @param phone
+     * @param passwd
      * @param cb
      */
     @FormUrlEncoded
-    @POST("/api/user/login")
-    public void authWithUsernamePassword(@Field("user") String user,
-                                         @Field("pass") String pass,
+    @POST("/swift/user/login")
+    public void authWithUsernamePassword(@Field("phone") String phone,
+                                         @Field("passwd") String passwd,
                                          Callback<SEUserResult> cb);
 }
 

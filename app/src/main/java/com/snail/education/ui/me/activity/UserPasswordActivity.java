@@ -3,7 +3,10 @@ package com.snail.education.ui.me.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -13,9 +16,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.snail.education.R;
+import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SERestManager;
+import com.snail.education.protocol.result.MCCommonResult;
 import com.snail.education.protocol.result.SEPasswordResult;
 import com.snail.education.protocol.service.SEUserService;
 import com.snail.education.ui.activity.SEBaseActivity;
@@ -27,21 +33,39 @@ import retrofit.client.Response;
 
 public class UserPasswordActivity extends SEBaseActivity {
 
-    private EditText phoneET, codeET, passET, passAgainET;
+    private EditText phoneET, codeET, passET;
     private Button submitBtn, codeBtn;
 
-    private String user, code, pass, repass;
+    private String user, code, pass;
+
+    private CountDownTimer mDownTimer = new CountDownTimer(60000, 1000) {
+
+        @Override
+        protected void finalize() throws Throwable {
+            super.finalize();
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            codeBtn.setText(millisUntilFinished / 1000 + "秒");
+        }
+
+        @Override
+        public void onFinish() {
+            codeBtn.setText("验证");
+            codeBtn.setClickable(true);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_password);
-        setTitleText("找回密码");
+        setTitleText("修改密码");
 
         phoneET = (EditText) findViewById(R.id.et_name);
         codeET = (EditText) findViewById(R.id.et_code);
         passET = (EditText) findViewById(R.id.et_password);
-        passAgainET = (EditText) findViewById(R.id.et_password_again);
 
         codeBtn = (Button) findViewById(R.id.btn_code);
         codeBtn.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +80,7 @@ public class UserPasswordActivity extends SEBaseActivity {
         });
         submitBtn = (Button) findViewById(R.id.btn_submit);
 
-        LinearLayout regLL = (LinearLayout) findViewById(R.id.regLL);
+        RelativeLayout regLL = (RelativeLayout) findViewById(R.id.regLL);
         regLL.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -86,7 +110,6 @@ public class UserPasswordActivity extends SEBaseActivity {
 
                 } else {
                     passET.setText("");
-                    passAgainET.setText("");
                     codeET.setText("");
                 }
                 changeColor();
@@ -95,7 +118,6 @@ public class UserPasswordActivity extends SEBaseActivity {
 
         codeET.addTextChangedListener(textWatcher);
         passET.addTextChangedListener(textWatcher);
-        passAgainET.addTextChangedListener(textWatcher);
 
 
     }
@@ -122,73 +144,63 @@ public class UserPasswordActivity extends SEBaseActivity {
         user = phoneET.getText().toString().trim();
         pass = passET.getText().toString().trim();
         code = codeET.getText().toString().trim();
-        repass = passAgainET.getText().toString().trim();
         if ((user != null) && (!user.equals("")) && (code != null) && (!code.equals(""))
-                && (pass != null) && (!pass.equals("")) && (repass != null) && (!repass.equals(""))) {
+                && (pass != null) && (!pass.equals(""))) {
             submitBtn.setClickable(true);
-            submitBtn.setBackgroundResource(R.drawable.button_selector);
+            submitBtn.setTextColor(Color.LTGRAY);
             submitBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    reMakePass(user, code, pass, repass);
+                    reMakePass(user, code, pass);
                 }
             });
         } else {
             submitBtn.setClickable(false);
-            submitBtn.setBackgroundResource(R.drawable.btn_normal);
+            submitBtn.setTextColor(Color.WHITE);
         }
     }
 
     private void getCode() {
-        codeBtn.setText("获取中...");
-        SEUserService userService = SERestManager.getInstance().create(SEUserService.class);
-        userService.findPass(phoneET.getText().toString().trim(), new Callback<SEPasswordResult>() {
+        codeBtn.setClickable(false);
+        mDownTimer.start();
+        SEAuthManager am = SEAuthManager.getInstance();
+        am.requestSMSAuthCode(phoneET.getText().toString().trim(), new Callback<MCCommonResult>() {
             @Override
-            public void success(SEPasswordResult result, Response response) {
-                codeBtn.setText("获取验证码");
-                if (result.state) {
-                    new AlertDialog.Builder(UserPasswordActivity.this)
-                            .setMessage(result.msg)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .show();
-                } else {
-                    SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, result.msg, 2.0f);
+            public void success(MCCommonResult result, Response response) {
+                if (!result.apicode.equals("10000")) {
+                    SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, result.message, 2.0f);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                codeBtn.setText("获取验证码");
-                SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, "网络异常", 2.0f);
             }
         });
     }
 
-    private void reMakePass(String user, String code, String pass, String repass) {
-        if (code.length() != 4) {
+    private void reMakePass(String user, String code, String pass) {
+        if (user.length() != 11) {
+            SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, "请输入手机号", 2.0f);
+            return;
+        }
+        if (code.length() < 4) {
             SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, "验证码错误", 2.0f);
             return;
         }
         SVProgressHUD.showInView(this, "请稍后...", true);
         SEUserService userService = SERestManager.getInstance().create(SEUserService.class);
-        userService.reMakePass(user, code, pass, repass, new Callback<SEPasswordResult>() {
+        userService.reMakePass(user, code, pass, new Callback<SEPasswordResult>() {
             @Override
             public void success(SEPasswordResult result, Response response) {
                 SVProgressHUD.dismiss(UserPasswordActivity.this);
-                if (result.state) {
-                    new AlertDialog.Builder(UserPasswordActivity.this)
-                            .setMessage(result.msg)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .show();
+                if (result.apicode.equals("10000")) {
+                    Intent intent = getIntent();
+                    intent.putExtra("phone", phoneET.getText().toString().trim());
+                    intent.putExtra("password", passET.getText().toString().trim());
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
-                    SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, result.msg, 2.0f);
+                    SVProgressHUD.showInViewWithoutIndicator(UserPasswordActivity.this, result.message, 2.0f);
                 }
             }
 

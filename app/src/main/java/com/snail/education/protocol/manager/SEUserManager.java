@@ -1,12 +1,15 @@
 package com.snail.education.protocol.manager;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.snail.education.app.SEConfig;
 import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.model.SEUserInfo;
+import com.snail.education.protocol.result.MCCommonResult;
+import com.snail.education.protocol.result.MCUploadResult;
 import com.snail.education.protocol.result.SEUserInfoResult;
 import com.snail.education.protocol.result.SEUserResult;
 import com.snail.education.protocol.result.ServiceError;
@@ -36,6 +39,7 @@ public class SEUserManager {
     private SEUserService _userService;
     private SEUserInfo userInfo;
     private SEUserResult regResult;
+    private MCUploadResult uploadResult;
 
     private SEUserManager() {
         _userService = SERestManager.getInstance().create(SEUserService.class);
@@ -61,6 +65,10 @@ public class SEUserManager {
         return regResult;
     }
 
+    public MCUploadResult getUploadResult() {
+        return uploadResult;
+    }
+
     public void logout() {
         SEAuthManager.getInstance().clearAccessUser();
         try {
@@ -74,8 +82,8 @@ public class SEUserManager {
         }
     }
 
-    public void regUser(String sn, String user, String pass, String repass, final SECallBack callback) {
-        _userService.regUser(sn, user, pass, repass, new Callback<SEUserResult>() {
+    public void regUser(String phone, String code, String pass, final SECallBack callback) {
+        _userService.regUser(phone, code, pass, new Callback<SEUserResult>() {
             @Override
             public void success(SEUserResult result, Response response) {
                 if (result == null) {
@@ -160,13 +168,12 @@ public class SEUserManager {
             return;
         }
 
-        SEUser currentUser = SEAuthManager.getInstance().getAccessUser();
         TypedFile avatarImageTypedFile = null;
         File avatarImageFile = new File(imagePath);
         avatarImageTypedFile = new TypedFile("application/octet-stream", avatarImageFile);
-        _userService.updateUserIcon(currentUser.getId(), avatarImageTypedFile, new Callback<SEUserResult>() {
+        _userService.updateUserIcon(avatarImageTypedFile, new Callback<MCUploadResult>() {
             @Override
-            public void success(SEUserResult result, Response response) {
+            public void success(MCUploadResult result, Response response) {
                 if (result == null) {
                     if (callback != null) {
                         callback.failure(new ServiceError(-1, "服务器返回数据出错"));
@@ -181,7 +188,7 @@ public class SEUserManager {
                     return;
                 }
 
-                regResult = result;
+                uploadResult = result;
 
                 if (callback != null) {
                     callback.success();
@@ -195,7 +202,7 @@ public class SEUserManager {
         });
     }
 
-    public void modifyUserMe(final String updatedNickname, final String updatedSignature, final String updateName, final String updateMail,
+    public void modifyUserMe(String name, String avator, String local, String sex, String descript,
                              final SECallBack callback) {
         SEAuthManager am = SEAuthManager.getInstance();
         if (!am.isAuthenticated()) {
@@ -205,29 +212,13 @@ public class SEUserManager {
 
         SEUser currentUser = SEAuthManager.getInstance().getAccessUser();
 
-        String nickname = updatedNickname;
-        if (nickname.equals("")) {
-            nickname = currentUser.getNickname();
+        if (TextUtils.isEmpty(avator)) {
+            avator = currentUser.getAvator();
         }
 
-        String signature = updatedSignature;
-        if (signature.equals("")) {
-            signature = currentUser.getSay();
-        }
-
-        String name = updateName;
-        if (name.equals("")) {
-            name = currentUser.getName();
-        }
-
-        String mail = updateMail;
-        if (mail.equals("")) {
-            mail = currentUser.getMail();
-        }
-
-        _userService.updateUser(currentUser.getId(), nickname, signature, name, mail, new Callback<SEUserResult>() {
+        _userService.updateUser(currentUser.getId(), name, avator, local, sex, descript, new Callback<MCCommonResult>() {
             @Override
-            public void success(SEUserResult result, Response response) {
+            public void success(MCCommonResult result, Response response) {
                 if (result == null) {
                     if (callback != null) {
                         callback.failure(new ServiceError(-1, "服务器返回数据出错"));
@@ -241,8 +232,6 @@ public class SEUserManager {
                     }
                     return;
                 }
-
-                regResult = result;
 
                 if (callback != null) {
                     callback.success();

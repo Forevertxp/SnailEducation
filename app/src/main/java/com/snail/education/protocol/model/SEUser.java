@@ -9,24 +9,15 @@ import java.io.Serializable;
 public class SEUser implements Serializable {
 
     private String id;
-    private String user;
-    private String pass;
-    private String icon;
+    private String phone;
+    private String passwd;
+    private String avator;
     private String name;
-    private String nickname;
-    private String mail;
-    private String say;
+    private String sign;
+    private String email;
+    private String age;
     private String sex;
-    private String point;
-    private String passcode;
-    private String findpass;
-    private String sys_msg_lastid;
-    private long regtime;
-    private String sn;
-    private String sina_id;
-    private String weixin_id;
-    private String qq_id;
-    private boolean loginok;
+    private String local;
 
     private boolean _isDataDirty = false;
 
@@ -34,76 +25,80 @@ public class SEUser implements Serializable {
         return id;
     }
 
-    public String getUser() {
-        return user;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getPass() {
-        return pass;
+    public String getPhone() {
+        return phone;
     }
 
-    public String getIcon() {
-        return icon;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPasswd() {
+        return passwd;
+    }
+
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
+
+    public String getAvator() {
+        return avator;
+    }
+
+    public void setAvator(String avator) {
+        this.avator = avator;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getNickname() {
-        return nickname;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMail() {
-        return mail;
+    public String getSign() {
+        return sign;
     }
 
-    public String getSay() {
-        return say;
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 
     public String getSex() {
         return sex;
     }
 
-    public String getPoint() {
-        return point;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
-    public String getPasscode() {
-        return passcode;
+    public String getLocal() {
+        return local;
     }
 
-    public String getFindpass() {
-        return findpass;
-    }
-
-    public String getSys_msg_lastid() {
-        return sys_msg_lastid;
-    }
-
-    public long getRegtime() {
-        return regtime;
-    }
-
-    public String getSn() {
-        return sn;
-    }
-
-    public String getSina_id() {
-        return sina_id;
-    }
-
-    public String getWeixin_id() {
-        return weixin_id;
-    }
-
-    public String getQq_id() {
-        return qq_id;
-    }
-
-    public boolean isLoginok() {
-        return loginok;
+    public void setLocal(String local) {
+        this.local = local;
     }
 
     public boolean is_isDataDirty() {

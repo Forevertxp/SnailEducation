@@ -95,11 +95,11 @@ public class InformationAdapter extends BaseAdapter {
             indexManager.fetchAdInfo(2, new SECallBack() {
                 @Override
                 public void success() {
-                    slidingPagerView.setAdapter(new ImagePagerAdapter(context, indexManager.getAdList()));
-                    slidingPagerView.setOnPageChangeListener(new MyOnPageChangeListener());
-                    slidingPagerView.setInterval(3000);
-                    slidingPagerView.setScrollDurationFactor(2.0);
-                    slidingPagerView.startAutoScroll();
+//                    slidingPagerView.setAdapter(new ImagePagerAdapter(context, indexManager.getAdList()));
+//                    slidingPagerView.setOnPageChangeListener(new MyOnPageChangeListener());
+//                    slidingPagerView.setInterval(3000);
+//                    slidingPagerView.setScrollDurationFactor(2.0);
+//                    slidingPagerView.startAutoScroll();
                 }
 
                 @Override

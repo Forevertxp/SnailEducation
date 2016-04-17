@@ -2,12 +2,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ic_index"
     tools:context="com.snail.education.ui.IndexActivity">
 
     <ImageView
-        android:id="@+id/indexImage"
+        android:id="@+id/logoImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_logo_white" />
+
+    <RelativeLayout
+        android:id="@+id/operationRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_index" />
+        android:layout_below="@+id/logoImage"
+        android:layout_marginTop="50dp">
+
+        <TextView
+            android:id="@+id/welcomeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="欢迎使用极速学院"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/sloganTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/welcomeTV"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Learning becomes smart,easy and free!"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sloganTV"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/btn_reg" />
+
+        <TextView
+            android:id="@+id/loginTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_register"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="登录"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/visitTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/loginTV"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="访客模式"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

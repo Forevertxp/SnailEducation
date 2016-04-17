@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.snail.education.R;
 import com.snail.education.common.NoScrollGridAdapter;
 import com.snail.education.common.NoScrollGridView;
@@ -77,7 +78,7 @@ public class StoryAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = View.inflate(context, R.layout.item_story, null);
             holder = new ViewHolder();
-            holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+            holder.iv_avatar = (RoundedImageView) convertView.findViewById(R.id.iv_avatar);
             holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
             holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
             holder.tv_msg = (TextView) convertView.findViewById(R.id.tv_msg);
@@ -99,8 +100,8 @@ public class StoryAdapter extends BaseAdapter {
         String imageUrl = story.getUser_icon();
         Picasso.with(context)
                 .load(imageUrl)
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.ic_launcher)
+                .placeholder(R.drawable.ic_avatar_default)
+                .error(R.drawable.ic_avatar_default)
                 .into(holder.iv_avatar);
         final ArrayList<String> imageUrls = story.getPics();
         if (imageUrls == null || imageUrls.size() == 0) { // 没有图片资源就隐藏GridView
@@ -289,7 +290,7 @@ public class StoryAdapter extends BaseAdapter {
     }
 
     class ViewHolder {
-        private ImageView iv_avatar;
+        private RoundedImageView iv_avatar;
         private TextView tv_title;
         private TextView tv_content;
         private TextView tv_msg;

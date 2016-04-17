@@ -7,6 +7,7 @@ import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.model.AccessToken;
 import com.snail.education.protocol.model.SEUser;
 import com.snail.education.protocol.result.AccessTokenResult;
+import com.snail.education.protocol.result.MCCommonResult;
 import com.snail.education.protocol.result.SEUserResult;
 import com.snail.education.protocol.result.ServiceError;
 import com.snail.education.protocol.result.ServiceResult;
@@ -28,7 +29,7 @@ import retrofit.client.Response;
 public class SEAuthManager {
 
 
-    private final static String AUTH_CONFIG_FILENAME = "usermanager.dat";
+    public final static String AUTH_CONFIG_FILENAME = "usermanager.dat";
     private final static String CLIENT_ID = "3ae125d6e9a009a6fcce3f081f4ce5ff";
 
     private static SEAuthManager s_instance;
@@ -61,33 +62,19 @@ public class SEAuthManager {
         return _accessToken != null || accessUser != null;
     }
 
-    public void requestSMSAuthCode(String cellphone, final SECallBack callback) {
-        _authService.requestSMSAuthCode(cellphone, CLIENT_ID, new Callback<ServiceResult>() {
+    public void requestSMSAuthCode(String cellphone, final Callback<MCCommonResult> callback) {
+        _authService.requestSMSAuthCode(cellphone, new Callback<MCCommonResult>() {
             @Override
-            public void success(ServiceResult result, Response response) {
-                if (result == null) {
-                    if (callback != null) {
-                        callback.failure(new ServiceError(-1, "服务器返回数据出错"));
-                    }
-                    return;
-                }
-
-                if (result.error != null) {
-                    if (callback != null) {
-                        callback.failure(result.error);
-                    }
-                    return;
-                }
-
+            public void success(MCCommonResult result, Response response) {
                 if (callback != null) {
-                    callback.success();
+                    callback.success(result, response);
                 }
             }
 
             @Override
-            public void failure(RetrofitError retrofitError) {
+            public void failure(RetrofitError error) {
                 if (callback != null) {
-                    callback.failure(new ServiceError(retrofitError));
+                    callback.failure(error);
                 }
             }
         });
@@ -147,47 +134,31 @@ public class SEAuthManager {
     /**
      * 用户名 密码登录
      *
-     * @param username
+     * @param phone
      * @param password
      * @param callback
      */
-    public void authWithUsernamePassword(String username, String password, final SECallBack callback) {
-        _authService.authWithUsernamePassword(username, password, new Callback<SEUserResult>() {
+    public void authWithUsernamePassword(String phone, String password, final Callback<SEUserResult> callback) {
+        _authService.authWithUsernamePassword(phone, password, new Callback<SEUserResult>() {
             @Override
             public void success(SEUserResult result, Response response) {
-                if (result == null) {
-                    if (callback != null) {
-                        callback.failure(new ServiceError(-1, "服务器返回数据出错"));
-                    }
-                    return;
-                }
-
-                if (result.error != null) {
-                    if (callback != null) {
-                        callback.failure(result.error);
-                    }
-                    return;
-                }
 
                 SEUser user = result.data;
                 if (user == null) {
-                    if (callback != null) {
-                        callback.failure(new ServiceError(-1, result.msg));
-                    }
                     return;
                 }
                 // 登录成功后返回用户信息，更新本地，通用只保存token即可，这里将用户对象保存至本地
                 updateUserInfo(user);
 
                 if (callback != null) {
-                    callback.success();
+                    callback.success(result, response);
                 }
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
                 if (callback != null) {
-                    callback.failure(new ServiceError(retrofitError));
+                    callback.failure(retrofitError);
                 }
             }
         });
@@ -221,9 +192,6 @@ public class SEAuthManager {
      * @param user
      */
     public void updateUserInfo(SEUser user) {
-        if (user == null) {
-            return;
-        }
         accessUser = user;
         save();
     }
@@ -232,10 +200,9 @@ public class SEAuthManager {
         try {
             FileOutputStream fos = SEConfig.getInstance().getContext().openFileOutput(AUTH_CONFIG_FILENAME, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            if (_accessToken != null)
-                oos.writeObject(_accessToken);
-            if (accessUser != null)
-                oos.writeObject(accessUser);
+//            if (_accessToken != null)
+//                oos.writeObject(_accessToken);
+            oos.writeObject(accessUser);
             oos.close();
         } catch (IOException e) {
             e.printStackTrace();

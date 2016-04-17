@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="5dp"
     android:paddingTop="5dp">
 
-    <com.snail.staggeredgridview.util.DynamicHeightImageView
+    <com.github.siyamed.shapeimageview.RoundedImageView
         android:id="@+id/iv_avatar"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_margin="5dp"
-        android:background="@drawable/ic_launcher"
-        android:scaleType="centerCrop" />
+        app:siRadius="6dp"
+        app:siBorderWidth="0dp"
+        app:siBorderColor="@color/lightgrey"
+        app:siSquare="true" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -90,10 +93,10 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:padding="3dp"
-            android:layout_toLeftOf="@+id/line" />
+            android:layout_toLeftOf="@+id/divider" />
 
         <ImageView
-            android:id="@+id/line"
+            android:id="@+id/divider"
             android:layout_width="1dp"
             android:layout_height="25dp"
             android:background="@color/lightgrey"

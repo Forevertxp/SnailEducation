@@ -1,57 +1,19 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
     tools:context="tree.love.animtabsview.demo.MainActivity$PlaceholderFragment">
 
-    <RelativeLayout
-        android:id="@+id/infoRL"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green"
-        android:minHeight="120dp">
+        android:layout_height="1dp"
+        android:background="@color/common_grey"></ImageView>
 
-        <ImageView
-            android:id="@+id/teacherAvatar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp" />
-
-        <TextView
-            android:id="@+id/nameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
-            android:padding="3dp"
-            android:layout_toRightOf="@+id/teacherAvatar" />
-
-        <TextView
-            android:id="@+id/subjectText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/teacherAvatar"
-            android:textSize="13sp"
-            android:layout_marginLeft="3dp"
-            android:padding="5dp"
-            android:textColor="@color/whitesmoke"
-            android:layout_below="@+id/nameText" />
-    </RelativeLayout>
-
-    <tree.love.animtabsview.AnimTabsView
-        android:id="@+id/publiclisten_tab"
-        android:layout_width="fill_parent"
-        android:layout_height="48dip"
-        android:layout_below="@+id/infoRL"
-        android:background="#00000000"></tree.love.animtabsview.AnimTabsView>
-
-    <FrameLayout
-        android:id="@+id/container"
+    <TextView
+        android:id="@+id/tv_teacherInfo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/publiclisten_tab"></FrameLayout>
+        android:layout_height="match_parent" />
 
-</RelativeLayout>
+</LinearLayout>

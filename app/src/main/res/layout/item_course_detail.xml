@@ -62,30 +62,49 @@
         android:textColor="#b3b3b3"
         android:textSize="12sp" />
 
+    <ImageView
+        android:id="@+id/learnerImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_player"
+        android:layout_below="@+id/tv_teacher"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/iv_avatar" />
+
     <TextView
         android:id="@+id/tv_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_teacher"
-        android:layout_marginLeft="5dp"
         android:layout_marginTop="3dp"
         android:maxLines="2"
         android:ellipsize="end"
-        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_toRightOf="@id/learnerImage"
         android:textColor="@color/green"
         android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/praiserImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_teacher"
+        android:layout_toRightOf="@id/tv_count"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/ic_praiser" />
 
     <TextView
         android:id="@+id/tv_praise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_teacher"
-        android:layout_marginLeft="20dp"
         android:layout_marginTop="3dp"
+        android:layout_marginLeft="2dp"
         android:maxLines="2"
         android:ellipsize="end"
-        android:layout_toRightOf="@id/tv_count"
-        android:textColor="@color/green"
+        android:layout_toRightOf="@id/praiserImage"
+        android:textColor="@color/lightgrey"
         android:textSize="12sp" />
 
     <TextView

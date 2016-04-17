@@ -1,208 +1,200 @@
 package com.snail.education.ui.course;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.SimpleAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.snail.education.R;
-import com.snail.education.protocol.SECallBack;
-import com.snail.education.protocol.SEDataRetriever;
-import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.protocol.manager.SEAuthManager;
+import com.snail.education.protocol.manager.SECourseManager;
+import com.snail.education.protocol.model.MCCourPoint;
+import com.snail.education.protocol.model.MCCourSection;
+import com.snail.education.protocol.model.MCCourse;
+import com.snail.education.protocol.model.MCVideo;
+import com.snail.education.protocol.model.VideoCollection;
+import com.snail.education.protocol.result.MCCommonResult;
+import com.snail.education.protocol.result.MCCourSectionResult;
+import com.snail.education.protocol.result.VideoCollectionResult;
 import com.snail.education.ui.activity.SEBaseActivity;
-import com.snail.pulltorefresh.PullToRefreshBase;
-import com.snail.pulltorefresh.PullToRefreshListView;
+import com.snail.svprogresshud.SVProgressHUD;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
-public class CourseListActivity extends SEBaseActivity implements View.OnClickListener {
+public class CourseListActivity extends Activity {
 
-    private PullToRefreshListView courseListView;
-    private TextView cateTV, organizationTV, teacherTV;
-    private CourseAdapter adapter;
-    private SEDataRetriever dataRetriver;
+    private TextView secTextView;
+    private ListView courseListView;
+    private ImageView backIV;
+    private CourseCateAdapter adapter;
 
-    private PopupWindow popupWindow;
-    private ListView listView;
-    private int mScreenWidth;
+    private RelativeLayout collectRL;
+    private TextView nameTV, listenTV, collectionText;
+    private ImageView collectImage;
 
-    private int cid = 0; // 课程类别id
-    private int tid = 0; // 名师id
-    private int oid = 0; // 机构id
+    private Boolean isCollect;
+
+    private MCCourse course;
+
+    private String pid;
+    private ArrayList<MCCourPoint> pointArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_course_list);
-        setTitleText("蜗牛课程");
-        cid = getIntent().getExtras().getInt("cid");
+        pid = getIntent().getExtras().getString("pid");
 
-        this.setDataRetriver(new SEDataRetriever() {
+        backIV = (ImageView) findViewById(R.id.iv_back);
+        backIV.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void refresh(SECallBack callback) {
-                if (adapter != null) {
-                    adapter.refresh("", tid, oid, cid, callback);
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        nameTV = (TextView) findViewById(R.id.nameTV);
+        listenTV = (TextView) findViewById(R.id.listenTV);
+        collectionText = (TextView) findViewById(R.id.collectionText);
+        collectRL = (RelativeLayout) findViewById(R.id.collectRL);
+        collectImage = (ImageView) findViewById(R.id.collectImage);
+        collectRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                collectCourse();
+            }
+        });
+        secTextView = (TextView) findViewById(R.id.tv_section);
+        courseListView = (ListView) findViewById(R.id.lv_point);
+        performRefresh();
+
+        courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MCCourPoint point = pointArrayList.get(position);
+                Intent intent = new Intent(CourseListActivity.this, CourseDetailActivity.class);
+                intent.putExtra("id", point.id);
+                intent.putExtra("name", point.name);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void performRefresh() {
+        SECourseManager courseManager = SECourseManager.getInstance();
+        courseManager.fetchCourseSection(pid, new Callback<MCCourSectionResult>() {
+            @Override
+            public void success(MCCourSectionResult result, Response response) {
+                if (!result.apicode.equals("10000")) {
+                    SVProgressHUD.showInViewWithoutIndicator(CourseListActivity.this, result.message, 2.0f);
                 } else {
-                    if (callback != null) {
-                        callback.success();
+                    if (result.course.sectionArrayList.size() > 0) {
+                        course = result.course;
+                        nameTV.setText(result.course.courName);
+                        listenTV.setText(result.course.playcount);
+
+                        MCCourSection section = result.course.sectionArrayList.get(0);
+                        secTextView.setText(section.childName);
+                        pointArrayList = section.pointList;
+                        adapter = new CourseCateAdapter(CourseListActivity.this, pointArrayList);
+                        courseListView.setAdapter(adapter);
                     }
+                    updateCourseInfo();
+                    fetchCollectionState();
                 }
             }
 
             @Override
-            public void loadMore(SECallBack callback) {
-                if (callback != null) {
-                    callback.success();
-                }
+            public void failure(RetrofitError error) {
+
             }
         });
+    }
 
-        cateTV = (TextView) findViewById(R.id.cateTV);
-        organizationTV = (TextView) findViewById(R.id.organizationTV);
-        teacherTV = (TextView) findViewById(R.id.teacherTV);
-        cateTV.setOnClickListener(this);
-        organizationTV.setOnClickListener(this);
-        teacherTV.setOnClickListener(this);
-
-        courseListView = (PullToRefreshListView) findViewById(R.id.courseListView);
-        courseListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+    private void updateCourseInfo() {
+        SECourseManager cm = SECourseManager.getInstance();
+        cm.updateCourseInfo(course.courId, new retrofit.Callback<MCCommonResult>() {
             @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                performRefresh();
+            public void success(MCCommonResult result, Response response) {
             }
 
             @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                performLoadMore();
+            public void failure(RetrofitError error) {
+
             }
         });
-        adapter = new CourseAdapter(this);
-        courseListView.setAdapter(adapter);
-
-        adapter.refresh("", tid, oid, cid, null);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.cateTV:
-                initControls();
-                if (!popupWindow.isShowing()) {
-                    popupWindow.showAsDropDown(cateTV, 0, 0);
-                }
-                break;
-            case R.id.organizationTV:
-                break;
-            case R.id.teacherTV:
-                break;
-            default:
-                break;
-        }
+    private void fetchCollectionState() {
 
-    }
-
-    private void initControls() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.view_popup_window, null);
-
-        SimpleAdapter adapter = new SimpleAdapter(this, getData(),
-                R.layout.item_popup_window,
-                new String[]{"text"},
-                new int[]{R.id.item});
-        listView = (ListView) view.findViewById(R.id.listview);
-        listView.setAdapter(adapter);
-
-        mScreenWidth = getResources().getDisplayMetrics().widthPixels;
-        popupWindow = new PopupWindow(view, mScreenWidth / 3,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg));
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
-        popupWindow.update();
-        popupWindow.setTouchable(true);
-        popupWindow.setFocusable(true);
-
-    }
-
-    private List<Map<String, String>> getData() {
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("text", "全部分类");
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("text", "面试");
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("text", "英语");
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("text", "数学");
-        list.add(map);
-        return list;
-    }
-
-
-    private void performRefresh() {
-        if (dataRetriver != null) {
-            dataRetriver.refresh(new SECallBack() {
-                @Override
-                public void success() {
-                    stopRefreshAnimation();
+        SECourseManager cm = SECourseManager.getInstance();
+        cm.getCollectionState(course.courId, "1", new Callback<VideoCollectionResult>() {
+            @Override
+            public void success(VideoCollectionResult result, Response response) {
+                VideoCollection collection = result.videoCollection;
+                collectionText.setText(collection.collectCount);
+                if (collection.isCollect.equals("1")) {
+                    isCollect = true;
+                    collectImage.setBackgroundResource(R.drawable.ic_collected);
+                } else {
+                    isCollect = false;
+                    collectImage.setBackgroundResource(R.drawable.ic_collect);
                 }
 
-                @Override
-                public void failure(ServiceError error) {
-                    Toast.makeText(CourseListActivity.this, error.getMessageWithPrompt("刷新失败"), Toast.LENGTH_SHORT).show();
-                    stopRefreshAnimation();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void collectCourse() {
+        SEAuthManager am = SEAuthManager.getInstance();
+        if (!am.isAuthenticated()) {
+            SVProgressHUD.showInViewWithoutIndicator(CourseListActivity.this, "您尚未登陆", 2.0f);
+            return;
+        }
+        SECourseManager cm = SECourseManager.getInstance();
+        if (course == null)
+            return;
+        cm.collectVideo(course.courId, isCollect ? "0" : "1", am.getAccessUser().getId(), "1", new retrofit.Callback<MCCommonResult>() {
+            @Override
+            public void success(MCCommonResult result, Response response) {
+                if (!result.apicode.equals("10000")) {
+                    SVProgressHUD.showInViewWithoutIndicator(CourseListActivity.this, result.message, 2.0f);
+                    return;
                 }
-            });
-        }
-    }
-
-    private void performLoadMore() {
-        if (dataRetriver != null) {
-            dataRetriver.loadMore(new SECallBack() {
-                @Override
-                public void success() {
-                    stopRefreshAnimation();
+                if (isCollect) {
+                    isCollect = false;
+                    collectImage.setBackgroundResource(R.drawable.ic_collect);
+                    collectionText.setText(Integer.parseInt(collectionText.getText().toString()) - 1 + "");
+                } else {
+                    isCollect = true;
+                    collectImage.setBackgroundResource(R.drawable.ic_collected);
+                    collectionText.setText(Integer.parseInt(collectionText.getText().toString()) + 1 + "");
                 }
 
-                @Override
-                public void failure(ServiceError error) {
-                    Toast.makeText(CourseListActivity.this, error.getMessageWithPrompt("无法加载更多"), Toast.LENGTH_SHORT).show();
-                    stopRefreshAnimation();
-                }
-            });
-        }
-    }
+                Intent intent = new Intent("com.swiftacademy.course.collection");
+                sendBroadcast(intent);
+            }
 
-    public void setDataRetriver(SEDataRetriever dataRetriver) {
-        this.dataRetriver = dataRetriver;
-    }
+            @Override
+            public void failure(RetrofitError error) {
 
-    private void startRefreshAnimation() {
-        if (courseListView != null) {
-            courseListView.setRefreshing(true);
-        }
+            }
+        });
     }
-
-    private void stopRefreshAnimation() {
-        if (courseListView != null) {
-            courseListView.onRefreshComplete();
-        }
-    }
-
 }

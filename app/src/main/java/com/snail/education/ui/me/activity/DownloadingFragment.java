@@ -197,7 +197,7 @@ public class DownloadingFragment extends BaseFragment {
                             CourseDB c = db.findById(CourseDB.class, id);
                             if (c != null) {
                                 c.setIsdone(1);
-                                c.setProgress("已完成");
+                                c.setProgress(100);
                                 db.update(c, "isdone", "progress");
                             }
                             isDownloading = false;
@@ -275,7 +275,7 @@ public class DownloadingFragment extends BaseFragment {
             CourseDB c = db.findById(CourseDB.class, id);
             if (c != null) {
                 c.setIsInQueue(0);
-                c.setProgress(downloadingProgress + "%");
+                c.setProgress(downloadingProgress);
                 c.setIsdone(0);
                 db.update(c, "isInQueue", "progress", "isdone");
             }

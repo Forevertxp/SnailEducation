@@ -59,8 +59,6 @@ public class TeacherAdapter extends BaseAdapter implements SectionIndexer {
             viewHolder.tvTitle = (TextView) view.findViewById(R.id.title);
             viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
             viewHolder.tvOname = (TextView) view.findViewById(R.id.oname);
-            viewHolder.tvJob = (TextView) view.findViewById(R.id.job);
-            viewHolder.tvCount = (TextView) view.findViewById(R.id.course_count);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -84,8 +82,6 @@ public class TeacherAdapter extends BaseAdapter implements SectionIndexer {
                 .into(viewHolder.avartar);
         viewHolder.tvTitle.setText(this.list.get(position).getName());
         viewHolder.tvOname.setText(this.list.get(position).getOname());
-        viewHolder.tvJob.setText(this.list.get(position).getJob());
-        viewHolder.tvCount.setText(this.list.get(position).getCount());
 
         return view;
 
@@ -97,8 +93,6 @@ public class TeacherAdapter extends BaseAdapter implements SectionIndexer {
         TextView tvLetter;
         TextView tvTitle;
         TextView tvOname;
-        TextView tvJob;
-        TextView tvCount;
     }
 
 

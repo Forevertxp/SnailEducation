@@ -7,23 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.snail.education.R;
-import com.snail.education.app.SEAPP;
-import com.snail.education.app.SEConfig;
-import com.snail.education.protocol.model.SETeacher;
-import com.snail.sortlistview.SortModel;
+import com.snail.education.protocol.model.MCTeacher;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class OrgTeacherAdapter extends BaseAdapter {
-    private List<SETeacher> list = null;
+    private ArrayList<MCTeacher> list = null;
     private Context mContext;
 
-    public OrgTeacherAdapter(Context mContext, List<SETeacher> list) {
+    public OrgTeacherAdapter(Context mContext, ArrayList<MCTeacher> list) {
         this.mContext = mContext;
         this.list = list;
     }
@@ -33,7 +29,7 @@ public class OrgTeacherAdapter extends BaseAdapter {
      *
      * @param list
      */
-    public void updateListView(List<SETeacher> list) {
+    public void updateListView(ArrayList<MCTeacher> list) {
         this.list = list;
         notifyDataSetChanged();
     }
@@ -52,31 +48,25 @@ public class OrgTeacherAdapter extends BaseAdapter {
 
     public View getView(final int position, View view, ViewGroup arg2) {
         ViewHolder viewHolder = null;
-        final SETeacher mContent = list.get(position);
+        final MCTeacher mContent = list.get(position);
         if (view == null) {
             viewHolder = new ViewHolder();
             view = LayoutInflater.from(mContext).inflate(R.layout.item_teacher, null);
             viewHolder.avartar = (ImageView) view.findViewById(R.id.teacherAvatar);
             viewHolder.tvTitle = (TextView) view.findViewById(R.id.title);
-            viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
-            viewHolder.tvOname = (TextView) view.findViewById(R.id.oname);
-            viewHolder.tvJob = (TextView) view.findViewById(R.id.job);
-            viewHolder.tvCount = (TextView) view.findViewById(R.id.course_count);
+            viewHolder.tvContent = (TextView) view.findViewById(R.id.content);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        viewHolder.tvLetter.setVisibility(View.GONE);
 
         Picasso.with(mContext)
-                .load(SEConfig.getInstance().getAPIBaseURL() + this.list.get(position).getIcon())
+                .load(this.list.get(position).avatar)
                 .resize(70, 70)
                 .centerCrop()
                 .into(viewHolder.avartar);
-        viewHolder.tvTitle.setText(this.list.get(position).getName());
-        viewHolder.tvOname.setText(this.list.get(position).getOname());
-        viewHolder.tvJob.setText(this.list.get(position).getJob());
-        viewHolder.tvCount.setText(this.list.get(position).getClasscount());
+        viewHolder.tvTitle.setText(this.list.get(position).name);
+        viewHolder.tvContent.setText(this.list.get(position).profile);
 
         return view;
 
@@ -85,11 +75,8 @@ public class OrgTeacherAdapter extends BaseAdapter {
 
     final static class ViewHolder {
         ImageView avartar;
-        TextView tvLetter;
         TextView tvTitle;
-        TextView tvOname;
-        TextView tvJob;
-        TextView tvCount;
+        TextView tvContent;
     }
 
 }

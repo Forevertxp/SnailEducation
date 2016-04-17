@@ -165,19 +165,19 @@ public class UserLoginFragment extends Fragment implements Callback,
     }
 
     private void login(String username, String password) {
-        SEAuthManager.getInstance().authWithUsernamePassword(username, password, new SECallBack() {
-            @Override
-            public void success() {
-                Intent intent = new Intent();
-                intent.setAction("com.snail.user.login");
-                getActivity().sendBroadcast(intent);
-            }
-
-            @Override
-            public void failure(ServiceError error) {
-                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+//        SEAuthManager.getInstance().authWithUsernamePassword(username, password, new SECallBack() {
+//            @Override
+//            public void success() {
+//                Intent intent = new Intent();
+//                intent.setAction("com.snail.user.login");
+//                getActivity().sendBroadcast(intent);
+//            }
+//
+//            @Override
+//            public void failure(ServiceError error) {
+//                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     private void authorize(Platform plat) {

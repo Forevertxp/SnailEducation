@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <com.snail.sortlistview.ClearEditText
         android:id="@+id/filter_edit"
         android:layout_marginTop="5dip"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/search_bar_edit_selector"
         android:drawableLeft="@drawable/search_bar_icon_normal"
         android:hint="请输入关键字"
@@ -17,7 +20,7 @@
 
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent">
 
         <ListView
             android:id="@+id/country_lvcountry"

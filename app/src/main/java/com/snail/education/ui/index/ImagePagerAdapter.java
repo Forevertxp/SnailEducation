@@ -2,16 +2,15 @@ package com.snail.education.ui.index;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.snail.education.R;
-import com.snail.education.app.SEConfig;
 import com.snail.education.common.RecyclingPagerAdapter;
-import com.snail.education.protocol.model.SEAdvertisement;
-import com.snail.education.ui.information.activity.InfoDetailActivity;
+import com.snail.education.protocol.model.MCVideo;
+import com.snail.education.ui.course.CourseDetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -21,19 +20,19 @@ import java.util.ArrayList;
  */
 public class ImagePagerAdapter extends RecyclingPagerAdapter {
     private Context context;
-    private ArrayList<SEAdvertisement> adImageList;
+    private ArrayList<MCVideo> videoList;
 
     private int size;
 
-    public ImagePagerAdapter(Context context, ArrayList<SEAdvertisement> adImageList) {
+    public ImagePagerAdapter(Context context, ArrayList<MCVideo> videoList) {
         this.context = context;
-        this.adImageList = adImageList;
-        this.size = adImageList.size();
+        this.videoList = videoList;
+        this.size = videoList.size();
     }
 
     @Override
     public int getCount() {
-        return adImageList.size();
+        return videoList.size();
     }
 
     @Override
@@ -46,12 +45,12 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SEAdvertisement ad = adImageList.get(position);
-                    Intent intent = new Intent(context, InfoDetailActivity.class);
-                    if (!ad.getEvent().getId().equals("")) {
-                        intent.putExtra("infoID", Integer.parseInt(ad.getEvent().getId()));
-                        context.startActivity(intent);
-                    }
+                    MCVideo videoInfo = videoList.get(position);
+                    Intent intent = new Intent(context,CourseDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("videoInfo", videoInfo);
+                    intent.putExtras(bundle);
+                    context.startActivity(intent);
                 }
             });
         } else {
@@ -60,10 +59,10 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
         int width = context.getResources().getDisplayMetrics().widthPixels;
         int height = context.getResources().getDisplayMetrics().heightPixels;
         Picasso.with(context)
-                .load(SEConfig.getInstance().getAPIBaseURL() + adImageList.get(position).getImg())
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.ic_launcher)
-                .resize(width, (int)(height*0.3))
+                .load(videoList.get(position).pic)
+                .placeholder(R.drawable.default_index)
+                .error(R.drawable.default_index)
+                .resize(width, (int) (height * 0.3))
                 .into(holder.imageView);
         return view;
     }

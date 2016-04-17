@@ -1,12 +1,12 @@
 package com.snail.education.ui.course;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -14,6 +14,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,7 +31,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -39,27 +39,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lidroid.xutils.DbUtils;
-import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.DbException;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.HttpHandler;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.snail.education.R;
-import com.snail.education.app.SEAPP;
-import com.snail.education.app.SEConfig;
 import com.snail.education.database.CourseDB;
-import com.snail.education.protocol.SECallBack;
 import com.snail.education.protocol.manager.SEAuthManager;
 import com.snail.education.protocol.manager.SECourseManager;
-import com.snail.education.protocol.model.SECourse;
-import com.snail.education.protocol.model.SECourseDetail;
-import com.snail.education.protocol.model.SEUser;
-import com.snail.education.protocol.result.ServiceError;
+import com.snail.education.protocol.model.MCVideo;
+import com.snail.education.protocol.model.VideoCollection;
+import com.snail.education.protocol.result.MCCommonResult;
+import com.snail.education.protocol.result.MCVideoResult;
+import com.snail.education.protocol.result.VideoCollectionResult;
 import com.snail.education.ui.activity.SEBaseActivity;
-import com.snail.education.ui.course.pay.CoursePayActivity;
 import com.snail.svprogresshud.SVProgressHUD;
 
 import java.io.File;
@@ -69,8 +61,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * 仿优酷播放
@@ -80,7 +74,7 @@ import java.util.Date;
 
 public class CourseDetailActivity extends SEBaseActivity implements OnClickListener {
 
-    private int courseID = 0;
+    private String pointId;
 
     private MediaPlayer mediaPlayer;
     private String path;
@@ -97,14 +91,14 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
     private Button xiaoping;
 
     private LinearLayout infoLL; // 下方信息布局，全屏时隐藏
-    private TextView priceText;
-    private TextView freeText;
-    private TextView infoText;
-    private ListView relativeListView;
     private ImageView coverImage;
     private ProgressBar waitingBar;
     private TextView totalTime;
-    private Button downloadButton;
+    private RelativeLayout listenRL, collctionRL, downloadRL;
+    private ImageView collectImage;
+    private TextView collectText;
+
+    private boolean isCollect;
 
     private String localUrl;
 
@@ -122,31 +116,26 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
         //requestWindowFeature(Window.FEATURE_NO_TITLE);// 隐藏标题
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // 应用运行时，保持屏幕高亮，不锁屏
         setContentView(R.layout.activity_course_detail);
-        courseID = getIntent().getExtras().getInt("id");
-        setTitleText(getIntent().getExtras().getString("name"));
 
         update = new upDateSeekBar(); // 创建更新进度条对象
         mediaPlayer = new MediaPlayer();
+
         initView();
-        initCourseInfo();
+
+        MCVideo videoInfo = (MCVideo) getIntent().getSerializableExtra("videoInfo");
+        if (videoInfo != null) {
+            setTitleText(videoInfo.name);
+            loadVideo(videoInfo);
+            fetchCollectionState(videoInfo);
+        } else {
+            pointId = getIntent().getExtras().getString("id", "1");
+            setTitleText(getIntent().getExtras().getString("name"));
+            initVideoInfo();
+        }
     }
 
 
     private void initView() {
-        // TODO Auto-generated method stub
-        if (android.os.Environment.getExternalStorageState().equals(
-                android.os.Environment.MEDIA_MOUNTED)) {
-            String localpath = Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + "/VideoCache/" + "snail2" + ".mp4";
-            File f = new File(localpath);
-            if (!f.exists()) {
-                path = "http://api.nowthinkgo.com/upload/video/mp4/02.mp4";
-            } else {
-                path = localpath;
-            }
-        } else {
-            Toast.makeText(this, "SD卡不存在！", Toast.LENGTH_SHORT).show();
-        }
         seekbar = (SeekBar) findViewById(R.id.seekbar);
         issrt = (Button) findViewById(R.id.issrt);
         issrt.setOnClickListener(this);
@@ -180,143 +169,209 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
         mediaPlayer.setOnErrorListener(new ErrorListener());
 
         infoLL = (LinearLayout) findViewById(R.id.infoLL);
-        priceText = (TextView) findViewById(R.id.coursePrice);
-        freeText = (TextView) findViewById(R.id.courseFree);
-        infoText = (TextView) findViewById(R.id.courseInfo);
-        relativeListView = (ListView) findViewById(R.id.relativeCourse);
-        downloadButton = (Button) findViewById(R.id.btn_download);
+        listenRL = (RelativeLayout) findViewById(R.id.listenRL);
+        collctionRL = (RelativeLayout) findViewById(R.id.collectRL);
+        downloadRL = (RelativeLayout) findViewById(R.id.downloadRL);
+        collectImage = (ImageView) findViewById(R.id.collectImage);
+        collectText = (TextView) findViewById(R.id.collectionText);
 
         // 注册网络监听
         registerNetBroad();
     }
 
     /**
-     * 具体课程信息
+     * 具体视频信息
      */
-    private void initCourseInfo() {
+    private void initVideoInfo() {
 
         final SECourseManager courseManager = SECourseManager.getInstance();
         SVProgressHUD.showInView(this, "正在加载，请稍后...", true);
-        SEUser currentuser = SEAuthManager.getInstance().getAccessUser();
-        int uid = (currentuser != null) ? Integer.parseInt(currentuser.getId()) : -1;
-        courseManager.getCourseDetail(courseID, uid, new SECallBack() {
+        courseManager.fetchVideoInfo(pointId, new retrofit.Callback<MCVideoResult>() {
             @Override
-            public void success() {
+            public void success(MCVideoResult result, Response response) {
                 SVProgressHUD.dismiss(CourseDetailActivity.this);
-                final SECourseDetail courseDetail = courseManager.getCourseDetail();
-                DisplayImageOptions options = new DisplayImageOptions.Builder()//
-                        .cacheInMemory(true)//
-                        .cacheOnDisk(true)//
-                        .bitmapConfig(Bitmap.Config.RGB_565)//
-                        .build();
-                ImageLoader.getInstance().displayImage(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getThumb(), coverImage, options);
-                priceText.setText("¥ " + courseDetail.getPrice());
-                if (courseDetail.getFree().equals("Y")) {
-                    freeText.setText("免费");
-                } else {
-                    if (courseDetail.get_buy().equals("Y")) {
-                        freeText.setText("已购买");
-                    } else {
-                        freeText.setText("马上购买");
-                        freeText.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (!SEAuthManager.getInstance().isAuthenticated()) {
-                                    new AlertDialog.Builder(CourseDetailActivity.this)
-                                            .setTitle("您尚未登录")
-                                            .setMessage("登录后才能购买，是否去登录？")
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                }
-                                            })
-                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    // do nothing
-                                                }
-                                            })
-                                            .show();
-                                    return;
-                                }
-                                Intent intent = new Intent(CourseDetailActivity.this, CoursePayActivity.class);
-                                intent.putExtra("id", courseDetail.getId());
-                                startActivity(intent);
-                            }
-                        });
-                    }
-                }
-                infoText.setText(courseDetail.getInfo());
-                ArrayList<SECourse> courseArrayList = courseManager.getCourseList();
-                RelativeCourseAdapter adapter = new RelativeCourseAdapter(CourseDetailActivity.this, courseArrayList);
-                relativeListView.setAdapter(adapter);
-
-                downloadButton.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (courseDetail.getFree().equals("Y") || courseDetail.get_buy().equals("Y"))
-                            downloadCourse(courseDetail);
-                        else
-                            SVProgressHUD.showInViewWithoutIndicator(CourseDetailActivity.this, "抱歉，您无下载权限！", 2.f);
-                    }
-                });
+                loadVideo(result.videoInfo);
+                fetchCollectionState(result.videoInfo);
             }
 
             @Override
-            public void failure(ServiceError error) {
-                SVProgressHUD.dismiss(CourseDetailActivity.this);
-                Toast.makeText(CourseDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            public void failure(RetrofitError error) {
+
             }
         });
     }
 
-    private void addToCart() {
+    private void loadVideo(final MCVideo videoInfo) {
+        // 视频路径
+        if (android.os.Environment.getExternalStorageState().equals(
+                android.os.Environment.MEDIA_MOUNTED)) {
+            String localpath = Environment.getExternalStorageDirectory()
+                    .getAbsolutePath() + "/SnailData/VideoCache/" + "snail" + videoInfo.id + ".mp4";
+            File f = new File(localpath);
+            if (!f.exists()) {
+                path = videoInfo.address + ".mp4";
+            } else {
+                path = localpath;
+            }
+        } else {
+            Toast.makeText(CourseDetailActivity.this, "SD卡不存在！", Toast.LENGTH_SHORT).show();
+        }
+        DisplayImageOptions options = new DisplayImageOptions.Builder()//
+                .cacheInMemory(true)//
+                .cacheOnDisk(true)//
+                .bitmapConfig(Bitmap.Config.RGB_565)//
+                .build();
+        ImageLoader.getInstance().displayImage(videoInfo.pic, coverImage, options);
 
+        downloadRL.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadCourse(videoInfo);
+            }
+        });
+        collctionRL.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                collectCourse(videoInfo);
+            }
+        });
     }
 
-    private void downloadCourse(SECourseDetail courseDetail) {
+    private void fetchCollectionState(MCVideo videoInfo) {
+
+        SECourseManager cm = SECourseManager.getInstance();
+        cm.getCollectionState(videoInfo.id, "2", new retrofit.Callback<VideoCollectionResult>() {
+            @Override
+            public void success(VideoCollectionResult result, Response response) {
+                VideoCollection collection = result.videoCollection;
+                collectText.setText(collection.collectCount);
+                if (collection.isCollect.equals("1")) {
+                    isCollect = true;
+                    collectImage.setBackgroundResource(R.drawable.ic_collected);
+                } else {
+                    isCollect = false;
+                    collectImage.setBackgroundResource(R.drawable.ic_collect);
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void collectCourse(MCVideo videoInfo) {
+        SEAuthManager am = SEAuthManager.getInstance();
+        if (!am.isAuthenticated()) {
+            SVProgressHUD.showInViewWithoutIndicator(CourseDetailActivity.this, "您尚未登陆", 2.0f);
+            return;
+        }
+        SECourseManager cm = SECourseManager.getInstance();
+        cm.collectVideo(videoInfo.id, isCollect ? "0" : "1", am.getAccessUser().getId(), "2", new retrofit.Callback<MCCommonResult>() {
+            @Override
+            public void success(MCCommonResult result, Response response) {
+                if (!result.apicode.equals("10000")) {
+                    SVProgressHUD.showInViewWithoutIndicator(CourseDetailActivity.this, result.message, 2.0f);
+                    return;
+                }
+                if (isCollect) {
+                    isCollect = false;
+                    collectImage.setBackgroundResource(R.drawable.ic_collect);
+                    collectText.setText(Integer.parseInt(collectText.getText().toString()) - 1 + "");
+                } else {
+                    isCollect = true;
+                    collectImage.setBackgroundResource(R.drawable.ic_collected);
+                    collectText.setText(Integer.parseInt(collectText.getText().toString()) + 1 + "");
+                }
+
+                Intent intent = new Intent("com.swiftacademy.course.collection");
+                sendBroadcast(intent);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void downloadCourse(final MCVideo videoInfo) {
+
+        final SharedPreferences sp = getSharedPreferences("SP", MODE_PRIVATE);
+        if (sp.getInt("DOWNLOAD_TYPE", 0) == 0 && !isWifiConnected()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("是否设置为允许移动数据下载？");
+            builder.setTitle("提示");
+            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    //存入数据
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt("DOWNLOAD_TYPE", 1);
+                    editor.commit();
+
+                    DbUtils db = DbUtils.create(CourseDetailActivity.this);
+                    try {
+                        if (db.findById(CourseDB.class, videoInfo.id) != null) {
+                            SVProgressHUD.showInViewWithoutIndicator(CourseDetailActivity.this, "缓存列表已存在", 2.0f);
+                            return;
+                        }
+                        SVProgressHUD.showInViewWithoutIndicator(CourseDetailActivity.this, "成功添加至缓存列表", 2.0f);
+                        Intent intent = new Intent("com.swiftacademy.download");
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("videoInfo", videoInfo);
+                        intent.putExtras(bundle);
+                        sendBroadcast(intent);
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
+            return;
+        }
+
         DbUtils db = DbUtils.create(CourseDetailActivity.this);
-        CourseDB course = new CourseDB();
-        course.setId(Integer.parseInt(courseDetail.getId()));
-        course.setName(courseDetail.getName());
-        course.setThumb(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getThumb());
-        course.setVideo(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getVideo());
         try {
-            if (db.findById(CourseDB.class, courseDetail.getId()) != null) {
+            if (db.findById(CourseDB.class, videoInfo.id) != null) {
                 SVProgressHUD.showInViewWithoutIndicator(this, "缓存列表已存在", 2.0f);
                 return;
             }
-            db.save(course);
             SVProgressHUD.showInViewWithoutIndicator(this, "成功添加至缓存列表", 2.0f);
+            Intent intent = new Intent("com.swiftacademy.download");
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videoInfo", videoInfo);
+            intent.putExtras(bundle);
+            sendBroadcast(intent);
         } catch (DbException e) {
             e.printStackTrace();
         }
-//        HttpUtils http = new HttpUtils();
-//        HttpHandler handler = http.download(SEConfig.getInstance().getAPIBaseURL() + courseDetail.getVideo(),
-//                "/sdcard/snailvideo" + courseDetail.getId() + ".mp4",
-//                true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
-//                true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
-//                new RequestCallBack<File>() {
-//
-//                    @Override
-//                    public void onStart() {
-//                        Toast.makeText(CourseDetailActivity.this, "添加至缓存列表", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onLoading(long total, long current, boolean isUploading) {
-//                        //testTextView.setText(current + "/" + total);
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(ResponseInfo<File> responseInfo) {
-//                        Toast.makeText(CourseDetailActivity.this, "downloaded:" + responseInfo.result.getPath(), Toast.LENGTH_SHORT).show();
-//                    }
-//
-//
-//                    @Override
-//                    public void onFailure(HttpException error, String msg) {
-//                        Toast.makeText(CourseDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+    }
+
+    /**
+     * 检测wifi是否连接
+     *
+     * @return
+     */
+    private boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            if (networkInfo != null
+                    && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private final class surfaceSeekBar implements OnSeekBarChangeListener {
@@ -330,7 +385,7 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
             // 如果视频已无缓存且无网络
             if (cachePercent - progressPercent <= 2 && !netState) {
                 mediaPlayer.pause();
-                issrt.setText("开始");
+                issrt.setBackgroundResource(R.drawable.ic_play);
                 pause = true;
                 waitingBar.setVisibility(View.VISIBLE);
             }
@@ -373,7 +428,7 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
             // 如果播放时程序退到后台，如home键被按下
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
-                issrt.setText("开始");
+                issrt.setBackgroundResource(R.drawable.ic_play);
                 pause = true;
             }
         }
@@ -392,14 +447,15 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
                         return;
                     }
                     play(0);
+                    pause = false;
                     waitingBar.setVisibility(View.VISIBLE);  // 显示加载进度条
-                    issrt.setText("暂停");
+                    issrt.setBackgroundResource(R.drawable.ic_pause);
                     iStart = false;
                     new Thread(update).start();
                 } else {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
-                        issrt.setText("开始");
+                        issrt.setBackgroundResource(R.drawable.ic_play);
                         pause = true;
                     } else {
                         // 如果无网络且无缓存
@@ -408,9 +464,14 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
                         } else {
                             waitingBar.setVisibility(View.GONE);
                             if (pause) {
-                                issrt.setText("暂停");
+                                issrt.setBackgroundResource(R.drawable.ic_pause);
                                 mediaPlayer.start();
                                 pause = false;
+                            } else {
+                                // 刚开始点击播放视频，视频还在缓冲阶段（此时isPlaying为false，且pause也为false）
+                                waitingBar.setVisibility(View.VISIBLE);
+                                issrt.setBackgroundResource(R.drawable.ic_play);
+                                return;
                             }
                         }
                     }
@@ -581,7 +642,7 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
     private final class CompletionListener implements OnCompletionListener {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            issrt.setText("开始");
+            issrt.setBackgroundResource(R.drawable.ic_play);
             pause = true;
             mediaPlayer.seekTo(0);
             seekbar.setProgress(0);
@@ -609,6 +670,9 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
                 // 缓存结束
                 case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                     waitingBar.setVisibility(View.GONE);
+                    if (mediaPlayer.isPlaying()) {
+                        issrt.setBackgroundResource(R.drawable.ic_pause);
+                    }
                     break;
             }
             return false;
@@ -780,6 +844,4 @@ public class CourseDetailActivity extends SEBaseActivity implements OnClickListe
 
         return "";
     }
-
-
 }

@@ -2,241 +2,246 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EEEEEE"
     tools:context="com.quanjing.weitu.app.ui.user.MWTUserInfoEditActivity">
 
-    <RelativeLayout
-        android:id="@+id/updateRL"
+
+    <LinearLayout
+        android:id="@+id/updateLL"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#EEEEEE"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/SectionAreaStyle"
+            android:layout_marginTop="28dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
+
+                <Button
+                    android:id="@+id/AvatarButton"
+                    style="@style/ManualSectionItemButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="头像" />
+
+                <com.snail.circularimageview.CircularImageView
+                    android:id="@+id/AvatarImageView"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="12dp"
+                    android:src="@drawable/ic_launcher" />
+            </RelativeLayout>
+
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            style="@style/SectionAreaStyle"
+            android:layout_marginTop="28dp">
+
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    style="@style/ManualSectionItemButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="真实姓名" />
+
+                <EditText
+                    android:id="@+id/et_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:gravity="right"
+                    android:hint="填写姓名"
+                    android:padding="10dp"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/NicknameButton"
+                    style="@style/ManualSectionItemButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="性别" />
+
+                <ImageView
+                    android:id="@+id/iv_switch_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/ic_user_man"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/iv_switch_women"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/ic_user_woman"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
+
+
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    style="@style/ManualSectionItemButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="个性签名" />
+
+                <EditText
+                    android:id="@+id/et_signature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:gravity="right"
+                    android:hint="我很懒，什么都没留下"
+                    android:padding="10dp"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#EEEEEE"
+            android:layout_marginTop="28dp"
+            android:background="@color/white"
             android:orientation="vertical">
 
-            <LinearLayout style="@style/SectionAreaStyle">
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
 
-                <RelativeLayout
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    style="@style/ManualSectionItemButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp">
+                    android:layout_height="wrap_content"
+                    android:text="地区" />
 
-                    <Button
-                        android:id="@+id/AvatarButton"
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="头像" />
+                <TextView
+                    android:id="@+id/tv_local"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:gravity="right"
+                    android:hint="北京市,海淀区"
+                    android:padding="10dp"
+                    android:textSize="16sp" />
 
-                    <com.snail.circularimageview.CircularImageView
-                        android:id="@+id/AvatarImageView"
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="12dp"
-                        android:src="@drawable/ic_launcher" />
-                </RelativeLayout>
+            </RelativeLayout>
 
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
 
-            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-
-            <LinearLayout
-                style="@style/SectionAreaStyle"
-                android:layout_marginTop="28dp">
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-                <RelativeLayout
+                <Button
+                    style="@style/ManualSectionItemButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:text="手机号码＊" />
 
-                    <Button
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="我的昵称" />
+                <TextView
+                    android:id="@+id/tv_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="未知的手机号码"
+                    android:textColor="@color/LightTextColor"
+                    android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/et_nickname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:padding="10dp"
-                        android:layout_centerVertical="true"
-                        android:background="@null"
-                        android:gravity="right"
-                        android:textSize="16sp"
-                        android:hint="填写昵称" />
+            </RelativeLayout>
 
-                </RelativeLayout>
+            <View
+                style="@style/horizontal_line_1px"
+                android:background="@color/lightgrey" />
 
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        android:id="@+id/NicknameButton"
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="性别" />
-
-
-                </RelativeLayout>
-
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="个性签名" />
-
-                    <EditText
-                        android:id="@+id/et_signature"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:padding="10dp"
-                        android:layout_centerVertical="true"
-                        android:background="@null"
-                        android:gravity="right"
-                        android:textSize="16sp"
-                        android:hint="我很懒，什么都没留下" />
-
-                </RelativeLayout>
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/SectionAreaStyle"
-                android:layout_marginTop="28dp">
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="真实姓名" />
-
-                    <EditText
-                        android:id="@+id/et_realname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:padding="10dp"
-                        android:layout_centerVertical="true"
-                        android:background="@null"
-                        android:gravity="right"
-                        android:textSize="16sp"
-                        android:hint="填写真实姓名" />
-
-                </RelativeLayout>
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="手机号码＊" />
-
-                    <TextView
-                        android:id="@+id/tv_phone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:padding="10dp"
-                        android:text="未知的手机号码"
-                        android:textColor="@color/LightTextColor"
-                        android:textSize="16sp" />
-
-                </RelativeLayout>
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        style="@style/ManualSectionItemButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="邮箱" />
-
-                    <EditText
-                        android:id="@+id/et_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:padding="10dp"
-                        android:layout_centerVertical="true"
-                        android:background="@null"
-                        android:gravity="right"
-                        android:textSize="16sp"
-                        android:hint="填写邮箱" />
-
-                </RelativeLayout>
-
-                <View
-                    style="@style/horizontal_line_1px"
-                    android:background="@color/lightgrey" />
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/user_save"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/button_selector"
-                android:text="保 存"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:padding="8dp" />
+                android:visibility="gone">
+
+                <Button
+                    style="@style/ManualSectionItemButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="邮箱" />
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:gravity="right"
+                    android:hint="填写邮箱"
+                    android:padding="10dp"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
+
 </com.snail.education.common.SEOverScrollView>

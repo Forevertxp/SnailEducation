@@ -24,6 +24,7 @@ import com.snail.education.protocol.result.SEOrgResult;
 import com.snail.education.protocol.service.SEOrgService;
 import com.snail.education.ui.activity.SEBaseActivity;
 import com.snail.education.ui.index.adapter.OrganizationAdapter;
+import com.snail.education.ui.organization.OrganizationInfoActivity;
 import com.snail.sortlistview.CharacterParser;
 import com.snail.sortlistview.ClearEditText;
 import com.snail.sortlistview.SideBar;

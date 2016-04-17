@@ -21,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textColor="@color/green"
         android:textSize="18sp"
         android:text="标题" />
 
@@ -40,8 +39,8 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:textSize="16sp"
+        android:textColor="@color/common_blue"
         android:padding="5dp"
-        android:textColor="@color/green"
         android:background="@null" />
 
 </RelativeLayout>  

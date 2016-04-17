@@ -11,6 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -23,6 +28,18 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.squareup.retrofit:retrofit:1.6.1'
     compile 'com.squareup.picasso:picasso:2.3.3'
+    // 分段listview
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    // 滑动删除listview
+    compile 'com.baoyz.swipemenulistview:library:1.3.0'
+    //自定义形状 ImageView
+    compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+    // segment control
+    compile 'info.hoang8f:android-segmented:1.0.6'
+    // 时间 城市选择
+    compile 'com.bigkoo:pickerview:2.0.7'
+    // pdf viewer
+    compile 'com.joanzapata.pdfview:android-pdfview:1.0.4@aar'
     compile project(':SVProgressHUD')
     compile files('libs/umeng-analytics-v5.2.4.jar')
     compile project(':IconicDroid')
@@ -45,4 +62,10 @@ dependencies {
     compile files('libs/ShareSDK-Wechat-Favorite-2.5.8.jar')
     compile files('libs/ShareSDK-Wechat-Moments-2.5.8.jar')
     compile project(':ImageChooser')
+    compile files('libs/xUtils-2.6.14.jar')
+    compile files('libs/libammsdk.jar')
+    compile project(':PhotoUploader')
+    compile project(':SegmentedRadios')
+    compile project(':AnimtabsView')
+    compile files('libs/locSDK_6.13.jar')
 }

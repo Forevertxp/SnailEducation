@@ -29,7 +29,7 @@ public class AuditionActivity extends SEBaseActivity {
             @Override
             public void refresh(SECallBack callback) {
                 if (adapter != null) {
-                    adapter.refresh("free", 0, 0, 0, callback);
+                    //adapter.refresh("free", 0, 0, 0, callback);
                 } else {
                     if (callback != null) {
                         callback.success();
@@ -57,10 +57,10 @@ public class AuditionActivity extends SEBaseActivity {
                 performLoadMore();
             }
         });
-        adapter = new CourseAdapter(this);
-        courseListView.setAdapter(adapter);
-
-        adapter.refresh("free", 0, 0, 0, null);
+//        adapter = new CourseAdapter(this);
+//        courseListView.setAdapter(adapter);
+//
+//        adapter.refresh("free", 0, 0, 0, null);
     }
 
     private void performRefresh() {
